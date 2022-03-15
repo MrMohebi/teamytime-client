@@ -1,8 +1,14 @@
 import type { NextPage } from 'next'
-import TInput from "../components/utilitis/input/TInput";
+import Image from "next/image";
 import TInputSearch from "../components/utilitis/inputSearch/TInputSearch";
+import logo from "/public/img/logo.png"
+import {useState} from "react";
+import * as React from "react";
+import SelectSample from "../components/selectSample/SelectSample";
 
 const Home: NextPage = () => {
+    const [selectedUser, setSelectedUser] = useState()
+
     const users = [
         {
             label:"mamad",
@@ -21,10 +27,46 @@ const Home: NextPage = () => {
         },
     ]
 
+    const defaultHours = [{label:"4H", value:4},{label:"5H", value:5}, {label:"6H", value:6}]
+    const defaultDays = [{label:"امروز", value:'today'},{label:"دیروز", value:"yesterday"}, {label:"دوروز پیش", value:"theDayBefore"}]
 
-  return (
-      <div className={"p-3"}>
-          <TInputSearch options={users} onSelect={(value)=>{console.log(value)}} placeholder={"کد کاربری"} icon={"/svg/search-icon.svg"}/>
+
+    return (
+      <div className="p-6 flex flex-col justify-center space-y-4">
+          <div className={"flex items-center"}>
+              <div className={"ml-2"}>
+                  <Image src={logo} alt={"logo"} height={30} width={70}/>
+              </div>
+              <TInputSearch options={users} onSelect={(value)=>{setSelectedUser(value)}} placeholder={"کد کاربری"} icon={"/svg/search-icon.svg"}/>
+          </div>
+          {  // @ts-ignore
+              selectedUser?.id &&
+              <div className={"flex  items-center space-x-4"}>
+                  <div className={"bg-default rounded-full w-10 h-10 flex justify-center items-center ml-4"}>
+                      <Image src={"/svg/user.svg"} alt={"user"} width={17} height={17}/>
+                  </div>
+                  <div className={""}>
+                      {  // @ts-ignore
+                          selectedUser.label}
+                  </div>
+                  <div className={"text-notEmphasis"}>
+                      {  // @ts-ignore
+                          selectedUser.position}
+                  </div>
+
+              </div>
+          }
+          <div className={"py-1 text-default "}>
+              <hr className={""}/>
+          </div>
+
+          <div className={"flex items-center"}>
+              <div className={"text-primary ml-4"}>
+                  تاریخ
+              </div>
+              <SelectSample options={defaultDays} onClick={(value)=>{console.log(value)}}/>
+          </div>
+
       </div>
   )
 }

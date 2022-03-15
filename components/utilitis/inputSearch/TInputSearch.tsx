@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import Image from "next/image";
 
 interface OptionsInterface{
@@ -33,7 +33,7 @@ const TInputSearch:React.FC<{placeholder?:string, icon?:string|null, options:Opt
     },[])
 
     const handelSelectItem = (item:OptionsInterface) => {
-        onSelect(item.id)
+        onSelect(item)
         setSearch(item.label as any)
         setIsOptionsShow(false)
     }
@@ -41,9 +41,9 @@ const TInputSearch:React.FC<{placeholder?:string, icon?:string|null, options:Opt
     const handelClickInp = () =>{
         setIsOptionsShow(true)
     }
-    const handelBlurInp = () =>{
-        setIsOptionsShow(false)
-    }
+    // const handelBlurInp = () =>{
+    //     setIsOptionsShow(false)
+    // }
     return(
         <div className="">
             <div onClick={handelClickInp} >
