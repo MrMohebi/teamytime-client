@@ -5,9 +5,12 @@ import logo from "/public/img/logo.png"
 import {useState} from "react";
 import * as React from "react";
 import SelectSample from "../components/selectSample/SelectSample";
+import 'react-modern-calendar-datepicker/lib/DatePicker.css';
+import {Calendar} from 'react-modern-calendar-datepicker';
 
 const Home: NextPage = () => {
     const [selectedUser, setSelectedUser] = useState()
+    const [selectedDay, setSelectedDay] = useState()
 
     const users = [
         {
@@ -27,8 +30,13 @@ const Home: NextPage = () => {
         },
     ]
 
-    const defaultHours = [{label:"4H", value:4},{label:"5H", value:5}, {label:"6H", value:6}]
+    const defaultHours = [{label:"4H", value:4},{label:"5H", value:5}, {label:"6H", value:6}, {label:"7H", value:7}]
     const defaultDays = [{label:"امروز", value:'today'},{label:"دیروز", value:"yesterday"}, {label:"دوروز پیش", value:"theDayBefore"}]
+
+
+    const handelSelectDay = (day:any) => {
+        setSelectedDay(day)
+    }
 
 
     return (
@@ -65,6 +73,27 @@ const Home: NextPage = () => {
                   تاریخ
               </div>
               <SelectSample options={defaultDays} onClick={(value)=>{console.log(value)}}/>
+          </div>
+          <div className={"w-full flex justify-center"}>
+              <Calendar
+                  colorPrimary="#0099ff"
+                  value={selectedDay}
+                  onChange={handelSelectDay}
+                  calendarClassName="calenderCss"
+                  locale="fa"
+                  shouldHighlightWeekends
+              />
+          </div>
+
+          <div className={"py-1 text-default "}>
+              <hr className={""}/>
+          </div>
+
+          <div className={"flex items-center"}>
+              <div className={"text-primary ml-4"}>
+                  مدت زمان
+              </div>
+              <SelectSample options={defaultHours} onClick={(value)=>{console.log(value)}}/>
           </div>
 
       </div>
