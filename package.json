@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "tcv": "tailwind-config-viewer -o",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -20,6 +21,7 @@
     "eslint": "8.11.0",
     "eslint-config-next": "12.1.0",
     "postcss": "^8.4.8",
+    "tailwind-config-viewer": "^1.6.3",
     "tailwindcss": "^3.0.23",
     "typescript": "4.6.2"
   }

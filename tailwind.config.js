@@ -8,6 +8,7 @@ module.exports = {
       'primary': '#0099ff',
       'primary-light': '#f1f5f8',
       'default': '#f0f2f5',
+      'notEmphasis':'#9db1c0',
       'white' : '#fefeff',
     },
   },
