@@ -1,14 +1,48 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@font-face {
+  font-family: "IranSans";
+  src: url("/assets/fonts/IranSansFarsiNums/IRANSans(FaNum).ttf");
+}
+.IranSans {
+  font-family: IranSans;
+}
 
+@font-face {
+  font-family: "IranSansMedium";
+  src: url("/assets/fonts/IranSansFarsiNums/IRANSans(FaNum)_Medium.ttf");
+}
+.IranSansMedium {
+  font-family: IranSansMedium;
+}
+
+@font-face {
+  font-family: "IranSansBlack";
+  src: url("/assets/fonts/IranSansFarsiNums/IRANSans(FaNum)_Black.ttf");
+}
+.IranSansBlack {
+  font-family: IranSansBlack;
+}
+
+@font-face {
+  font-family: "IranSansBold";
+  src: url("/assets/fonts/IranSansFarsiNums/IRANSans(FaNum)_Bold.ttf");
+}
+.IranSansBold {
+  font-family: IranSansBold;
+}
 
 html,
 body {
+  height: 100%;
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+#__next {
+  height: 100%;
 }
 
 a {
@@ -19,3 +53,13 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.MuiCircularProgress-colorPrimary {
+  @apply text-primary !important;
+}
+
+/*# sourceMappingURL=globals.css.map */
