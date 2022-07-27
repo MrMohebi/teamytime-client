@@ -71,7 +71,6 @@ const CanEdit = (props: {
     moment.loadPersian()
     useEffect(() => {
         moment.relativeTimeThreshold('h', 30);
-        console.log(moment.duration(props.remainSeconds ?? 0, 'seconds').humanize())
     }, [])
 
     useEffect(() => {
@@ -86,7 +85,6 @@ const CanEdit = (props: {
 
     useEffect(() => {
 
-        console.log(props.dayData)
 
         if (props.dayData) {
             if (props.dayData.textFields) {
@@ -102,7 +100,6 @@ const CanEdit = (props: {
                 (props.dayData.timeFields).forEach((item, index) => {
                     if (item.title === "ساعت کار") {
                         setDefaultWorkHour(item.value ?? '')
-                        console.log(item.value ?? '')
                     }
                     if (item.title === "ساعت آموزش") {
                         setDefaultTrainingHours(item.value ?? '')
@@ -145,7 +142,6 @@ const CanEdit = (props: {
         setBtnLoading(true)
 
         sendReport(UserId(), CompanyId(), CurrentSelectedDate(), JSON.stringify(timeFields), JSON.stringify(textFields)).then((res) => {
-            console.log(res)
             setBtnLoading(false)
             if (res.data === 200) {
                 Swal.fire(

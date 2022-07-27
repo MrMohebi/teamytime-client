@@ -20,13 +20,8 @@ const TimePicker = (props: {
     useEffect(() => {
 
 
-
-
         props.setHour(currentActiveHour)
         props.setMinute(currentActiveMinute)
-
-        console.log(currentActiveMinute)
-        console.log(currentActiveHour)
 
 
     }, [currentActiveMinute, currentActiveHour])
@@ -43,11 +38,11 @@ const TimePicker = (props: {
     useEffect(() => {
 
 
-        if (props.defaultTime){
-            if (props.defaultTime.split(":").length === 2){
+        if (props.defaultTime) {
+            if (props.defaultTime.split(":").length === 2) {
 
                 hourScrollTo(parseInt(props.defaultTime.split(':')[0]))
-                minuteScrollTo(parseInt(props.defaultTime.split(':')[2]))
+                minuteScrollTo(parseInt(props.defaultTime.split(':')[1])/10)
             }
         }
     }, [props.defaultTime]);

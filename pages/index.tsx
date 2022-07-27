@@ -65,7 +65,6 @@ const Home: NextPage = () => {
 
 
                 if (day.createdAt) {
-                    console.log('day has saved')
                     setReportHasData(true)
                     setReportSent(true)
 
@@ -91,7 +90,6 @@ const Home: NextPage = () => {
                     setWorkHours(workHour[0])
                     setTrainingHours(trainingHour[0])
 
-                    console.log(whatDidUserDo)
                     setWhatDidUserDoInReport(whatDidUserDo[0])
 
                 }
