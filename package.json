@@ -6,7 +6,7 @@
     "tcv": "tailwind-config-viewer -o",
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3232",
     "lint": "next lint"
   },
   "dependencies": {
