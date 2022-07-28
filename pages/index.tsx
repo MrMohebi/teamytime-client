@@ -16,6 +16,7 @@ const Home: NextPage = () => {
 
     const [loadingFragment, setLoadingFragment] = useState(true);
 
+
     //report Data
     const [remainSeconds, setRemainSeconds] = useState(0);
     const [workHours, setWorkHours] = useState(0);
