@@ -54,6 +54,10 @@ const Home: NextPage = () => {
         getUserReports(UserId(), day, day).then((res) => {
 
             let day = res.data[Object.keys(res.data)[0]]
+            setWorkHours(0)
+            setTrainingHours(0)
+            setWhatDidUserDoInReport("")
+
 
 
             setDayData(day)
@@ -62,7 +66,6 @@ const Home: NextPage = () => {
             if (res.data) {
                 setRemainSeconds(res.data[Object.keys(res.data)[0]].remainTime)
                 setLoadingFragment(false)
-
 
                 if (day.createdAt) {
                     setReportHasData(true)
@@ -89,7 +92,6 @@ const Home: NextPage = () => {
 
                     setWorkHours(workHour[0])
                     setTrainingHours(trainingHour[0])
-
                     setWhatDidUserDoInReport(whatDidUserDo[0])
 
                 }
