@@ -121,8 +121,8 @@ const Home: NextPage = () => {
                     </div>
 
                     :
-                    remainSeconds > 3600 * 30 ?
-                        <NotYet remainSeconds={remainSeconds}/>
+                    remainSeconds > 3600 * 39 ?
+                        <NotYet remainSeconds={remainSeconds - (39*3600)}/>
                         :
                         remainSeconds < 0 ?
                             <Passed saved={reportSent && reportHasData} workHours={workHours}
