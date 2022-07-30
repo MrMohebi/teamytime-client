@@ -3,9 +3,13 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useDebouncedCallback} from "use-debounce";
 
 import {CurrentSelectedDate} from "../../../store/store";
+import {getUserReports} from "../../../Requests/Requests";
 
 const Header = (props: {
-        setDay: Function
+        setDay: Function,
+        name?: string,
+        role?: string,
+        avatarURL?:string
     }) => {
 
 
@@ -113,7 +117,9 @@ const Header = (props: {
 
                         if (Math.abs(middleOfTheChild - middleOfIndicator) < 10) {
 
+
                             setCurrentDay(item.querySelector('.date-of-day')!.innerHTML)
+
 
                             let monthOfDay = "";
                             try {
@@ -173,17 +179,21 @@ const Header = (props: {
 
 
         return (
-            <div className={'w-full bg-primary-dark'}>
+            <div className={'w-full  bg-primary-dark sticky  z-30'} style={{
+                top: '-4.5rem',
+                boxShadow: '0 11px 11px #151e27'
+            }}>
 
-                <div className={'w-full flex flex-row justify-between items-center px-5 pt-8'}>
+                <div className={'w-full flex flex-row justify-between items-center px-5 pt-4'}>
 
                     <div className={'flex flex-row justify-center items-center'}>
-                        <div className={'h-20 w-20 rounded-2xl bg-primary overflow-hidden'}>
+                        <div className={'h-14 w-14 rounded-xl bg-primary overflow-hidden'}>
                             <img src="/img/no-image.png" alt="Arnoya" className={'w-full h-full block object-cover'}/>
                         </div>
                         <div className={'flex h-full flex-col justify-around items-start mr-3'}>
-                            <span className={'block IranSansMedium text-white'}>محمد کریمدادی</span>
-                            <span className={'block text-text-blue-light IranSans text-sm'}>محمد کریمدادی</span>
+                            <span className={'block IranSansMedium text-lg text-white'}>{props.name ?? ""}</span>
+                            <span
+                                className={'block text-text-blue-light mt-1 IranSansMedium text-sm'}>{props.role ?? ""}</span>
                         </div>
                     </div>
 
@@ -194,15 +204,21 @@ const Header = (props: {
 
                 {/*    date*/}
 
-                <div className={'w-full flex flex-row justify-between items-center px-4'}>
-                    <span></span>
+
+                <div className={'w-full flex flex-row justify-between items-center pt-3 px-4'}>
+                    <div className={'flex flex-row justify-center items-center'}>
+                        <img className={'w-9 ml-2'} src="/svg/day-navigating-arrows.svg" alt=""/>
+                        <span className={'text-primary IranSans pt-0.5'} style={{
+                            fontSize: '0.8rem'
+                        }}>جابجایی بین روز ها</span>
+                    </div>
                     <span dir={'ltr'}
-                          className={'IranSansMedium text-white'}>{getYearFromNow(0) + " " + currentMonth}</span>
+                          className={'IranSansMedium text-xl text-white'}>{getYearFromNow(0) + " " + currentMonth}</span>
                 </div>
 
                 {/*    day scroller*/}
 
-                <div className={'relative w-full mt-3'}>
+                <div className={'relative w-full mt-1'}>
                     <div className={'w-full h-full  absolute z-10 top-0 left-0  pointer-events-none'} style={{
                         background: "linear-gradient(to RIGHT, #202E3B -15%, transparent 46%), linear-gradient(to left, #202E3B -15%, transparent 55%)"
                     }}
@@ -210,7 +226,7 @@ const Header = (props: {
                     </div>
 
                     <div dir={'ltr'} onScroll={debouncedScrollHandler}
-                         className={'w-full flex flex-row-reverse relative items-center flex-1 flex-grow snap-x snap-mandatory overflow-x-auto relative hide-scrollbar scroll-smooth'}
+                         className={'w-full flex flex-row-reverse   relative items-center flex-1 flex-grow snap-x snap-mandatory overflow-x-auto relative hide-scrollbar scroll-smooth'}
                          ref={scrollerRef}>
 
 
@@ -263,7 +279,7 @@ const Header = (props: {
 
                                          }}
                                          id={'d-' + indx}
-                                         className={'w-20 header-day shrink-0 pt-1.5  h-20 snap-center flex flex-col justify-start items-center text-text-blue-light'}>
+                                         className={'w-14 transition-all duration-300 ease-in-out header-day shrink-0 pt-1.5  h-18 snap-center flex flex-col justify-start items-center text-text-blue-light'}>
                                     <span className={'hidden month-of-day'}
                                           id={'month-' + index}>{getFullDateFromNow(index).split(',')[0].split(' ')[1]}</span>
                                         <span className={'hidden date-of-day'}
@@ -272,11 +288,11 @@ const Header = (props: {
                                         <span className={"IranSans text-sm "}>{getDayNameFromNow(index)}</span>
 
                                         {fullDate(index) === fullDate(0) ?
-                                            <div className={'w-3 h-3 mt-0.5'}><img src="/svg/down-arrow.svg"
-                                                                                   className={'object-contain w-full h-full'}
-                                                                                   alt="Today"/></div>
+                                            <div className={'w-2.5 h-2.5  mt-0.5'}><img src="/svg/down-arrow.svg"
+                                                                                        className={'object-contain w-full h-full'}
+                                                                                        alt="Today"/></div>
                                             :
-                                            <div className={'w-3 h-3 mt-0.5'}></div>
+                                            <div className={'w-2.5 h-2.5 mt-0.5'}></div>
                                         }
                                         <span className={"IranSans text-white text-lg "}>
                                                                             {getDayDateFromNow(index)}
@@ -293,7 +309,7 @@ const Header = (props: {
                     </div>
 
                     <div ref={indicatorRef}
-                         className={'absolute left-1/2 -translate-x-1/2 bottom-0 rounded-tl-lg  rounded-tr-lg h-1.5 w-16 bg-primary'}></div>
+                         className={'absolute left-1/2 -translate-x-1/2 bottom-0 rounded-tl-lg  rounded-tr-lg h-1 w-12 bg-primary'}></div>
 
                 </div>
 

@@ -7,66 +7,26 @@ import TextField from "../utilitis/TextField/TextField";
 import {sendReport} from "../../Requests/Requests";
 import {CompanyId, CurrentSelectedDate, UserId} from "../../store/store";
 import Swal from "sweetalert2";
+import {json} from "stream/consumers";
 
 const CanEdit = (props: {
     remainSeconds: number,
-    workTimeSamples: string,
-    trainingTimeSamples: string,
-    dayData: { textFields: [any], timeFields: [any] }
+    dayData: { textFields: [any], timeFields: [any] },
+    textFields: [any],
+    timeFields: [any]
 }) => {
 
 
-    const setWorkHours = (number: number) => {
-        if (number < 10) {
-            wHours.current = ("0" + number)
-        } else {
-            wHours.current = (number.toString())
-        }
-    }
-    const setWorkMinutes = (number: number) => {
-        if (number < 10) {
-            wMinutes.current = ("0" + number)
-        } else {
-            wMinutes.current = (number.toString())
-        }
-    }
+    const textFieldsData = useRef({} as any)
+    const timeFieldsData = useRef({} as any)
 
-    const setTrainingHours = (number: number) => {
-        if (number < 10) {
-            tHours.current = ("0" + number)
-        } else {
-            tHours.current = (number.toString())
-        }
-    }
-    const setTrainingMinutes = (number: number) => {
-        if (number < 10) {
-            tMinutes.current = ("0" + number)
-        } else {
-            tMinutes.current = (number.toString())
-        }
-    }
 
     const [reportDetails, setReportDetails] = useState("");
-    const [whyDidntYouDoTheJob, setWhyDidntYouDoTheJob] = useState("");
-    const [tomorrowPlans, setTomorrowPlans] = useState("");
     const [allowedToSubmit, setAllowedToSubmit] = useState(false);
 
-
-    const wHours = useRef("");
-    const wMinutes = useRef("");
-    const tHours = useRef("");
-    const tMinutes = useRef("");
-
-    const [workHoursState, setWorkHoursState] = useState("");
-    const [workMinutesState, setWorkMinutesState] = useState("");
-    const [trainingHoursState, setTrainingHoursState] = useState("");
-    const [trainingMinutesState, setTrainingMinutesState] = useState("");
-
-
-    const [defaultWorkHours, setDefaultWorkHour] = useState("");
-    const [defaultTrainingHours, setDefaultTrainingHours] = useState("");
-
     const [btnLoading, setBtnLoading] = useState(false);
+
+    const textFieldsHolder = useRef<HTMLDivElement>(null)
 
     moment.loadPersian()
     useEffect(() => {
@@ -86,26 +46,34 @@ const CanEdit = (props: {
     useEffect(() => {
 
 
-        if (props.dayData) {
-            if (props.dayData.textFields) {
-                (props.dayData.textFields).forEach((item, index) => {
-                    if (item.title === "شرح اقدامات") {
-                        setReportDetails(item.value ?? '')
+        // if (props.dayData) {
+        //     if (props.dayData.textFields) {
+        //         (props.dayData.textFields).forEach((item, index) => {
+        //             if (item.title === "شرح اقدامات") {
+        //                 setReportDetails(item.value ?? '')
+        //
+        //             }
+        //
+        //         })
+        //     }
+        //
+        // }
 
-                    }
 
-                })
+        try {
+            if (textFieldsHolder.current) {
+                let children = textFieldsHolder.current.querySelectorAll('.t-field')
+                if (props.dayData.textFields)
+                    props.dayData.textFields.forEach((tField, index) => {
+                        children.forEach((tElement, index) => {
+                            if (tElement.querySelector('.t-title')?.innerHTML === tField.title) {
+                                tElement.querySelector('textarea')!.innerHTML = tField.value
+                            }
+                        })
+                    })
+                console.log(children)
             }
-            if (props.dayData.timeFields) {
-                (props.dayData.timeFields).forEach((item, index) => {
-                    if (item.title === "ساعت کار") {
-                        setDefaultWorkHour(item.value ?? '')
-                    }
-                    if (item.title === "ساعت آموزش") {
-                        setDefaultTrainingHours(item.value ?? '')
-                    }
-                })
-            }
+        } catch (e) {
         }
 
 
@@ -119,26 +87,17 @@ const CanEdit = (props: {
     const submitClickHandler = () => {
 
 
-        let timeFields = []
-        timeFields = [
-            {
-                title: "ساعت کار",
-                value: wHours.current + ":" + wMinutes.current
-            },
-            {
-                title: "ساعت آموزش",
-                value: tHours.current + ":" + tMinutes.current
-            },
+        let timeFields = [] as any[]
 
-        ]
+        Object.keys(timeFieldsData.current).forEach((key, index) => {
+            timeFields.push({title: key, value: timeFieldsData.current[key]})
+        })
 
-        let textFields = []
-        textFields = [
-            {
-                title: 'شرح اقدامات',
-                value: reportDetails
-            }
-        ]
+        let textFields = [] as any[]
+
+        Object.keys(textFieldsData.current).forEach((key, index) => {
+            textFields.push({title: key, value: textFieldsData.current[key]})
+        })
         setBtnLoading(true)
 
         sendReport(UserId(), CompanyId(), CurrentSelectedDate(), JSON.stringify(timeFields), JSON.stringify(textFields)).then((res) => {
@@ -153,7 +112,7 @@ const CanEdit = (props: {
                         confirmButtonColor: '#68b4eb',
                     }
                 )
-            } else{
+            } else {
                 Swal.fire(
                     {
                         title: 'خطا در هنگام ثبت گزارش',
@@ -167,58 +126,137 @@ const CanEdit = (props: {
         })
     }
 
+
+    useEffect(() => {
+        console.log(props.dayData.textFields)
+
+    }, [props.timeFields, props.textFields]);
+
+
+    const getDefaultTime = (title: string) => {
+
+
+        if (props.dayData.timeFields)
+
+            props.dayData.timeFields.forEach((savedTime, index) => {
+                if (savedTime.title === title) {
+                    return savedTime.value
+                }
+            })
+
+
+        return "00:00"
+
+
+    }
     return (
-        <div>
+        <div className={''}>
             <div className={'pager w-full flex-col justify-start items-center bg-background'}>
-                <div className={'w-full  pb-2 text-right text-deactive-border IranSans text-sm pt-2 px-3'}>
-                    برای این روز شما تا
-                    {" "}
-                    {moment.duration(props.remainSeconds ?? 0, 'seconds').humanize()}
-                    {" "}
-                    دیگر میتوانید گزارش بنویسید
-                </div>
-                <TimePicker defaultTime={defaultWorkHours} sample={props.workTimeSamples} title={'مدت زمان کار'}
-                            setHour={setWorkHours}
-                            setMinute={setWorkMinutes}/>
-                <div className={'w-full  pb-2 text-right text-deactive-border IranSans text-sm pt-2 px-3'}>
-                    میتوانید از گزینه های سمت راست برای سرعت بیشتر استفاده کنید
-                </div>
-                <TimePicker defaultTime={defaultTrainingHours} sample={props.trainingTimeSamples}
-                            title={'مدت زمان آموزش'} setHour={setTrainingHours}
-                            setMinute={setTrainingMinutes}/>
-                <div className={'w-full bg-secondary flex flex-col justify-start items-center pb-2'}>
-                    <div className={'w-11/12 bg-background'} style={{
-                        height: '1.5px'
-                    }}/>
-                    <TextField value={reportDetails} defaultValue={reportDetails} title={'شرح اقدامات و آموزش ها'}
-                               maxLength={50}
-                               onChange={(text: string) => {
-                                   setReportDetails(text)
-                               }}
-                    />
-                    <div className={'w-11/12 bg-background mt-5'} style={{
-                        height: '1.5px'
-                    }}/>
 
-                    <TextField value={whyDidntYouDoTheJob} defaultValue={whyDidntYouDoTheJob}
-                               title={'دلایل عدم تحقق برنامه ها'} maxLength={50}
-                               onChange={(text: string) => {
-                                   setWhyDidntYouDoTheJob(text)
-                               }}/>
-                    <div className={'w-11/12 bg-background mt-5'} style={{
-                        height: '1.5px'
-                    }}/>
+                {
 
-                    <TextField value={tomorrowPlans} defaultValue={tomorrowPlans} title={'برنامه های فردا'}
-                               maxLength={50}
-                               onChange={(text: string) => {
-                                   setTomorrowPlans(text)
-                               }}/>
+                    props.timeFields.map((time: object, index: number) => {
+
+
+                        return (
+                            <div key={index + 'timePickers'} className={'contents '}>
+
+                                {
+                                    index === 0 ?
+                                        <div
+                                            className={'w-full  pb-2 text-right text-hint-text IranSansMedium text-sm pt-2 px-3'}>
+                                            برای این روز شما تا
+                                            {" "}
+                                            {moment.duration(props.remainSeconds ?? 0, 'seconds').humanize()}
+                                            {" "}
+                                            دیگر میتوانید گزارش بنویسید
+                                        </div>
+                                        :
+                                        index === 1 ?
+                                            <div
+                                                className={'w-full  pb-2 text-right text-hint-text IranSansMedium text-sm pt-2 px-3'}>
+                                                میتوانید از گزینه های سمت راست برای سرعت بیشتر استفاده کنید
+                                            </div>
+                                            :
+                                            null
+                                }
+                                <TimePicker onTimeChange={(selectedTime: string) => {
+                                    timeFieldsData.current[(time as { title: string, sampleValues: any[] }).title] = selectedTime
+
+                                }}
+                                            defaultTime={props.dayData.timeFields ? props.dayData.timeFields.filter((item) => {
+                                                if (item.title === time.title) {
+                                                    return true
+                                                }
+                                            })[0].value : "00:00"}
+                                            sample={(time as { sampleValues: any[] }).sampleValues}
+                                            title={(time as { title: string, sampleValues: any[] }).title}
+                                />
+                            </div>)
+
+                    })
+
+                }
+
+                <div ref={textFieldsHolder}
+                     className={'w-full bg-secondary flex flex-col justify-start items-center pb-2'}>
+
+                    {
+                        props.textFields.map((textField, index) => {
+
+                            return (
+                                <div key={index + "TFields"} className={'contents'}>
+                                    <div className={'w-11/12 bg-background mt-5'} style={{
+                                        height: '1.5px'
+                                    }}/>
+                                    <div className={'w-full t-field'}>
+                                        <TextField
+                                            title={textField.title}
+                                            maxLength={150}
+                                            onChange={(text: string) => {
+                                                textFieldsData.current[textField.title] = text
+                                            }}
+                                        />
+
+                                    </div>
+                                </div>
+
+
+                            )
+
+                        })
+                    }
+                    {/*<TextField value={reportDetails} defaultValue={reportDetails} title={'شرح اقدامات و آموزش ها'}*/}
+                    {/*           maxLength={150}*/}
+                    {/*           onChange={(text: string) => {*/}
+                    {/*               setReportDetails(text)*/}
+                    {/*           }}*/}
+                    {/*/>*/}
+                    {/*<div className={'w-11/12 bg-background mt-5'} style={{*/}
+                    {/*    height: '1.5px'*/}
+                    {/*}}/>*/}
+
+                    {/*<TextField value={whyDidntYouDoTheJob} defaultValue={whyDidntYouDoTheJob}*/}
+                    {/*           title={'دلایل عدم تحقق برنامه ها'} maxLength={100}*/}
+                    {/*           onChange={(text: string) => {*/}
+                    {/*               setWhyDidntYouDoTheJob(text)*/}
+                    {/*           }}/>*/}
+                    {/*<div className={'w-11/12 bg-background mt-5'} style={{*/}
+                    {/*    height: '1.5px'*/}
+                    {/*}}/>*/}
+
+                    {/*<TextField value={tomorrowPlans} defaultValue={tomorrowPlans} title={'برنامه های فردا'}*/}
+                    {/*           maxLength={50}*/}
+                    {/*           onChange={(text: string) => {*/}
+                    {/*               setTomorrowPlans(text)*/}
+                    {/*           }}/>*/}
+
 
                 </div>
                 <div className={'h-28'}></div>
-                <ButtonBase disabled={!allowedToSubmit}
-                            className={`w-11/12 left-1/2 z-20 transition-all -translate-x-1/2 fixed bottom-5 h-14 ${allowedToSubmit ? "bg-primary" : 'bg-gray-400'}  rounded-2xl text-white IranSansMedium `}
+
+                <ButtonBase disabled={false}
+                            className={`w-11/12 left-1/2 fixed z-20 transition-all -translate-x-1/2 fixed bottom-5 h-14 ${allowedToSubmit ? "bg-primary" : 'bg-gray-400'}  rounded-2xl text-white IranSansMedium `}
                             onClick={submitClickHandler}
 
                 >
@@ -233,8 +271,6 @@ const CanEdit = (props: {
                             <span>ثبت</span>
 
                     }
-
-
                 </ButtonBase>
 
             </div>

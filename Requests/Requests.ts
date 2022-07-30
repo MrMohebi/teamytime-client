@@ -14,10 +14,10 @@ export const getCompany = (name: string) => {
     });
 }
 
-export const sendReport = (userID:string, companyID:string, jalaliDate:string, timeFields:string, textFields:string) => {
+export const sendReport = (userID: string, companyID: string, jalaliDate: string, timeFields: string, textFields: string) => {
 
-    return axios.get( "https://time.m3m.dev/api/upsertReport.php", {
-        params:{
+    return axios.get("https://time.m3m.dev/api/upsertReport.php", {
+        params: {
             userID: userID,
             companyID: companyID,
             jalaliDate,
@@ -36,5 +36,19 @@ export const getUserReports = (userID: string, startDate: string, endDate: strin
                 endDate
             }
         });
-
 }
+
+export const getReportsForAdmin = (token: string,startDate:string,endDate:string) => {
+    return axios.get(BASE_URL + 'getAdminReports.php',
+        {
+            headers:{
+                token
+            },
+            params:{
+                startDate,
+                endDate
+            }
+
+        });
+}
+
