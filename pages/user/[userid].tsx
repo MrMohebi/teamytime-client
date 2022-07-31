@@ -38,8 +38,8 @@ const Userid = () => {
 
     useEffect(() => {
         if (userid) {
-            UserId(userid[0])
-            setUserId(userid[0])
+            UserId(userid.toString())
+            setUserId(userid.toString())
         }
     }, [userid])
 
