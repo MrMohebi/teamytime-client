@@ -141,7 +141,7 @@ const Admin = () => {
 
             </div>
 
-            <div className={'fixed bottom-0 w-full h-20 flex flex-row justify-center items-center p-2'}>
+            <div className={'fixed bottom-0 w-11/12  h-20 flex flex-row justify-center items-center py-2'}>
 
                 <div
                     className={'w-26 shrink-0 border-2 border-primary rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}>
@@ -172,7 +172,7 @@ const Admin = () => {
 
 
                         </div>
-                        <img src="/svg/more-arrow-BLUE.svg" className={'h-5 w-5 rotate-180'} alt=""/>
+                        <img src="/svg/more-arrow-blue.svg" className={'h-5 w-5 rotate-180'} alt=""/>
                     </div>
 
                     <span

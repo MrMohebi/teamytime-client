@@ -37,3 +37,35 @@ a {
 .MuiCircularProgress-colorPrimary {
   @apply text-primary #{!important};
 }
+
+
+
+
+@font-face {
+  font-family: "IranSans";
+  src: url("/assets/fonts/IranSansFarsiNums/IRANSans(FaNum).ttf");
+}
+.IranSans{
+  font-family: IranSans;
+}
+@font-face {
+  font-family: "IranSansMedium";
+  src: url("/assets/fonts/IranSansFarsiNums/IRANSans(FaNum)_Medium.ttf");
+}
+.IranSansMedium{
+  font-family: IranSansMedium;
+}
+@font-face {
+  font-family: "IranSansBlack";
+  src: url("/assets/fonts/IranSansFarsiNums/IRANSans(FaNum)_Black.ttf");
+}
+.IranSansBlack{
+  font-family: IranSansBlack;
+}
+@font-face {
+  font-family: "IranSansBold";
+  src: url("/assets/fonts/IranSansFarsiNums/IRANSans(FaNum)_Bold.ttf");
+}
+.IranSansBold{
+  font-family: IranSansBold;
+}
