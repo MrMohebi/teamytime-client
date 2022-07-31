@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {getReportsForAdmin, getUserReports} from "../../Requests/Requests";
-import {UserId} from "../../store/store";
+import {getReportsForAdmin} from "../../Requests/Requests";
 import Header from "../../components/utilitis/Header/Header";
 import {ButtonBase, CircularProgress} from "@material-ui/core";
 
@@ -74,7 +73,7 @@ const Admin = () => {
                     <div>
 
 
-                        <div className={' w-full h-full flex flex-col justify-start items-center px-4 py-3 '}>
+                        <div className={' w-full pb-16 h-full flex flex-col justify-start items-center px-4 py-3 '}>
 
 
                             {
@@ -165,7 +164,7 @@ const Admin = () => {
                         <div className={'fixed bottom-0 w-full  h-20 flex flex-row justify-center items-center py-2'}>
 
                             <div
-                                className={' shrink-0 border-2 border-primary rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}
+                                className={'bg-primary-dark shrink-0 border-2 border-primary rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}
                                 style={{
                                     width: '25%'
                                 }}>
@@ -224,7 +223,7 @@ const Admin = () => {
 
 
                             <div
-                                className={'  shrink-0 border-2 border-deactive-border rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}
+                                className={'bg-primary-dark shrink-0 border-2 border-deactive-border rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}
 
                                 style={{
                                     width: '25%'
