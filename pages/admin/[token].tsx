@@ -198,6 +198,7 @@ const Admin = () => {
                                     <img src="/svg/more-arrow-blue.svg" className={'h-5 w-5 rotate-180'} alt=""/>
                                 </div>
 
+
                                 <span
                                     className={'IranSansMedium pt-1 text-primary  whitespace-nowrap block w-full text-center '}
                                     style={{
