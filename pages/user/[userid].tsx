@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from "next/router";
-import {getCompany, getUser, getUserReports} from "../Requests/Requests";
-import {CompanyId, CompanyName, UserId} from "../store/store";
-import Header from "../components/utilitis/Header/Header";
+import {getCompany, getUser, getUserReports} from "../../Requests/Requests";
+import {CompanyId, CompanyName, UserId} from "../../store/store";
+import Header from "../../components/utilitis/Header/Header";
 import {CircularProgress} from "@material-ui/core";
-import NotYet from "../components/DayFragments/NotYet";
-import Passed from "../components/DayFragments/Passed";
-import CanEdit from "../components/DayFragments/CanEdit";
+import NotYet from "../../components/DayFragments/NotYet";
+import Passed from "../../components/DayFragments/Passed";
+import CanEdit from "../../components/DayFragments/CanEdit";
 
 const Userid = () => {
 

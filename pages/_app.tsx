@@ -6,7 +6,6 @@ import type {AppProps} from 'next/app'
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {UserId} from "../store/store";
-import Head from "next/head";
 
 function MyApp({Component, pageProps}: AppProps) {
     const client = new ApolloClient({
@@ -21,27 +20,6 @@ function MyApp({Component, pageProps}: AppProps) {
 
     return (
         <ApolloProvider client={client}>
-
-            <Head>
-                <link
-                    rel="preload"
-                    href="/assets/fonts/IranSansFarsiNums/IRANSans(FaNum).ttf"
-                    as="font"
-                    type="font/ttf"
-                    crossOrigin=""
-                />
-                <link
-                    rel="preload"
-                    href="/assets/fonts/IranSansFarsiNums/IRANSans(FaNum)_Medium.ttf"
-                    as="font"
-                    type="font/ttf"
-                    crossOrigin=""
-                />
-
-
-
-            </Head>
-
 
             {/*{allowUserToLogIn ?*/}
                 <Component {...pageProps} />
