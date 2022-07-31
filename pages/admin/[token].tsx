@@ -8,11 +8,11 @@ import {ButtonBase} from "@material-ui/core";
 const Admin = () => {
 
     const [currentDay, setCurrentDay] = useState("");
-    const [dayData, setDayData] = useState({});
+    const [dayData, setDayData] = useState({} as {reports:any[],sentUsers:any[],unsentUsers:any[]});
 
-    const [reports, setReports] = useState([]);
-    const [sentUsers, setSentUsers] = useState([]);
-    const [unsentUsers, setUnsentUsers] = useState([]);
+    const [reports, setReports] = useState([] as any[]);
+    const [sentUsers, setSentUsers] = useState([] as any[]);
+    const [unsentUsers, setUnsentUsers] = useState([] as any[]);
 
     useEffect(() => {
         if (currentDay)
@@ -27,16 +27,29 @@ const Admin = () => {
 
 
         if (dayData) {
-
             if (dayData.reports) {
                 setReports(dayData.reports)
-                setSentUsers(dayData.sentUsers)
-                setUnsentUsers(dayData.unsentUsers)
+            } else {
+                setReports([])
             }
+            if (dayData.sentUsers) {
+                setSentUsers(dayData.sentUsers)
+            } else {
+                setSentUsers([])
+            }
+
+            if (dayData.unsentUsers) {
+                setUnsentUsers(dayData.unsentUsers)
+
+            } else {
+                setUnsentUsers([])
+            }
+
+
         }
     }, [dayData]);
     return (
-        <div className={'bg-secondary h- pb-10'}>
+        <div className={'bg-secondary min-h-full pb-10'}>
             <Header name={'آقای یزدانی'} role={"مدیریت منابع انسانی"} setDay={(day: string) => {
                 setCurrentDay(day)
             }}/>
@@ -58,9 +71,9 @@ const Admin = () => {
                             return (
 
                                 <div key={'rep-' + index}
-                                     className={'each-user bg-primary-dark rounded-lg pb-3  w-full shadow-md'}>
+                                     className={'each-user bg-primary-dark rounded-2xl pb-3  w-full shadow-md'}>
 
-                                    <div className={' flex flex-row justify-between h-full items-start px-3 pt-3'}>
+                                    <div className={' flex flex-row justify-between  items-start px-3 pt-3'}>
                                         <div className={'flex flex-row justify-center items-center shrink-0'}>
                                             <div className={'h-12 w-12 rounded-xl bg-primary overflow-hidden'}>
                                                 <img src="/img/no-image.png" alt="Arnoya"
@@ -68,9 +81,11 @@ const Admin = () => {
                                             </div>
                                             <div className={'flex h-full flex-col justify-around items-start mr-3'}>
                                             <span
-                                                className={'block IranSansMedium text-md text-white'}>{report.user.name}</span>
+                                                className={'block IranSansMedium text-sm text-white'}>{report.user.name}</span>
                                                 <span
-                                                    className={'block text-text-blue-light mt-1 IranSansMedium text-sm'}>{report.user.role}</span>
+                                                    className={'block text-text-blue-light mt-1 IranSansMedium '} style={{
+                                                        fontSize:'0.7rem'
+                                                }}>{report.user.role}</span>
                                             </div>
                                         </div>
 
@@ -80,15 +95,15 @@ const Admin = () => {
                                                 className={'rounded-xl border mb-2 border-deactive-border flex flex-row justify-center items-center   py-1.5  '}>
                                                 {/*todo change the index to text*/}
                                                 <span
-                                                    className={'IranSansMedium text-primary mx-3 text-xl '}>{report.timeFields[0] ? report.timeFields[0].value : "00:00"}</span>
-                                                <img className={'ml-2'} src="/svg/work-glyph.svg" alt=""/>
+                                                    className={'IranSansMedium text-primary mx-3 text-sm '}>{report.timeFields[0] ? report.timeFields[0].value : "00:00"}</span>
+                                                <img className={'ml-2 w-5'} src="/svg/work-glyph.svg" alt=""/>
                                             </div>
 
                                             <div
                                                 className={'rounded-xl border border-deactive-border flex flex-row justify-center items-center   py-1.5'}>
                             <span
-                                className={'IranSansMedium text-primary mx-3 text-xl '}>{report.timeFields[0] ? report.timeFields[1].value : "00:00"}</span>
-                                                <img className={'ml-2'} src="/svg/training-glyph.svg" alt=""/>
+                                className={'IranSansMedium text-primary mx-3 text-sm '}>{report.timeFields[0] ? report.timeFields[1].value : "00:00"}</span>
+                                                <img className={'ml-2 w-5'} src="/svg/training-glyph.svg" alt=""/>
 
                                             </div>
 
@@ -99,17 +114,20 @@ const Admin = () => {
                                     <div className={'w-full flex flex-col justify-start items-center'}></div>
 
                                     <div
-                                        className={'w-full flex flex-row justify-between items-center text-white IranSansMedium px-3'}>
-                                        <div className={'flex flex-row justify-center items-center'}>
+                                        className={'w-full h-7 flex flex-row justify-between items-end text-white IranSansMedium px-3'}>
+                                        <div className={'flex flex-row justify-center items-center  '}>
                                             <div
-                                                className={'w-10 h-10 border flex flex-row justify-center items-center border-deactive-border rounded-xl'}>
+                                                className={'w-9 h-9 border flex flex-row justify-center items-center border-deactive-border rounded-xl'}>
                                                 <img src="/svg/more-arrow.svg" className={'p-2'} alt=""/>
                                             </div>
 
-                                            <span className={'IranSansMedium text-primary text-sm mr-2'}>پنهان کردن اطلاعات بیشتر</span>
+                                            <span className={'IranSansMedium text-primary  mr-2'} style={{
+                                                fontSize:'0.7rem'
+                                            }}>پنهان کردن اطلاعات بیشتر</span>
                                         </div>
-                                        <span className={'text-sm'}>12:13</span>
-
+                                        <span className={''} style={{
+                                            fontSize:'0.7rem'
+                                        }}>12:13</span>
                                     </div>
 
                                 </div>
@@ -123,10 +141,10 @@ const Admin = () => {
 
             </div>
 
-            <div className={'fixed bottom-0 w-full h-20 flex flex-row justify-between items-center p-2'}>
+            <div className={'fixed bottom-0 w-full h-20 flex flex-row justify-center items-center p-2'}>
 
                 <div
-                    className={'w-1/3 shrink-0 border-2 border-primary rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}>
+                    className={'w-26 shrink-0 border-2 border-primary rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}>
 
                     <div className={'flex flex-row justify-between items-center'}>
                         <div className={'flex w-2/3 flex-row justify-center items-center'}>
@@ -135,11 +153,11 @@ const Admin = () => {
                             }}>
 
                                 {
-                                    sentUsers.slice(0,4).map((avatar, index) => {
+                                    sentUsers.slice(0, 3).map((avatar, index) => {
                                         return (
 
                                             <div key={index + "av"}
-                                                 className={'w-7 h-7 rounded-full bg-yellow-300  border-secondary border-2 shrink-0'}
+                                                 className={'w-6 h-6 rounded-full bg-yellow-300  border-secondary border-2 shrink-0'}
                                                  style={{
                                                      transform: `translateX(${index / 1.5}rem)`
                                                  }}/>
@@ -154,10 +172,13 @@ const Admin = () => {
 
 
                         </div>
-                        <img src="/svg/more-arrow.svg" className={'h-7 w-7 '} alt=""/>
+                        <img src="/svg/more-arrow-BLUE.svg" className={'h-5 w-5 rotate-180'} alt=""/>
                     </div>
 
-                    <span className={'IranSansMedium text-primary text-sm whitespace-nowrap block w-full text-center '}>
+                    <span
+                        className={'IranSansMedium pt-1 text-primary  whitespace-nowrap block w-full text-center '} style={{
+                        fontSize:'0.7rem'
+                    }}>
 
 
                         {sentUsers.length}
@@ -169,26 +190,26 @@ const Admin = () => {
 
 
                 <ButtonBase
-                    className={'w-2/4 shrink-0 mx-2 bg-primary rounded-xl h-full flex flex-row justify-center items-center text-sm IranSansMedium text-white'}>
-                    دانـلود گـزارش کامـل
+                    className={'w-48 shrink-0 mx-2 bg-primary rounded-xl h-full flex flex-row justify-center items-center  IranSansMedium text-white'}>
+                    دانـلود گـزارش
                 </ButtonBase>
 
 
                 <div
-                    className={'w-1/3 shrink-0 border-2 border-deactive-border rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}>
+                    className={' w-26 shrink-0 border-2 border-deactive-border rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}>
 
                     <div className={'flex flex-row justify-between items-center'}>
                         <div className={'flex w-2/3 flex-row justify-center items-center'}>
-                            <div className={'flex flex-row justify-end items-center'} style={{
-                                transform: `translateX(${-(unsentUsers.length / 4)}rem)`
+                            <div className={'flex flex-row w-12 justify-start items-center'} style={{
+                                // transform: `translateX(${-(unsentUsers.length/(unsentUsers.length-1))}rem)`
                             }}>
 
                                 {
-                                    unsentUsers.slice(0,4).map((avatar, index) => {
+                                    unsentUsers.slice(0, 3).map((avatar, index) => {
                                         return (
 
                                             <div key={index + "av"}
-                                                 className={'w-7 h-7 rounded-full bg-yellow-300  border-secondary border-2 shrink-0'}
+                                                 className={'w-6 h-6 rounded-full bg-yellow-300  border-secondary border-2 shrink-0'}
                                                  style={{
                                                      transform: `translateX(${index / 1.5}rem)`
                                                  }}/>
@@ -203,13 +224,16 @@ const Admin = () => {
 
 
                         </div>
-                        <img src="/svg/more-arrow.svg" className={'h-7 w-7 '} alt=""/>
+                        <img src="/svg/more-arrow.svg" className={'h-5 w-5 rotate-180 '} alt=""/>
                     </div>
 
-                    <span className={'IranSansMedium text-text-blue-light text-sm whitespace-nowrap block w-full text-center '}>
-
+                    <span
+                        className={'IranSansMedium  pt-1 text-text-blue-light  whitespace-nowrap block w-full text-center '} style={{
+                            fontSize:'0.7rem'
+                    }}>
 
                         {unsentUsers.length}
+
                         {" "}
 
 

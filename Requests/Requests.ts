@@ -13,6 +13,14 @@ export const getCompany = (name: string) => {
         }
     });
 }
+export const getUser = (userID: string) => {
+
+    return axios.get(BASE_URL + 'getUser.php', {
+        params: {
+            userID
+        }
+    });
+}
 
 export const sendReport = (userID: string, companyID: string, jalaliDate: string, timeFields: string, textFields: string) => {
 

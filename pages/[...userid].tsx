@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from "next/router";
-import {getCompany, getUserReports} from "../Requests/Requests";
+import {getCompany, getUser, getUserReports} from "../Requests/Requests";
 import {CompanyId, CompanyName, UserId} from "../store/store";
 import Header from "../components/utilitis/Header/Header";
 import {CircularProgress} from "@material-ui/core";
@@ -23,12 +23,13 @@ const Userid = () => {
     const [reportHasData, setReportHasData] = useState(false);
     const [companyGot, setCompanyGot] = useState(false);
 
-    const [textFields, setTextFields] = useState("[]");
-    const [timeFields, setTimeFields] = useState("[]");
+    const [textFields, setTextFields] = useState([] as any[]);
+    const [timeFields, setTimeFields] = useState([] as any[]);
 
 
     const [userId, setUserId] = useState("");
-
+    const [name, setName] = useState("");
+    const [role, setRole] = useState("");
     const [dayData, setDayData] = useState(Object);
     const router = useRouter();
 
@@ -41,6 +42,18 @@ const Userid = () => {
             setUserId(userid[0])
         }
     }, [userid])
+
+    useEffect(() => {
+        if (UserId())
+            getUser(UserId()).then((value) => {
+                if (value.data) {
+                    console.log(value.data)
+                    setName(value.data.name)
+                    setRole(value.data.role)
+                }
+            })
+    }, [UserId()]);
+
     useEffect(() => {
 
         console.log(userid)
@@ -55,7 +68,6 @@ const Userid = () => {
                 setTimeFields((res.data.timeFields))
             }
             setCompanyGot(true)
-
 
 
         })
@@ -107,8 +119,7 @@ const Userid = () => {
                     setTrainingHours(trainingHour[0])
                     setWhatDidUserDoInReport(whatDidUserDo[0])
 
-                }
-                else{
+                } else {
                     setReportHasData(false)
                 }
 
@@ -128,7 +139,7 @@ const Userid = () => {
 
                 <div className="bg-background">
 
-                    <Header setDay={onDayChange}/>
+                    <Header name={name} setDay={onDayChange} role={role}/>
 
                     {loadingFragment ?
 
@@ -142,7 +153,7 @@ const Userid = () => {
                             <NotYet remainSeconds={remainSeconds - (39 * 3600)}/>
                             :
                             remainSeconds < 0 ?
-                                <Passed dayData={dayData} saved={ reportHasData} workHours={workHours}
+                                <Passed dayData={dayData} saved={reportHasData} workHours={workHours}
                                         trainingHours={trainingHours} whatDidUserDo={whatDidUserDoInReport}/>
                                 :
                                 <CanEdit timeFields={timeFields} textFields={textFields} dayData={dayData}

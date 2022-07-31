@@ -2,14 +2,14 @@ import React, {useEffect, useRef, useState} from 'react';
 
 import {useDebouncedCallback} from "use-debounce";
 
-import {CurrentSelectedDate} from "../../../store/store";
-import {getUserReports} from "../../../Requests/Requests";
+import {CurrentSelectedDate, UserId} from "../../../store/store";
+import {getUser, getUserReports} from "../../../Requests/Requests";
 
 const Header = (props: {
         setDay: Function,
         name?: string,
         role?: string,
-        avatarURL?:string
+        avatarURL?: string
     }) => {
 
 
@@ -36,7 +36,10 @@ const Header = (props: {
 
             scrollToToday()
 
+
         }, [])
+
+
 
 
         const getDayNameFromNow = (dayOffset: number) => {
@@ -191,9 +194,10 @@ const Header = (props: {
                             <img src="/img/no-image.png" alt="Arnoya" className={'w-full h-full block object-cover'}/>
                         </div>
                         <div className={'flex h-full flex-col justify-around items-start mr-3'}>
-                            <span className={'block IranSansMedium text-lg text-white'}>{props.name ?? ""}</span>
+                            <span className={'block IranSansMedium text-md text-white'}>{props.name ?? ""}</span>
                             <span
-                                className={'block text-text-blue-light mt-1 IranSansMedium text-sm'}>{props.role ?? ""}</span>
+                                className={'block text-text-blue-light mt-1 IranSansMedium text-sm'}
+                                style={{}}>{props.role ?? ""}</span>
                         </div>
                     </div>
 

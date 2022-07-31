@@ -12,8 +12,8 @@ import {json} from "stream/consumers";
 const CanEdit = (props: {
     remainSeconds: number,
     dayData: { textFields: [any], timeFields: [any] },
-    textFields: [any],
-    timeFields: [any]
+    textFields: any[],
+    timeFields: any[]
 }) => {
 
 
@@ -21,8 +21,7 @@ const CanEdit = (props: {
     const timeFieldsData = useRef({} as any)
 
 
-    const [reportDetails, setReportDetails] = useState("");
-    const [allowedToSubmit, setAllowedToSubmit] = useState(false);
+    const [allowedToSubmit, setAllowedToSubmit] = useState(true);
 
     const [btnLoading, setBtnLoading] = useState(false);
 
@@ -32,15 +31,6 @@ const CanEdit = (props: {
     useEffect(() => {
         moment.relativeTimeThreshold('h', 30);
     }, [])
-
-    useEffect(() => {
-
-        if (reportDetails.length > 2) {
-            setAllowedToSubmit(true)
-        } else {
-            setAllowedToSubmit(false)
-        }
-    }, [reportDetails])
 
 
     useEffect(() => {
@@ -62,10 +52,13 @@ const CanEdit = (props: {
 
         try {
             if (textFieldsHolder.current) {
+                console.log(props.dayData)
+
                 let children = textFieldsHolder.current.querySelectorAll('.t-field')
                 if (props.dayData.textFields)
                     props.dayData.textFields.forEach((tField, index) => {
                         children.forEach((tElement, index) => {
+                            console.log(tElement.querySelector('.t-title')?.innerHTML)
                             if (tElement.querySelector('.t-title')?.innerHTML === tField.title) {
                                 tElement.querySelector('textarea')!.innerHTML = tField.value
                             }
@@ -74,6 +67,7 @@ const CanEdit = (props: {
                 console.log(children)
             }
         } catch (e) {
+            console.log(e)
         }
 
 
@@ -105,6 +99,13 @@ const CanEdit = (props: {
             if (res.data === 200) {
                 Swal.fire(
                     {
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInUp'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutDown animate__fater'
+                        },
+                        position: "bottom",
                         title: 'ثبت شد',
                         html: 'گزارش امروز شما با موفقیت ثبت شد ',
                         icon: 'success',
@@ -127,10 +128,7 @@ const CanEdit = (props: {
     }
 
 
-    useEffect(() => {
-        console.log(props.dayData.textFields)
 
-    }, [props.timeFields, props.textFields]);
 
 
     const getDefaultTime = (title: string) => {
@@ -159,7 +157,9 @@ const CanEdit = (props: {
 
 
                         return (
-                            <div key={index + 'timePickers'} className={'contents '}>
+                            <div key={index + 'timePickers'} className={'contents  '}>
+
+
 
                                 {
                                     index === 0 ?
@@ -180,18 +180,27 @@ const CanEdit = (props: {
                                             :
                                             null
                                 }
+
+
                                 <TimePicker onTimeChange={(selectedTime: string) => {
                                     timeFieldsData.current[(time as { title: string, sampleValues: any[] }).title] = selectedTime
 
                                 }}
                                             defaultTime={props.dayData.timeFields ? props.dayData.timeFields.filter((item) => {
-                                                if (item.title === time.title) {
+                                                if (item.title === (time as {title:string}).title) {
                                                     return true
                                                 }
                                             })[0].value : "00:00"}
                                             sample={(time as { sampleValues: any[] }).sampleValues}
                                             title={(time as { title: string, sampleValues: any[] }).title}
                                 />
+                                {
+                                    index===0?
+                                        <div className={'h-3 bg-secondary'}></div>
+                                        :
+                                        null
+                                }
+
                             </div>)
 
                     })
@@ -206,11 +215,12 @@ const CanEdit = (props: {
 
                             return (
                                 <div key={index + "TFields"} className={'contents'}>
-                                    <div className={'w-11/12 bg-background mt-5'} style={{
+                                    <div className={'w-11/12 bg-background mt-3'} style={{
                                         height: '1.5px'
                                     }}/>
-                                    <div className={'w-full t-field'}>
+                                    <div className={'w-full t-field '}>
                                         <TextField
+                                            required={textField.required}
                                             title={textField.title}
                                             maxLength={150}
                                             onChange={(text: string) => {
@@ -255,9 +265,10 @@ const CanEdit = (props: {
                 </div>
                 <div className={'h-28'}></div>
 
-                <ButtonBase disabled={false}
-                            className={`w-11/12 left-1/2 fixed z-20 transition-all -translate-x-1/2 fixed bottom-5 h-14 ${allowedToSubmit ? "bg-primary" : 'bg-gray-400'}  rounded-2xl text-white IranSansMedium `}
-                            onClick={submitClickHandler}
+                <ButtonBase
+
+                    className={`w-11/12 left-1/2 fixed z-20 transition-all -translate-x-1/2 fixed bottom-5 h-14 bg-primary rounded-2xl text-white IranSansMedium `}
+                    onClick={submitClickHandler}
 
                 >
 
@@ -268,7 +279,7 @@ const CanEdit = (props: {
 
                             </div>
                             :
-                            <span>ثبت</span>
+                            <span className={'text-lg'}>ثبت</span>
 
                     }
                 </ButtonBase>

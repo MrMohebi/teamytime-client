@@ -5,7 +5,7 @@ const Passed = (props: {
     workHours: number
     trainingHours: number
     whatDidUserDo: string
-    dayData: object
+    dayData:any
 }) => {
 
 

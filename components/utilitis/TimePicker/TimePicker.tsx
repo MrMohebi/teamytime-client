@@ -120,13 +120,13 @@ const TimePicker = (props: {
         , 50
     )
     return (
-        <div className={'time-picker bg-secondary pb-5'}>
-            <div className={'w-full h-12 text-white IranSans pt-2 pr-3'}>{props.title}</div>
+        <div className={'time-picker bg-secondary '}>
+            <div className={'w-full h-10 text-white IranSans pt-2 pr-3'}>{props.title}</div>
             <div className={'w-full flex flex-row justify-between items-center px-5'}>
 
 
                 {/*select hour*/}
-                <div className={'grid grid-cols-2 grid-rows-2 gap-3'}>
+                <div className={'grid grid-cols-2 grid-rows-2 gap-3 pr-2'}>
 
 
                     {
