@@ -31,6 +31,8 @@ const Userid = () => {
     const [name, setName] = useState("");
     const [role, setRole] = useState("");
     const [dayData, setDayData] = useState(Object);
+
+    const [day, setDay] = useState("");
     const router = useRouter();
 
     const {userid} = router.query
@@ -74,6 +76,8 @@ const Userid = () => {
     }, [])
 
     const onDayChange = (day: string) => {
+
+        setDay(day)
 
         setLoadingFragment(true)
 

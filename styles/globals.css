@@ -95,4 +95,8 @@ a {
   font-family: IranSansBold;
 }
 
+* {
+  user-select: none;
+}
+
 /*# sourceMappingURL=globals.css.map */

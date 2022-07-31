@@ -25,6 +25,7 @@ const Header = (props: {
         useEffect(() => {
 
             props.setDay(currentDay)
+            CurrentSelectedDate(currentDay)
         }, [currentDay])
 
 
