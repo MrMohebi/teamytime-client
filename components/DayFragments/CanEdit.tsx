@@ -58,11 +58,13 @@ const CanEdit = (props: {
                 if (props.dayData.textFields)
                     props.dayData.textFields.forEach((tField, index) => {
                         children.forEach((tElement, index) => {
-                            console.log(tElement.querySelector('.t-title')?.innerHTML)
                             if (tElement.querySelector('.t-title')?.innerHTML === tField.title) {
                                 tElement.querySelector('textarea')!.innerHTML = tField.value
                             }
                         })
+
+
+                        textFieldsData.current[tField.title] = tField.value
                     })
                 console.log(children)
             }
@@ -93,6 +95,7 @@ const CanEdit = (props: {
             textFields.push({title: key, value: textFieldsData.current[key]})
         })
         setBtnLoading(true)
+
 
         sendReport(UserId(), CompanyId(), CurrentSelectedDate(), JSON.stringify(timeFields), JSON.stringify(textFields)).then((res) => {
             setBtnLoading(false)
@@ -128,9 +131,6 @@ const CanEdit = (props: {
     }
 
 
-
-
-
     const getDefaultTime = (title: string) => {
 
 
@@ -160,7 +160,6 @@ const CanEdit = (props: {
                             <div key={index + 'timePickers'} className={'contents  '}>
 
 
-
                                 {
                                     index === 0 ?
                                         <div
@@ -187,7 +186,7 @@ const CanEdit = (props: {
 
                                 }}
                                             defaultTime={props.dayData.timeFields ? props.dayData.timeFields.filter((item) => {
-                                                if (item.title === (time as {title:string}).title) {
+                                                if (item.title === (time as { title: string }).title) {
                                                     return true
                                                 }
                                             })[0].value : "00:00"}
@@ -195,7 +194,7 @@ const CanEdit = (props: {
                                             title={(time as { title: string, sampleValues: any[] }).title}
                                 />
                                 {
-                                    index===0?
+                                    index === 0 ?
                                         <div className={'h-3 bg-secondary'}></div>
                                         :
                                         null
