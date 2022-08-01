@@ -48,11 +48,10 @@ const Header = (props: {
         useEffect(() => {
 
 
-
             if (adminId && localDays.length < 1) {
 
                 getReportsForAdmin("093845b5f724e4a047c9f2221cd903b4", fullDate(-backDaysLimit), fullDate(backDaysLimit)).then((res) => {
-                    console.log(res.data)
+                        console.log(res.data)
                         if (res.data) {
                             let datesArr = [] as any;
 
@@ -318,7 +317,7 @@ const Header = (props: {
 
                         {
 
-                            localDays.map((item:any, indx) => {
+                            localDays.map((item: any, indx) => {
 
                                 let date = new Date()
                                 date.setDate(date.getDate()) + indx
@@ -382,14 +381,14 @@ const Header = (props: {
 
                                     </span>
                                         {
-                                          adminId?
-                                              <div
-                                                  className={`absolute day-indicator transition-all ease-in-out duration-500 w-3/12 left-1/2 bottom-0 -translate-x-1/2 h-1 rounded-tl-lg rounded-tr-lg   `}
-                                              />
-                                          :
-                                              <div
-                                                  className={`absolute day-indicator transition-all ease-in-out duration-500 w-3/12 left-1/2 bottom-0 -translate-x-1/2 h-1 rounded-tl-lg rounded-tr-lg ${item.remainTime < 10 ? item.createdAt ? "bg-primary" : 'bg-red' : ''} ${item.jalaliDate === fullDate(0) ? "bg-primary" : item.jalaliDate}   `}
-                                              />
+                                            adminId ?
+                                                <div
+                                                    className={`absolute day-indicator transition-all ease-in-out duration-500 w-3/12 left-1/2 bottom-0 -translate-x-1/2 h-1 rounded-tl-lg rounded-tr-lg   `}
+                                                />
+                                                :
+                                                <div
+                                                    className={`absolute day-indicator transition-all ease-in-out duration-500 w-3/12 left-1/2 bottom-0 -translate-x-1/2 h-1 rounded-tl-lg rounded-tr-lg ${item.createdAt ? 'bg-primary' : ''} ${!item.createdAt && !item.canEdit ? 'bg-red' : ''}    `}
+                                                />
                                         }
 
                                     </div>
@@ -404,7 +403,7 @@ const Header = (props: {
                     {
                         localDays.length ?
                             <div ref={indicatorRef}
-                                 className={`absolute transition-all ease-in-out left-1/2 -translate-x-1/2 bottom-0 rounded-tl-lg  z-10 rounded-tr-lg h-1 w-12 ${adminId?"bg-primary":""} `}></div>
+                                 className={`absolute transition-all ease-in-out left-1/2 -translate-x-1/2 bottom-0 rounded-tl-lg  z-10 rounded-tr-lg h-1 w-12 ${adminId ? "bg-primary" : ""} `}></div>
                             :
                             null
                     }
