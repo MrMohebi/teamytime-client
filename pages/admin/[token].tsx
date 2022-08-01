@@ -75,9 +75,7 @@ const Admin = () => {
         }
     }, [dayData]);
     return (
-        <div className={'bg-secondary min-h-full pb-10 relative'} onClick={(event) => {
-            console.log(event.target)
-        }}>
+        <div className={'bg-secondary min-h-full pb-10 relative'} >
             <Header name={'آقای یزدانی'} role={"مدیریت منابع انسانی"} setDay={(day: string) => {
                 setLoading(true)
                 setCurrentDay(day)

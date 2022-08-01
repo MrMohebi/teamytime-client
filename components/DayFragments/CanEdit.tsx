@@ -45,10 +45,6 @@ const CanEdit = (props: {
                 if (props.dayData.textFields)
                     props.dayData.textFields.forEach((tField, index) => {
 
-
-                        console.log(tField)
-
-
                         children.forEach((tElement, index) => {
 
                             if (tElement.querySelector('.t-title')?.innerHTML === tField.title) {
@@ -136,15 +132,6 @@ const CanEdit = (props: {
 
     }
 
-
-    useEffect(() => {
-        console.log('filled trigger')
-        if (requirementsFilled) {
-            console.log('yeah there is')
-        } else {
-            console.log('wll its empty')
-        }
-    }, [requirementsFilled]);
 
     return (
         <div className={''}>
@@ -237,11 +224,7 @@ const CanEdit = (props: {
                                                         setRequirementsFilled(requirementsFilled.replace(textField.title, ''))
                                                     }
                                                 }
-                                                console.log(requirementsFilled)
 
-
-                                                // console.log(requirementsFilled)
-                                                // console.log(CompanyRequiredFields())
 
 
                                                 textFieldsData.current[textField.title] = text
@@ -275,7 +258,6 @@ const CanEdit = (props: {
                         }
                     </ButtonBase>
                 </div>
-
 
 
             </div>

@@ -49,7 +49,6 @@ const Userid = () => {
         if (UserId())
             getUser(UserId()).then((value) => {
                 if (value.data) {
-                    console.log(value.data)
                     setName(value.data.name)
                     setRole(value.data.role)
                 }

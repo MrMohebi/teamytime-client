@@ -6,6 +6,7 @@ import {AdminID, CurrentSelectedDate, UserId} from "../../../store/store";
 import {getReportsForAdmin, getUser, getUserReports, getUserReportsRange} from "../../../Requests/Requests";
 import {ifError} from "assert";
 import {useReactiveVar} from "@apollo/client";
+import moment from 'moment-jalaali'
 
 const Header = (props: {
         setDay: Function,
@@ -22,6 +23,8 @@ const Header = (props: {
         const scrollerRef = useRef<HTMLDivElement>(null)
         const [currentDay, setCurrentDay] = useState("");
         const [currentMonth, setCurrentMonth] = useState("");
+
+        const [goToPosition, setGoToPosition] = useState('');
 
         const adminId = useReactiveVar(AdminID)
 
@@ -64,18 +67,6 @@ const Header = (props: {
 
                     }
                 )
-                // getUserReportsRange(UserId(), fullDate(-backDaysLimit), fullDate(backDaysLimit)).then((res) => {
-                //     if (res.data) {
-                //         let datesArr = [] as any;
-                //
-                //         Object.keys(res.data).forEach((date, index) => {
-                //             datesArr.push(res.data[date])
-                //         })
-                //         setLocalDays(datesArr)
-                //     }
-                //
-                //
-                // })
             }
         }, [adminId]);
 
@@ -189,19 +180,32 @@ const Header = (props: {
                             setCurrentDay(item.querySelector('.date-of-day')!.innerHTML);
 
 
-                            // if (indicatorRef.current) {
+                            let m = moment(fullDate(0), 'jYYYY/jMM/jDD')
+                            let ma = moment(item.querySelector('.date-of-day')!.innerHTML, 'jYYYY/jM/jD')
+
+                            if (fullDate(0) !== item.querySelector('.date-of-day')!.innerHTML) {
+                                if (m.isAfter(ma)) {
+                                    setGoToPosition('left')
+
+                                } else {
+                                    setGoToPosition('right')
+                                }
+                            } else {
+                                setGoToPosition('')
+
+                            }
 
 
-                            // console.log(window.getComputedStyle((item.querySelector('.day-indicator')! as HTMLDivElement)).background);
+                            if (item.querySelector('.date-of-day')!.innerHTML === fullDate(0)) {
+                                setGoToPosition('')
+                            }
+
+
+
+
 
 
                             (item.querySelector('.day-indicator')! as HTMLDivElement).style.setProperty("width", "85%", "important")
-                            // console.log((item.querySelector('.day-indicator')! as HTMLDivElement).style.backgroundColor);
-
-                            // (indicatorRef.current as HTMLDivElement).style.backgroundColor = window.getComputedStyle((item.querySelector('.day-indicator')! as HTMLDivElement)).background.split('none')[0]
-
-
-                            // }
 
 
                             let monthOfDay = "";
@@ -301,6 +305,16 @@ const Header = (props: {
                 {/*    day scroller*/}
 
                 <div className={'relative w-full mt-1'}>
+
+                    <div style={{
+                        background: 'rgba(104,180,235,0.6)'
+                    }} onClick={() => {
+                        scrollToToday()
+                    }}
+                         className={`flex absolute backdrop-blur-lg scale-75 text-white py-2 px-3 rounded-3xl z-20 top-1/2 -translate-y-1/2 ${!goToPosition ? 'hidden' : ''} ${goToPosition === "left" ? "flex-row-reverse left-0" : 'flex-row'}  justify-between items-center`}>
+                        <img className={`${goToPosition === 'left' ? 'rotate-180' : ''}`} src="/svg/right-arro.svg" alt=""/>
+                        <span className={'IranSansMedium'}>برو به امروز</span>
+                    </div>
                     <div className={'w-full h-full  absolute z-10 top-0 left-0  pointer-events-none'} style={{
                         background: "linear-gradient(to RIGHT, #202E3B -15%, transparent 46%), linear-gradient(to left, #202E3B -15%, transparent 55%)"
                     }}
