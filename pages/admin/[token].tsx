@@ -107,6 +107,10 @@ const Admin = () => {
                             {
                                 reports.length ?
                                     reports.map((report, index) => {
+
+
+                                        const d = new Date((report.updatedAt??report.createdAt) * 1000)
+
                                         return (
 
                                             <div key={'rep-' + index} style={{
@@ -213,7 +217,7 @@ const Admin = () => {
                                                     </div>
                                                     <span className={''} style={{
                                                         fontSize: '0.7rem'
-                                                    }}>{new Intl.DateTimeFormat('fa-IR', {timeStyle: 'short'}).format(report.createdAt)}</span>
+                                                    }}>{new Intl.DateTimeFormat('fa-IR', {timeStyle: 'short'}).format(d)}</span>
                                                 </div>
 
                                             </div>
