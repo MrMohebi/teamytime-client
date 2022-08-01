@@ -27,6 +27,8 @@ const Header = (props: {
 
         const [goToPosition, setGoToPosition] = useState('');
 
+        const [indicatorColorClass, setIndicatorColorClass] = useState("bg-primary");
+
         const adminId = useReactiveVar(AdminID)
 
         const [localDays, setLocalDays] = useState([]);
@@ -55,7 +57,6 @@ const Header = (props: {
             if (adminId && localDays.length < 1) {
 
                 getReportsForAdmin("093845b5f724e4a047c9f2221cd903b4", fullDate(-backDaysLimit), fullDate(backDaysLimit)).then((res) => {
-                        console.log(res.data)
                         if (res.data) {
                             let datesArr = [] as any;
 
@@ -172,10 +173,12 @@ const Header = (props: {
 
                         let middleOfTheChild = Math.floor(item.getBoundingClientRect().left + (eachChildW / 2));
 
-                        (item.querySelector('.day-indicator')! as HTMLDivElement).style.setProperty("width", "20%", "important")
-
 
                         if (Math.abs(middleOfTheChild - middleOfIndicator) < 10) {
+                            let itemClassArray = (item.querySelector('.day-indicator')! as HTMLDivElement).className.split('bg')
+                            if (itemClassArray.length > 1) {
+                                setIndicatorColorClass('bg' + itemClassArray[1])
+                            }
 
 
                             setCurrentDay(item.querySelector('.date-of-day')!.innerHTML);
@@ -200,13 +203,6 @@ const Header = (props: {
                             if (item.querySelector('.date-of-day')!.innerHTML === fullDate(0)) {
                                 setGoToPosition('')
                             }
-
-
-
-
-
-
-                            (item.querySelector('.day-indicator')! as HTMLDivElement).style.setProperty("width", "85%", "important")
 
 
                             let monthOfDay = "";
@@ -418,7 +414,7 @@ const Header = (props: {
                     {
                         localDays.length ?
                             <div ref={indicatorRef}
-                                 className={`absolute transition-all ease-in-out left-1/2 -translate-x-1/2 bottom-0 rounded-tl-lg  z-10 rounded-tr-lg h-1 w-12 ${adminId ? "bg-primary" : ""} `}></div>
+                                 className={`absolute transition-all ease-in-out left-1/2 -translate-x-1/2 bottom-0 rounded-tl-lg  z-10 rounded-tr-lg h-1 w-12 ${adminId ? "bg-primary" : ""} ${indicatorColorClass}  `}></div>
                             :
                             null
                     }
