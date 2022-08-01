@@ -6,7 +6,7 @@ import {AdminID, CurrentSelectedDate, UserId} from "../../../store/store";
 import {getReportsForAdmin, getUser, getUserReports, getUserReportsRange} from "../../../Requests/Requests";
 import {ifError} from "assert";
 import {useReactiveVar} from "@apollo/client";
-
+// @ts-ignore
 import moment from 'moment-jalaali'
 
 const Header = (props: {
