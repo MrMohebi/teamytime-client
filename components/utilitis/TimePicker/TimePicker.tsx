@@ -47,23 +47,44 @@ const TimePicker = (props: {
 
 
     useEffect(() => {
+        //
+        // if (props.defaultTime) {
+        //     if (props.defaultTime.split(":").length === 2) {
+        //
+        //         hourScrollTo(parseInt(props.defaultTime.split(':')[0]))
+        //         minuteScrollTo(parseInt(props.defaultTime.split(':')[1]) / 10)
+        //     }
+        // }
+        //
+        //
 
-        if (props.defaultTime) {
-            if (props.defaultTime.split(":").length === 2) {
 
-                hourScrollTo(parseInt(props.defaultTime.split(':')[0]))
-                minuteScrollTo(parseInt(props.defaultTime.split(':')[1]) / 10)
+        setTimeout(() => {
+            if (props.defaultTime) {
+                if (props.defaultTime.split(":").length === 2) {
+
+                    hourScrollTo(parseInt(props.defaultTime.split(':')[0]))
+                    minuteScrollTo(parseInt(props.defaultTime.split(':')[1]) / 10)
+                }
             }
-        }
+        }, 500)
+
+
     }, [props.defaultTime]);
 
     const hourScrollTo = (hourIndex: number) => {
         if (customHourRef) {
 
+
             if (customHourRef.current) {
-                let childH = customHourRef.current.children[1].getBoundingClientRect().height;
-                customHourRef.current.scrollTo(0, (hourIndex + 1) * childH)
+                let childH = (customHourRef.current.children[hourIndex] as HTMLDivElement).offsetTop
+                customHourRef.current.scrollTo(0, childH)
             }
+
+            // if (customHourRef.current) {
+            //     let childH = customHourRef.current.children[1].getBoundingClientRect().height;
+            //     customHourRef.current.scrollTo(0, (hourIndex + 1) * childH)
+            // }
 
         }
     }

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from "next/router";
 import {getCompany, getUser, getUserReports} from "../../Requests/Requests";
-import {CompanyId, CompanyName, UserId} from "../../store/store";
+import {CompanyId, CompanyName, CompanyRequiredFields, UserId} from "../../store/store";
 import Header from "../../components/utilitis/Header/Header";
 import {CircularProgress} from "@material-ui/core";
 import NotYet from "../../components/DayFragments/NotYet";
@@ -58,19 +58,26 @@ const Userid = () => {
 
     useEffect(() => {
 
-        console.log(userid)
         getCompany(CompanyName()).then((res) => {
             CompanyId(res.data.id)
-            console.log(res.data)
 
             if (res.data.textFields) {
+
+                (res.data.textFields as any[]).forEach((textField) => {
+                    if (textField.required) {
+                        if (!CompanyRequiredFields().includes(textField.title)) {
+                            let arr = CompanyRequiredFields()
+                            arr.push(textField.title)
+                            CompanyRequiredFields(arr)
+                        }
+                    }
+                })
                 setTextFields((res.data.textFields))
             }
             if (res.data.timeFields) {
                 setTimeFields((res.data.timeFields))
             }
             setCompanyGot(true)
-
 
         })
     }, [])
@@ -101,27 +108,39 @@ const Userid = () => {
                     setReportSent(true)
 
                     //hours
-                    let workHour = Object.keys(day.timeFields).map((timeField) => {
-                        if (day.timeFields[timeField].title === 'ساعت کار') {
-                            return day.timeFields[timeField].value
-                        }
-                    })
-                    let trainingHour = Object.keys(day.timeFields).map((timeField) => {
-                        if (day.timeFields[timeField].title === 'ساعت آموزش') {
-                            return day.timeFields[timeField].value
-                        }
-                    })
+
+                    let workHour;
+                    if (day.timeFields)
+                        workHour = Object.keys(day.timeFields).map((timeField) => {
+                            if (day.timeFields[timeField].title === 'ساعت کار') {
+                                return day.timeFields[timeField].value
+                            }
+                        })
+
+                    let trainingHour;
+                    if (day.timeFields)
+                        trainingHour = Object.keys(day.timeFields).map((timeField) => {
+                            if (day.timeFields[timeField].title === 'ساعت آموزش') {
+                                return day.timeFields[timeField].value
+                            }
+                        })
 
                     //details
-                    let whatDidUserDo = Object.keys(day.textFields).map((textField) => {
-                        if (day.textFields[textField].title === "شرح اقدامات") {
-                            return day.textFields[textField].value
-                        }
-                    })
+                    let whatDidUserDo;
+                    if (day.textFields)
 
-                    setWorkHours(workHour[0])
-                    setTrainingHours(trainingHour[0])
-                    setWhatDidUserDoInReport(whatDidUserDo[0])
+                        whatDidUserDo = Object.keys(day.textFields).map((textField) => {
+                            if (day.textFields[textField].title === "شرح اقدامات") {
+                                return day.textFields[textField].value
+                            }
+                        })
+
+                    if (workHour)
+                        setWorkHours(workHour[0])
+                    if (trainingHour)
+                        setTrainingHours(trainingHour[0])
+                    if (whatDidUserDo)
+                        setWhatDidUserDoInReport(whatDidUserDo[0])
 
                 } else {
                     setReportHasData(false)
@@ -141,7 +160,7 @@ const Userid = () => {
             return (
 
 
-                <div className="bg-background">
+                <div className="bg-secondary">
 
                     <Header name={name} setDay={onDayChange} role={role}/>
 

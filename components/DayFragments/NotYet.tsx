@@ -11,7 +11,7 @@ const NotYet = (props: {
 
 
     return (
-        <div className={'w-full flex flex-col justify-start items-center bg-background'}>
+        <div className={'w-full flex flex-col justify-start items-center bg-secondary'}>
 
             <img src="/svg/sand-clock.svg" className={'w-20 h-20 mt-10 '} alt=""/>
             <span className={'IranSansMedium text-primary mt-8'}>مهلت ثبت گزارش نرسیده است</span>

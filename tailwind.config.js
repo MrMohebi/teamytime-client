@@ -6,6 +6,10 @@ module.exports = {
     ],
     theme: {
         extend: {
+
+            maxWidth: {
+                'btn-max-width': '26rem',
+            },
             colors: {
 
 

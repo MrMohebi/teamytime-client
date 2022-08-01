@@ -1,8 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {getReportsForAdmin} from "../../Requests/Requests";
 import Header from "../../components/utilitis/Header/Header";
 import {ButtonBase, CircularProgress} from "@material-ui/core";
+import {useRouter} from "next/router";
+import {AdminID} from "../../store/store";
 
+// @ts-ignore
+import moment from 'moment-jalaali'
 
 const Admin = () => {
 
@@ -14,7 +18,28 @@ const Admin = () => {
     const [unsentUsers, setUnsentUsers] = useState([] as any[]);
     const [loading, setLoading] = useState(false);
 
+    const [dialogListData, setDialogListData] = useState([] as any[]);
+
+
+    const unsentUsersHolderRef = useRef<HTMLDivElement>(null)
+    const sentUsersHolderRef = useRef<HTMLDivElement>(null)
+    const usersListRef = useRef<HTMLDivElement>(null)
+
+    const [currentOpenDialog, setCurrentOpenDialog] = useState('');
+    const router = useRouter()
+    const {token} = router.query
+
+    const reportsHolder = useRef<HTMLDivElement>(null)
+
+
     useEffect(() => {
+        if (token)
+            AdminID(token as string)
+    }, [token]);
+
+    useEffect(() => {
+
+        setDialogListData([])
         if (currentDay)
 
             getReportsForAdmin("093845b5f724e4a047c9f2221cd903b4", currentDay, currentDay).then((e) => {
@@ -50,7 +75,9 @@ const Admin = () => {
         }
     }, [dayData]);
     return (
-        <div className={'bg-secondary min-h-full pb-10'}>
+        <div className={'bg-secondary min-h-full pb-10 relative'} onClick={(event) => {
+            console.log(event.target)
+        }}>
             <Header name={'آقای یزدانی'} role={"مدیریت منابع انسانی"} setDay={(day: string) => {
                 setLoading(true)
                 setCurrentDay(day)
@@ -73,7 +100,8 @@ const Admin = () => {
                     <div>
 
 
-                        <div className={' w-full pb-16 h-full flex flex-col justify-start items-center px-4 py-3 '}>
+                        <div className={' w-full pb-16 h-full flex flex-col justify-start items-center px-4 py-3  '}
+                             ref={reportsHolder}>
 
 
                             {
@@ -81,10 +109,10 @@ const Admin = () => {
                                     reports.map((report, index) => {
                                         return (
 
-                                            <div key={'rep-' + index}  style={{
+                                            <div key={'rep-' + index} style={{
                                                 animationDelay: ((index + 1) * 50) + 'ms'
                                             }}
-                                                 className={'each-user mt-4 animate__animated animate__fadeInUp animate__faster  bg-primary-dark rounded-2xl pb-3  w-full shadow-md'}>
+                                                 className={'each-user transition-all mt-4 animate__animated animate__fadeInUp animate__faster  bg-primary-dark rounded-2xl pb-3  w-full shadow-md'}>
 
                                                 <div
                                                     className={' flex flex-row justify-between  items-start px-3 pt-3'}>
@@ -111,7 +139,6 @@ const Admin = () => {
                                                     <div className={'flex flex-col justify-center items-center  '}>
                                                         <div
                                                             className={'rounded-xl border mb-2 border-deactive-border flex flex-row justify-center items-center   py-1.5  '}>
-                                                            {/*todo change the index to text*/}
                                                             <span
                                                                 className={'IranSansMedium text-primary mx-3 text-sm '}>{report.timeFields[0] ? report.timeFields[0].value : "00:00"}</span>
                                                             <img className={'ml-2 w-5'} src="/svg/work-glyph.svg"
@@ -122,7 +149,8 @@ const Admin = () => {
                                                             className={'rounded-xl border border-deactive-border flex flex-row justify-center items-center   py-1.5'}>
                             <span
                                 className={'IranSansMedium text-primary mx-3 text-sm '}>{report.timeFields[0] ? report.timeFields[1].value : "00:00"}</span>
-                                                            <img className={'ml-2 w-5'} src="/svg/training-glyph.svg"
+                                                            <img className={'ml-2 w-5'}
+                                                                 src="/svg/training-glyph.svg"
                                                                  alt=""/>
 
                                                         </div>
@@ -132,23 +160,60 @@ const Admin = () => {
                                                 </div>
 
                                                 <div
-                                                    className={'w-full flex flex-col justify-start items-center'}></div>
+                                                    className={'w-full flex flex-col justify-start items-center px-4 transition-all report-details overflow-hidden h-0'}>
+
+                                                    {
+                                                        (report.textFields as any[]).map((textField, index) => {
+                                                            if (textField.value)
+                                                                return (
+                                                                    <div key={'e-rep' + report.userID + index}
+                                                                         className={"w-full flex flex-col mt-4 justify-start items-start"}>
+                                                                        <span className={'text-primary IranSansMedium '}
+                                                                              style={{
+                                                                                  fontSize: '0.75rem'
+                                                                              }}>{textField.title}</span>
+                                                                        <p className={'text-white text-justify IranSansMedium  mt-2'}
+                                                                           style={{
+                                                                               fontSize: '0.7rem'
+                                                                           }}>{textField.value}</p>
+                                                                    </div>
+
+                                                                )
+                                                        })
+                                                    }
+
+
+                                                    <div className={'h-5'}></div>
+
+                                                </div>
 
                                                 <div
                                                     className={'w-full h-7 flex flex-row justify-between items-end text-white IranSansMedium px-3'}>
-                                                    <div className={'flex flex-row justify-center items-center  '}>
+                                                    <div className={'flex flex-row justify-center items-center  '}
+                                                         onClick={(e) => {
+                                                             let el = (e.currentTarget as HTMLDivElement).parentElement!.parentElement!.querySelector('.report-details')!
+                                                             if (el.className.includes('h-0')) {
+                                                                 el.className = el.className.replace("h-0", "h-auto")
+                                                             } else {
+                                                                 el.className = el.className.replace("h-auto", "h-0")
+
+                                                             }
+                                                         }}
+                                                    >
                                                         <div
                                                             className={'w-9 h-9 border flex flex-row justify-center items-center border-deactive-border rounded-xl'}>
-                                                            <img src="/svg/more-arrow.svg" className={'p-2'} alt=""/>
+                                                            <img src="/svg/more-arrow.svg" className={'p-2'}
+                                                                 alt=""/>
                                                         </div>
 
-                                                        <span className={'IranSansMedium text-primary  mr-2'} style={{
-                                                            fontSize: '0.7rem'
-                                                        }}>پنهان کردن اطلاعات بیشتر</span>
+                                                        <span className={'IranSansMedium text-primary  mr-2'}
+                                                              style={{
+                                                                  fontSize: '0.7rem'
+                                                              }}>پنهان کردن اطلاعات بیشتر</span>
                                                     </div>
                                                     <span className={''} style={{
                                                         fontSize: '0.7rem'
-                                                    }}>12:13</span>
+                                                    }}>{new Intl.DateTimeFormat('fa-IR', {timeStyle: 'short'}).format(report.createdAt)}</span>
                                                 </div>
 
                                             </div>
@@ -161,56 +226,106 @@ const Admin = () => {
                             }
                         </div>
 
-                        <div className={'fixed bottom-0 w-full  h-20 flex flex-row justify-center items-center py-2'}>
+                        <div
+                            className={'fixed max-w-md bottom-0 left-1/2 -translate-x-1/2 w-full  h-20 flex flex-row justify-center items-center py-2'}>
 
-                            <div
-                                className={'bg-primary-dark shrink-0 border-2 border-primary rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}
-                                style={{
-                                    width: '25%'
-                                }}>
+                            <div ref={sentUsersHolderRef}
+                                 className={' bg-primary-dark shrink-0 border-2 border-primary rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}
+                                 style={{
+                                     width: '25%'
+                                 }}
+                                 onClick={(e) => {
+                                     if (usersListRef.current) {
+                                         usersListRef.current.style.transition = 'all .3s'
+                                         usersListRef.current.style.opacity = "0"
+                                         usersListRef.current.style.transition = ''
 
-                                <div className={'flex flex-row justify-between items-center'}>
-                                    <div className={'flex w-2/3 flex-row justify-center items-center'}>
-                                        <div className={'flex flex-row justify-end items-center'} style={{
-                                            transform: `translateX(${-(sentUsers.length / 4)}rem)`
-                                        }}>
+                                         usersListRef.current.style.right = (Math.abs(e.currentTarget.getBoundingClientRect().right - document.body.getBoundingClientRect().width)) + "px"
+                                         usersListRef.current.style.left = ""
+                                         usersListRef.current.style.transition = 'all .3s'
 
-                                            {
-                                                sentUsers.slice(0, 3).map((avatar, index) => {
-                                                    return (
+                                         usersListRef.current.style.opacity = "1"
 
-                                                        <div key={index + "av"}
-                                                             className={'w-6 h-6 rounded-full bg-yellow-300  border-secondary border-2 shrink-0'}
-                                                             style={{
-                                                                 transform: `translateX(${index / 1.5}rem)`
-                                                             }}/>
-                                                    )
+                                     }
+
+                                     if (currentOpenDialog === "sent") {
+                                         setDialogListData([])
+                                         setCurrentOpenDialog('')
+
+                                     } else {
+                                         setDialogListData(sentUsers)
+                                         setCurrentOpenDialog('sent')
+
+                                     }
 
 
-                                                })
-                                            }
+                                 }}
+                            >
 
+
+                                {
+                                    sentUsers.length ?
+
+                                        <div>
+                                            <div className={'flex flex-row justify-between items-center'}>
+                                                <div className={'flex w-2/3 flex-row justify-center items-center'}>
+                                                    <div className={'flex flex-row justify-end items-center'}
+                                                         style={{
+                                                             transform: `translateX(${-(sentUsers.length / 4)}rem)`
+                                                         }}>
+
+                                                        {
+                                                            sentUsers.slice(0, 3).map((avatar, index) => {
+                                                                return (
+
+                                                                    <div key={index + "av"}
+                                                                         className={'w-6 h-6 rounded-full bg-yellow-300  border-secondary border-2 shrink-0'}
+                                                                         style={{
+                                                                             transform: `translateX(${index / 1.5}rem)`
+                                                                         }}/>
+                                                                )
+
+
+                                                            })
+                                                        }
+
+
+                                                    </div>
+
+
+                                                </div>
+                                                <div className={'rotate-180'}></div>
+                                                <img src="/svg/more-arrow-blue.svg"
+                                                     className={`h-5 w-5 transition-all duration-500 ease-in-out ${currentOpenDialog === 'sent' ? "" : 'rotate-180'}`}
+                                                     alt=""/>
+                                            </div>
+
+
+                                            <span
+                                                className={'IranSansMedium pt-1 text-primary  whitespace-nowrap block w-full text-center '}
+                                                style={{
+                                                    fontSize: '0.7rem'
+                                                }}>
+
+
+                                    {sentUsers.length}
+                                                {" "}
+
+
+                                                نفر ثبت شده</span>
 
                                         </div>
 
+                                        :
+                                        <div className={'w-full flex flex-col justify-center items-center'}>
+                                                <span
+                                                    className={'IranSansMedium text-primary text-sm whitespace-nowrap'}>تا الان گزارشی</span>
+                                            <span className={'IranSansMedium text-primary text-sm'}>ثبت نشده</span>
+                                        </div>
 
-                                    </div>
-                                    <img src="/svg/more-arrow-blue.svg" className={'h-5 w-5 rotate-180'} alt=""/>
-                                </div>
-
-
-                                <span
-                                    className={'IranSansMedium pt-1 text-primary  whitespace-nowrap block w-full text-center '}
-                                    style={{
-                                        fontSize: '0.7rem'
-                                    }}>
+                                }
 
 
-                        {sentUsers.length}
-                                    {" "}
-
-
-                                    نفر ثبت شده</span>
                             </div>
 
 
@@ -223,54 +338,106 @@ const Admin = () => {
                             </ButtonBase>
 
 
-                            <div
-                                className={'bg-primary-dark shrink-0 border-2 border-deactive-border rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}
+                            <div ref={unsentUsersHolderRef}
+                                 className={'bg-primary-dark shrink-0 border-2 border-deactive-border rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}
 
-                                style={{
-                                    width: '25%'
-                                }}>
-
-                                <div className={'flex flex-row justify-between items-center'}>
-                                    <div className={'flex w-2/3 flex-row justify-center items-center'}>
-                                        <div className={'flex flex-row w-12 justify-start items-center'} style={{
-                                            // transform: `translateX(${-(unsentUsers.length/(unsentUsers.length-1))}rem)`
-                                        }}>
-
-                                            {
-                                                unsentUsers.slice(0, 3).map((avatar, index) => {
-                                                    return (
-
-                                                        <div key={index + "av"}
-                                                             className={'w-6 h-6 rounded-full bg-yellow-300  border-secondary border-2 shrink-0'}
-                                                             style={{
-                                                                 transform: `translateX(${index / 1.5}rem)`
-                                                             }}/>
-                                                    )
+                                 style={{
+                                     width: '25%'
+                                 }}
+                                 onClick={(e) => {
 
 
-                                                })
-                                            }
+                                     if (usersListRef.current) {
+                                         usersListRef.current.style.transition = 'all .3s'
+                                         usersListRef.current.style.opacity = "0"
+                                         usersListRef.current.style.transition = ''
 
+                                         usersListRef.current.style.left = (Math.abs(e.currentTarget.getBoundingClientRect().left)) + "px"
+                                         usersListRef.current.style.right = ""
+                                         usersListRef.current.style.transition = 'all .3s'
+
+                                         usersListRef.current.style.opacity = "1"
+
+                                     }
+
+
+                                     if (currentOpenDialog === "unsent") {
+                                         setDialogListData([])
+                                         setCurrentOpenDialog('')
+
+
+                                     } else {
+                                         setDialogListData(unsentUsers)
+                                         setCurrentOpenDialog('unsent')
+
+                                     }
+
+
+                                 }}
+
+                            >
+
+
+                                {
+                                    unsentUsers.length ?
+                                        <div>
+
+                                            <div className={'flex flex-row justify-between items-center'}>
+                                                <div className={'flex w-2/3 flex-row justify-center items-center'}>
+                                                    <div className={'flex flex-row w-12 justify-start items-center'}
+                                                         style={{
+                                                             // transform: `translateX(${-(unsentUsers.length/(unsentUsers.length-1))}rem)`
+                                                         }}>
+
+                                                        {
+                                                            unsentUsers.slice(0, 3).map((avatar, index) => {
+                                                                return (
+
+                                                                    <div key={index + "av"}
+                                                                         className={'w-6 h-6 rounded-full bg-yellow-300  border-secondary border-2 shrink-0'}
+                                                                         style={{
+                                                                             transform: `translateX(${index / 1.5}rem)`
+                                                                         }}/>
+                                                                )
+
+
+                                                            })
+                                                        }
+
+
+                                                    </div>
+
+
+                                                </div>
+                                                <img src="/svg/more-arrow.svg"
+                                                     className={`h-5 w-5 transition-all duration-500 ease-in-out ${currentOpenDialog === 'unsent' ? "" : 'rotate-180'}`}
+                                                     alt=""/>
+                                            </div>
+
+                                            <span
+                                                className={'IranSansMedium  pt-1 text-text-blue-light  whitespace-nowrap block w-full text-center '}
+                                                style={{
+                                                    fontSize: '0.7rem'
+                                                }}>
+
+                                    {unsentUsers.length}
+
+                                                {" "}
+
+                                                نفر ثبت نشده
+                                </span>
 
                                         </div>
+                                        :
+                                        <div className={'w-full flex flex-col justify-center items-center'}>
+                                            <span
+                                                className={'IranSansMedium text-text-blue-light text-sm'}> گزارش همه</span>
+                                            <span
+                                                className={'IranSansMedium text-text-blue-light text-sm'}>ثبت شده</span>
+                                        </div>
 
+                                }
 
-                                    </div>
-                                    <img src="/svg/more-arrow.svg" className={'h-5 w-5 rotate-180 '} alt=""/>
-                                </div>
-
-                                <span
-                                    className={'IranSansMedium  pt-1 text-text-blue-light  whitespace-nowrap block w-full text-center '}
-                                    style={{
-                                        fontSize: '0.7rem'
-                                    }}>
-
-                        {unsentUsers.length}
-
-                                    {" "}
-
-
-                                    نفر ثبت نشده</span>
                             </div>
                         </div>
 
@@ -279,7 +446,51 @@ const Admin = () => {
             }
 
 
+            <div
+                ref={usersListRef}
+                style={{
+                    left: '20px'
+                }}
+                className={` ${dialogListData.length ? '' : 'hidden pointer-events-none'} unsent-users-list px-3 pb-2 flex flex-col justify-start items-center fixed bottom-20  border border-deactive-border backdrop-blur-2xl rounded-2xl`}>
+
+
+                {dialogListData.map((item: any, index) => {
+
+                    return (
+                        <ButtonBase key={'dial' + index + item.name}
+                                    style={{
+                                        animationDelay: (index * 100) + 'ms'
+                                    }}
+                                    className={'w-full flex flex-row mt-2 border-b-4 border-white justify-start items-start animate__animated animate__fadeIn animate__faster  '}
+                                    onClick={() => {
+                                        if (currentOpenDialog === 'sent') {
+                                            setDialogListData([])
+                                            setCurrentOpenDialog("")
+                                            if (reportsHolder.current) {
+
+                                                reportsHolder.current.scrollTo(0, (reportsHolder.current.children[index] as HTMLDivElement).offsetTop)
+                                            }
+                                        } else {
+
+                                        }
+
+                                    }}
+                        >
+                            <img src="/img/no-image.png" className={'rounded-xl h-7 w-7'} alt=""/>
+                            <span
+                                className={'text-white mx-3 whitespace-nowrap IranSansMedium'}>{item.name} </span>
+                        </ButtonBase>
+                    )
+
+                })}
+
+
+            </div>
+
+
         </div>
+
+
     );
 };
 

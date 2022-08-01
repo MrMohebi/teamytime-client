@@ -2,8 +2,10 @@ import React, {useEffect, useRef, useState} from 'react';
 
 import {useDebouncedCallback} from "use-debounce";
 
-import {CurrentSelectedDate, UserId} from "../../../store/store";
-import {getUser, getUserReports} from "../../../Requests/Requests";
+import {AdminID, CurrentSelectedDate, UserId} from "../../../store/store";
+import {getReportsForAdmin, getUser, getUserReports, getUserReportsRange} from "../../../Requests/Requests";
+import {ifError} from "assert";
+import {useReactiveVar} from "@apollo/client";
 
 const Header = (props: {
         setDay: Function,
@@ -13,13 +15,17 @@ const Header = (props: {
     }) => {
 
 
-        const backDaysLimit = 3;
+        const backDaysLimit = 7;
 
 
         const indicatorRef = useRef(null)
         const scrollerRef = useRef<HTMLDivElement>(null)
         const [currentDay, setCurrentDay] = useState("");
         const [currentMonth, setCurrentMonth] = useState("");
+
+        const adminId = useReactiveVar(AdminID)
+
+        const [localDays, setLocalDays] = useState([]);
 
 
         useEffect(() => {
@@ -37,10 +43,66 @@ const Header = (props: {
 
             scrollToToday()
 
-
         }, [])
 
+        useEffect(() => {
 
+
+
+            if (adminId && localDays.length < 1) {
+
+                getReportsForAdmin("093845b5f724e4a047c9f2221cd903b4", fullDate(-backDaysLimit), fullDate(backDaysLimit)).then((res) => {
+                    console.log(res.data)
+                        if (res.data) {
+                            let datesArr = [] as any;
+
+                            Object.keys(res.data).forEach((date, index) => {
+                                datesArr.push(res.data[date])
+                            })
+                            setLocalDays(datesArr)
+                        }
+
+
+                    }
+                )
+                // getUserReportsRange(UserId(), fullDate(-backDaysLimit), fullDate(backDaysLimit)).then((res) => {
+                //     if (res.data) {
+                //         let datesArr = [] as any;
+                //
+                //         Object.keys(res.data).forEach((date, index) => {
+                //             datesArr.push(res.data[date])
+                //         })
+                //         setLocalDays(datesArr)
+                //     }
+                //
+                //
+                // })
+            }
+        }, [adminId]);
+
+        useEffect(() => {
+
+            if (UserId() && localDays.length < 1) {
+                getUserReportsRange(UserId(), fullDate(-backDaysLimit), fullDate(backDaysLimit)).then((res) => {
+                    if (res.data) {
+                        let datesArr = [] as any;
+
+                        Object.keys(res.data).forEach((date, index) => {
+                            datesArr.push(res.data[date])
+                        })
+                        setLocalDays(datesArr)
+                    }
+
+
+                })
+            }
+        }, [UserId()]);
+
+
+        useEffect(() => {
+
+            scrollToToday()
+        }, [localDays]);
 
 
         const getDayNameFromNow = (dayOffset: number) => {
@@ -117,12 +179,30 @@ const Header = (props: {
                     elChildren.forEach((item, index) => {
 
 
-                        let middleOfTheChild = Math.floor(item.getBoundingClientRect().left + (eachChildW / 2))
+                        let middleOfTheChild = Math.floor(item.getBoundingClientRect().left + (eachChildW / 2));
+
+                        (item.querySelector('.day-indicator')! as HTMLDivElement).style.setProperty("width", "20%", "important")
+
 
                         if (Math.abs(middleOfTheChild - middleOfIndicator) < 10) {
 
 
-                            setCurrentDay(item.querySelector('.date-of-day')!.innerHTML)
+                            setCurrentDay(item.querySelector('.date-of-day')!.innerHTML);
+
+
+                            // if (indicatorRef.current) {
+
+
+                            // console.log(window.getComputedStyle((item.querySelector('.day-indicator')! as HTMLDivElement)).background);
+
+
+                            (item.querySelector('.day-indicator')! as HTMLDivElement).style.setProperty("width", "85%", "important")
+                            // console.log((item.querySelector('.day-indicator')! as HTMLDivElement).style.backgroundColor);
+
+                            // (indicatorRef.current as HTMLDivElement).style.backgroundColor = window.getComputedStyle((item.querySelector('.day-indicator')! as HTMLDivElement)).background.split('none')[0]
+
+
+                            // }
 
 
                             let monthOfDay = "";
@@ -174,8 +254,6 @@ const Header = (props: {
 
                 scrollerRef.current.scrollTo(-(rest + halfSpace), 0)
                 scrollerRef.current.style.setProperty('scroll-behavior', '')
-
-
             }
 
 
@@ -240,7 +318,7 @@ const Header = (props: {
 
                         {
 
-                            Array(40).fill('').map((item, indx) => {
+                            localDays.map((item:any, indx) => {
 
                                 let date = new Date()
                                 date.setDate(date.getDate()) + indx
@@ -284,7 +362,7 @@ const Header = (props: {
 
                                          }}
                                          id={'d-' + indx}
-                                         className={'w-14 transition-all duration-300 ease-in-out header-day shrink-0 pt-1.5  h-18 snap-center flex flex-col justify-start items-center text-text-blue-light'}>
+                                         className={'w-16 relative transition-all duration-300 ease-in-out header-day shrink-0 pt-1.5  h-18 snap-center flex flex-col justify-start items-center text-text-blue-light'}>
                                     <span className={'hidden month-of-day'}
                                           id={'month-' + index}>{getFullDateFromNow(index).split(',')[0].split(' ')[1]}</span>
                                         <span className={'hidden date-of-day'}
@@ -303,6 +381,17 @@ const Header = (props: {
                                                                             {getDayDateFromNow(index)}
 
                                     </span>
+                                        {
+                                          adminId?
+                                              <div
+                                                  className={`absolute day-indicator transition-all ease-in-out duration-500 w-3/12 left-1/2 bottom-0 -translate-x-1/2 h-1 rounded-tl-lg rounded-tr-lg   `}
+                                              />
+                                          :
+                                              <div
+                                                  className={`absolute day-indicator transition-all ease-in-out duration-500 w-3/12 left-1/2 bottom-0 -translate-x-1/2 h-1 rounded-tl-lg rounded-tr-lg ${item.remainTime < 10 ? item.createdAt ? "bg-primary" : 'bg-red' : ''} ${item.jalaliDate === fullDate(0) ? "bg-primary" : item.jalaliDate}   `}
+                                              />
+                                        }
+
                                     </div>
                                 )
                             })
@@ -312,9 +401,14 @@ const Header = (props: {
 
 
                     </div>
+                    {
+                        localDays.length ?
+                            <div ref={indicatorRef}
+                                 className={`absolute transition-all ease-in-out left-1/2 -translate-x-1/2 bottom-0 rounded-tl-lg  z-10 rounded-tr-lg h-1 w-12 ${adminId?"bg-primary":""} `}></div>
+                            :
+                            null
+                    }
 
-                    <div ref={indicatorRef}
-                         className={'absolute left-1/2 -translate-x-1/2 bottom-0 rounded-tl-lg  rounded-tr-lg h-1 w-12 bg-primary'}></div>
 
                 </div>
 

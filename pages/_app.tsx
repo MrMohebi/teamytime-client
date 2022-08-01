@@ -14,23 +14,12 @@ function MyApp({Component, pageProps}: AppProps) {
     });
 
 
-    const [allowUserToLogIn, setAllowUserToLogIn] = useState(false);
-    const router = useRouter();
-
-
     return (
         <ApolloProvider client={client}>
-
-            {/*{allowUserToLogIn ?*/}
+            <div className={'w-full h-full relative'}>
                 <Component {...pageProps} />
-            {/*    :*/}
-            {/*    <div className={'bg-background w-full h-full  flex flex-col justify-center items-center text-white IranSans'}>*/}
 
-            {/*        <span>لینک به درستی وارد نشده است </span>*/}
-            {/*        <span className={'text-sm scale-75 mt-5'}>(شما برای استفاده از این سیستم نیاز به یک آیدی مشخص دارید)</span>*/}
-            {/*    </div>*/}
-
-            {/*}*/}
+            </div>
         </ApolloProvider>
     )
 }

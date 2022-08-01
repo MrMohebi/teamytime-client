@@ -21,7 +21,7 @@ const TextField = (props: {
             <div className={'w-full h-12 text-white IranSans pt-2 flex flex-row justify-between items-center px-3 '}>
                 <span className={'t-title hidden'}>{props.title}</span>
                 <span className={'mb-2'}>{props.title} {props.required ?
-                    <span className={'text-red mx-1'}>*</span> : null}</span>
+                    <span className={'text-red  star mx-1'}>*</span> : null}</span>
                 <CircularProgress thickness={7} className={''} variant={'determinate'}
                                   value={(text.length / props.maxLength) * 100} size={20}/>
             </div>

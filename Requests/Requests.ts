@@ -46,6 +46,17 @@ export const getUserReports = (userID: string, startDate: string, endDate: strin
         });
 }
 
+export const getUserReportsRange = (userID: string, startDate: string, endDate: string) => {
+    return axios.get(BASE_URL + 'getUserPreviousReports.php',
+        {
+            params: {
+                userID,
+                startDate,
+                endDate
+            }
+        });
+}
+
 export const getReportsForAdmin = (token: string,startDate:string,endDate:string) => {
     return axios.get(BASE_URL + 'getAdminReports.php',
         {

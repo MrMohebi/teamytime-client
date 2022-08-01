@@ -5,7 +5,7 @@ import {ButtonBase, CircularProgress} from "@material-ui/core";
 import moment from 'moment-jalaali'
 import TextField from "../utilitis/TextField/TextField";
 import {sendReport} from "../../Requests/Requests";
-import {CompanyId, CurrentSelectedDate, UserId} from "../../store/store";
+import {CompanyId, CompanyRequiredFields, CurrentSelectedDate, UserId} from "../../store/store";
 import Swal from "sweetalert2";
 import {json} from "stream/consumers";
 
@@ -25,6 +25,9 @@ const CanEdit = (props: {
 
     const [btnLoading, setBtnLoading] = useState(false);
 
+    const requirements = useRef(0)
+    const [requirementsFilled, setRequirementsFilled] = useState("");
+
     const textFieldsHolder = useRef<HTMLDivElement>(null)
 
     moment.loadPersian()
@@ -36,37 +39,27 @@ const CanEdit = (props: {
     useEffect(() => {
 
 
-        // if (props.dayData) {
-        //     if (props.dayData.textFields) {
-        //         (props.dayData.textFields).forEach((item, index) => {
-        //             if (item.title === "شرح اقدامات") {
-        //                 setReportDetails(item.value ?? '')
-        //
-        //             }
-        //
-        //         })
-        //     }
-        //
-        // }
-
-
         try {
             if (textFieldsHolder.current) {
-                console.log(props.dayData)
-
                 let children = textFieldsHolder.current.querySelectorAll('.t-field')
                 if (props.dayData.textFields)
                     props.dayData.textFields.forEach((tField, index) => {
+
+
+                        console.log(tField)
+
+
                         children.forEach((tElement, index) => {
+
                             if (tElement.querySelector('.t-title')?.innerHTML === tField.title) {
-                                tElement.querySelector('textarea')!.innerHTML = tField.value
+                                tElement.querySelector('textarea')!.value = tField.value
+
                             }
                         })
 
 
                         textFieldsData.current[tField.title] = tField.value
                     })
-                console.log(children)
             }
         } catch (e) {
             console.log(e)
@@ -74,10 +67,6 @@ const CanEdit = (props: {
 
 
     }, [props.dayData]);
-
-    useEffect(() => {
-
-    }, []);
 
 
     const submitClickHandler = () => {
@@ -145,11 +134,21 @@ const CanEdit = (props: {
 
         return "00:00"
 
-
     }
+
+
+    useEffect(() => {
+        console.log('filled trigger')
+        if (requirementsFilled) {
+            console.log('yeah there is')
+        } else {
+            console.log('wll its empty')
+        }
+    }, [requirementsFilled]);
+
     return (
         <div className={''}>
-            <div className={'pager w-full flex-col justify-start items-center bg-background'}>
+            <div className={'pager pb-24 w-full flex-col justify-start items-center bg-secondary '}>
 
                 {
 
@@ -163,7 +162,7 @@ const CanEdit = (props: {
                                 {
                                     index === 0 ?
                                         <div
-                                            className={'w-full  pb-2 text-right text-hint-text IranSansMedium text-sm pt-2 px-3'}>
+                                            className={'w-full bg-background pb-2 text-right text-hint-text IranSansMedium text-sm pt-2 px-3'}>
                                             برای این روز شما تا
                                             {" "}
                                             {moment.duration(props.remainSeconds ?? 0, 'seconds').humanize()}
@@ -173,7 +172,7 @@ const CanEdit = (props: {
                                         :
                                         index === 1 ?
                                             <div
-                                                className={'w-full  pb-2 text-right text-hint-text IranSansMedium text-sm pt-2 px-3'}>
+                                                className={'w-full  bg-background pb-2 text-right text-hint-text IranSansMedium text-sm pt-2 px-3'}>
                                                 میتوانید از گزینه های سمت راست برای سرعت بیشتر استفاده کنید
                                             </div>
                                             :
@@ -223,6 +222,28 @@ const CanEdit = (props: {
                                             title={textField.title}
                                             maxLength={150}
                                             onChange={(text: string) => {
+
+
+                                                if (text) {
+                                                    if (textField.required) {
+                                                        if (requirementsFilled.substring(textField.title)) {
+
+                                                        } else {
+                                                            setRequirementsFilled(requirementsFilled + textField.title)
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (requirementsFilled.substring(textField.title)) {
+                                                        setRequirementsFilled(requirementsFilled.replace(textField.title, ''))
+                                                    }
+                                                }
+                                                console.log(requirementsFilled)
+
+
+                                                // console.log(requirementsFilled)
+                                                // console.log(CompanyRequiredFields())
+
+
                                                 textFieldsData.current[textField.title] = text
                                             }}
                                         />
@@ -235,53 +256,27 @@ const CanEdit = (props: {
 
                         })
                     }
-                    {/*<TextField value={reportDetails} defaultValue={reportDetails} title={'شرح اقدامات و آموزش ها'}*/}
-                    {/*           maxLength={150}*/}
-                    {/*           onChange={(text: string) => {*/}
-                    {/*               setReportDetails(text)*/}
-                    {/*           }}*/}
-                    {/*/>*/}
-                    {/*<div className={'w-11/12 bg-background mt-5'} style={{*/}
-                    {/*    height: '1.5px'*/}
-                    {/*}}/>*/}
-
-                    {/*<TextField value={whyDidntYouDoTheJob} defaultValue={whyDidntYouDoTheJob}*/}
-                    {/*           title={'دلایل عدم تحقق برنامه ها'} maxLength={100}*/}
-                    {/*           onChange={(text: string) => {*/}
-                    {/*               setWhyDidntYouDoTheJob(text)*/}
-                    {/*           }}/>*/}
-                    {/*<div className={'w-11/12 bg-background mt-5'} style={{*/}
-                    {/*    height: '1.5px'*/}
-                    {/*}}/>*/}
-
-                    {/*<TextField value={tomorrowPlans} defaultValue={tomorrowPlans} title={'برنامه های فردا'}*/}
-                    {/*           maxLength={50}*/}
-                    {/*           onChange={(text: string) => {*/}
-                    {/*               setTomorrowPlans(text)*/}
-                    {/*           }}/>*/}
 
 
+                    <ButtonBase
+                        className={`w-11/12 left-1/2 max-w-btn-max-width  ${true ? "" : 'translate-y-20'} transition-all duration-300 ease-in-out  fixed bottom-3 z-20 transition-all -translate-x-1/2 fixed  h-14 bg-primary rounded-2xl text-white IranSansMedium `}
+                        onClick={submitClickHandler}
+                    >
+
+                        {
+                            btnLoading ?
+                                <div className={'text-white'}>
+                                    <CircularProgress color={'inherit'}/>
+
+                                </div>
+                                :
+                                <span className={'text-lg'}>ثبت</span>
+
+                        }
+                    </ButtonBase>
                 </div>
-                <div className={'h-28'}></div>
 
-                <ButtonBase
 
-                    className={`w-11/12 left-1/2 fixed z-20 transition-all -translate-x-1/2 fixed bottom-5 h-14 bg-primary rounded-2xl text-white IranSansMedium `}
-                    onClick={submitClickHandler}
-
-                >
-
-                    {
-                        btnLoading ?
-                            <div className={'text-white'}>
-                                <CircularProgress color={'inherit'}/>
-
-                            </div>
-                            :
-                            <span className={'text-lg'}>ثبت</span>
-
-                    }
-                </ButtonBase>
 
             </div>
 
