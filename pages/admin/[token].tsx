@@ -200,7 +200,7 @@ const Admin = () => {
                                                                               style={{
                                                                                   fontSize: '0.75rem'
                                                                               }}>{textField.title}</span>
-                                                                        <p className={'text-white text-justify IranSansMedium  mt-2'}
+                                                                        <p className={'text-white text-justify IranSansMedium select-all mt-2'}
                                                                            style={{
                                                                                fontSize: '0.7rem'
                                                                            }}>{textField.value}</p>
