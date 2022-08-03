@@ -7,7 +7,9 @@ import {AdminID} from "../../store/store";
 
 // @ts-ignore
 import moment from 'moment-jalaali'
+import gsap from 'gsap'
 
+moment.loadPersian()
 const Admin = () => {
 
     const [currentDay, setCurrentDay] = useState("");
@@ -19,6 +21,8 @@ const Admin = () => {
     const [loading, setLoading] = useState(false);
 
     const [dialogListData, setDialogListData] = useState([] as any[]);
+
+    const [adminRemainingTime, setAdminRemainingTime] = useState(0);
 
 
     const unsentUsersHolderRef = useRef<HTMLDivElement>(null)
@@ -41,10 +45,11 @@ const Admin = () => {
 
         setDialogListData([])
         if (currentDay)
-
             getReportsForAdmin("093845b5f724e4a047c9f2221cd903b4", currentDay, currentDay).then((e) => {
+                let day = e.data[Object.keys(e.data)[0]]
                 setDayData(e.data[Object.keys(e.data)[0]])
                 setLoading(false)
+                setAdminRemainingTime(day.remainTime)
             })
     }, [currentDay]);
 
@@ -75,18 +80,35 @@ const Admin = () => {
         }
     }, [dayData]);
     return (
-        <div className={'bg-secondary min-h-full pb-10 relative'} >
+        <div className={'bg-secondary min-h-full pb-10 relative'}>
             <Header name={'آقای یزدانی'} role={"مدیریت منابع انسانی"} setDay={(day: string) => {
                 setLoading(true)
                 setCurrentDay(day)
             }}/>
 
-            <div
-                className={'w-full  pb-2 text-right text-hint-text IranSansMedium bg-background text-sm pt-2 px-3'}>
-                کارمندان تا 2 ساعت و 20 دقیقه دیگر میتوانند گزارش ثبت کنند {" "}
-                {/*{moment.duration(remainSeconds ?? 0, 'seconds').humanize()}*/}
-                {" "}
-            </div>
+            {
+                adminRemainingTime > 1 ?
+                    <div
+                        className={'w-full  pb-2 text-right text-hint-text IranSansMedium bg-background text-sm pt-2 px-3'}>
+                        <span>
+                                    کارمندان تا
+                        </span>
+                        {" "}
+                        {moment.duration(adminRemainingTime ?? 0, 'seconds').humanize()}
+                        {" "}
+                        <span>
+                                    دیگر میتوانند گزارش ثبت کنند
+
+                        </span>
+                    </div>
+                    :
+                    <div
+                        className={'w-full  pb-2 text-right text-hint-text IranSansMedium bg-background text-sm pt-2 px-3'}>
+                        <span>مهلت ثبت گزارش برای این روز به پایان رسیده است</span>
+
+                    </div>
+
+            }
 
 
             {
@@ -107,7 +129,7 @@ const Admin = () => {
                                     reports.map((report, index) => {
 
 
-                                        const d = new Date((report.updatedAt??report.createdAt) * 1000)
+                                        const d = new Date((report.updatedAt ?? report.createdAt) * 1000)
 
                                         return (
 
@@ -122,6 +144,7 @@ const Admin = () => {
                                                         className={'flex flex-row justify-center items-center shrink-0'}>
                                                         <div
                                                             className={'h-12 w-12 rounded-xl bg-primary overflow-hidden'}>
+                                                            {/* eslint-disable-next-line @next/next/no-img-element */}
                                                             <img src="/img/no-image.png" alt="Arnoya"
                                                                  className={'w-full h-full block object-cover'}/>
                                                         </div>
@@ -162,7 +185,10 @@ const Admin = () => {
                                                 </div>
 
                                                 <div
-                                                    className={'w-full flex flex-col justify-start items-center px-4 transition-all report-details overflow-hidden h-0'}>
+                                                    className={'w-full flex flex-col justify-start items-center px-4 transition-none report-details overflow-hidden h--0 '}
+                                                    style={{
+                                                        height: '0px'
+                                                    }}>
 
                                                     {
                                                         (report.textFields as any[]).map((textField, index) => {
@@ -194,21 +220,37 @@ const Admin = () => {
                                                     <div className={'flex flex-row justify-center items-center  '}
                                                          onClick={(e) => {
                                                              let el = (e.currentTarget as HTMLDivElement).parentElement!.parentElement!.querySelector('.report-details')!
-                                                             if (el.className.includes('h-0')) {
-                                                                 el.className = el.className.replace("h-0", "h-auto")
+                                                             let arrow = e.currentTarget.querySelector('.up-arrow') ?? document.createElement('div')
+                                                             let text = e.currentTarget.querySelector('.more-text') ?? document.createElement('div')
+                                                             if (el.className.includes('h--0')) {
+                                                                 el.className = el.className.replace("h--0", "h--auto");
+                                                                 gsap.to(el, {
+                                                                     height: 'auto',
+                                                                     duration: '0.3'
+                                                                 });
+                                                                 (text as HTMLSpanElement).innerText = "پنهان کردن اطلاعات بیشتر"
+                                                                 arrow.classList.add('rotate-180')
                                                              } else {
-                                                                 el.className = el.className.replace("h-auto", "h-0")
-
+                                                                 el.className = el.className.replace("h--auto", "h--0");
+                                                                 gsap.to(el, {
+                                                                     height: '0px',
+                                                                     duration: '0.3'
+                                                                 });
+                                                                 (text as HTMLSpanElement).innerText = "نمایش  اطلاعات بیشتر"
+                                                                 arrow.classList.remove('rotate-180')
                                                              }
+
+
                                                          }}
                                                     >
                                                         <div
                                                             className={'w-9 h-9 border flex flex-row justify-center items-center border-deactive-border rounded-xl'}>
-                                                            <img src="/svg/more-arrow.svg" className={'p-2'}
+                                                            <img src="/svg/more-arrow.svg"
+                                                                 className={'p-2 up-arrow transition-all duration-300 ease-in-out'}
                                                                  alt=""/>
                                                         </div>
 
-                                                        <span className={'IranSansMedium text-primary  mr-2'}
+                                                        <span className={'IranSansMedium text-primary  mr-2 more-text'}
                                                               style={{
                                                                   fontSize: '0.7rem'
                                                               }}>پنهان کردن اطلاعات بیشتر</span>

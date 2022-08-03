@@ -282,7 +282,7 @@ const Header = (props: {
                     </div>
 
                     <div className={'h-10 w-10 rounded-xl shadow-md p-1 '}>
-                        <img src={'/svg/userEdit.svg'} className={'h-full w-full relative p-1'}/>
+                        <img alt={'edit-user'} src={'/svg/userEdit.svg'} className={'h-full w-full relative p-1'}/>
                     </div>
                 </div>
 

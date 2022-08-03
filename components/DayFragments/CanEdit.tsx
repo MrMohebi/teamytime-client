@@ -100,7 +100,9 @@ const CanEdit = (props: {
                         customClass: 'text-white bg-background',
                         confirmButtonColor: '#68b4eb',
                     }
-                )
+                ).then(()=>{
+
+                })
             } else {
                 Swal.fire(
                     {
@@ -110,7 +112,9 @@ const CanEdit = (props: {
                         customClass: 'text-white bg-background',
                         confirmButtonColor: '#68b4eb',
                     }
-                )
+                ).then(()=>{
+
+                })
             }
         })
     }
