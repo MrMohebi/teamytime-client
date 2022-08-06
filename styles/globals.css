@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -109,6 +110,50 @@ a {
 
 * {
   user-select: none;
+}
+
+.avatars-opened {
+  position: relative;
+  overflow: hidden;
+}
+.avatars-opened div {
+  animation-name: fadeOutUp;
+  animation-duration: 0.4s;
+  animation-direction: normal;
+}
+.avatars-opened:after {
+  content: "پنهان کردن";
+  width: 100%;
+  height: 100%;
+  background: red;
+  position: absolute;
+  @apply bg-primary-dark text-[0.6rem] flex flex-col justify-center items-center whitespace-nowrap text-text-blue-light IranSans;
+  animation-name: fadeInUp;
+  animation-duration: 0.4s;
+  animation-direction: normal;
+}
+
+.avatars-closed {
+  position: relative;
+  overflow: hidden;
+}
+.avatars-closed div {
+  animation-name: fadeInDown;
+  animation-duration: 0.4s;
+  animation-direction: normal;
+}
+.avatars-closed:after {
+  opacity: 0;
+  transition-delay: 0.4s;
+  content: "پنهان کردن";
+  width: 100%;
+  height: 100%;
+  background: red;
+  position: absolute;
+  @apply bg-primary-dark text-[0.6rem] flex flex-col justify-center items-center whitespace-nowrap text-text-blue-light IranSans;
+  animation-name: fadeOutDown;
+  animation-duration: 0.4s;
+  animation-direction: normal;
 }
 
 /*# sourceMappingURL=globals.css.map */

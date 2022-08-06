@@ -44,6 +44,7 @@ const Admin = () => {
     useEffect(() => {
 
         setDialogListData([])
+        setCurrentOpenDialog('')
         if (currentDay)
             getReportsForAdmin("093845b5f724e4a047c9f2221cd903b4", currentDay, currentDay).then((e) => {
                 let day = e.data[Object.keys(e.data)[0]]
@@ -79,6 +80,25 @@ const Admin = () => {
 
         }
     }, [dayData]);
+
+
+    const isThisReportEmpty = (report: any) => {
+
+
+        let textFieldsValues = [] as string[];
+        if (report.textFields) {
+            Object.keys(report.textFields).forEach((key) => {
+                let data = report.textFields[key].value
+                if (data) {
+                    textFieldsValues.push(data)
+                }
+            })
+        }
+
+
+        return !textFieldsValues.length;
+
+    }
     return (
         <div className={'bg-secondary min-h-full pb-10 relative'}>
             <Header name={'آقای یزدانی'} role={"مدیریت منابع انسانی"} setDay={(day: string) => {
@@ -185,10 +205,12 @@ const Admin = () => {
                                                 </div>
 
                                                 <div
+                                                    data-has-reports={isThisReportEmpty(report)}
                                                     className={'w-full flex flex-col justify-start items-center px-4 transition-none report-details overflow-hidden h--0 '}
                                                     style={{
                                                         height: '0px'
                                                     }}>
+
 
                                                     {
                                                         (report.textFields as any[]).map((textField, index) => {
@@ -208,6 +230,7 @@ const Admin = () => {
 
                                                                 )
                                                         })
+
                                                     }
 
 
@@ -215,50 +238,62 @@ const Admin = () => {
 
                                                 </div>
 
+
                                                 <div
                                                     className={'w-full h-7 flex flex-row justify-between items-end text-white IranSansMedium px-3'}>
-                                                    <div className={'flex flex-row justify-center items-center  '}
-                                                         onClick={(e) => {
-                                                             let el = (e.currentTarget as HTMLDivElement).parentElement!.parentElement!.querySelector('.report-details')!
-                                                             let arrow = e.currentTarget.querySelector('.up-arrow') ?? document.createElement('div')
-                                                             let text = e.currentTarget.querySelector('.more-text') ?? document.createElement('div')
-                                                             if (el.className.includes('h--0')) {
-                                                                 el.className = el.className.replace("h--0", "h--auto");
-                                                                 gsap.to(el, {
-                                                                     height: 'auto',
-                                                                     duration: '0.3'
-                                                                 });
-                                                                 (text as HTMLSpanElement).innerText = "پنهان کردن اطلاعات بیشتر"
-                                                                 arrow.classList.add('rotate-180')
-                                                             } else {
-                                                                 el.className = el.className.replace("h--auto", "h--0");
-                                                                 gsap.to(el, {
-                                                                     height: '0px',
-                                                                     duration: '0.3'
-                                                                 });
-                                                                 (text as HTMLSpanElement).innerText = "نمایش  اطلاعات بیشتر"
-                                                                 arrow.classList.remove('rotate-180')
-                                                             }
 
+                                                    {!isThisReportEmpty(report) ?
 
-                                                         }}
-                                                    >
                                                         <div
-                                                            className={'w-9 h-9 border flex flex-row justify-center items-center border-deactive-border rounded-xl'}>
-                                                            <img src="/svg/more-arrow.svg"
-                                                                 className={'p-2 up-arrow transition-all duration-300 ease-in-out'}
-                                                                 alt=""/>
-                                                        </div>
+                                                            className={'flex flex-row justify-center items-center  '}
+                                                            onClick={(e) => {
+                                                                let el = (e.currentTarget as HTMLDivElement).parentElement!.parentElement!.querySelector('.report-details')!
+                                                                let arrow = e.currentTarget.querySelector('.up-arrow') ?? document.createElement('div')
+                                                                let text = e.currentTarget.querySelector('.more-text') ?? document.createElement('div')
+                                                                if (el.className.includes('h--0')) {
+                                                                    el.className = el.className.replace("h--0", "h--auto");
+                                                                    gsap.to(el, {
+                                                                        height: 'auto',
+                                                                        duration: '0.3'
+                                                                    });
+                                                                    (text as HTMLSpanElement).innerText = "پنهان کردن اطلاعات بیشتر"
+                                                                    arrow.classList.add('rotate-180')
+                                                                } else {
+                                                                    el.className = el.className.replace("h--auto", "h--0");
+                                                                    gsap.to(el, {
+                                                                        height: '0px',
+                                                                        duration: '0.3'
+                                                                    });
+                                                                    (text as HTMLSpanElement).innerText = "نمایش  اطلاعات بیشتر"
+                                                                    arrow.classList.remove('rotate-180')
+                                                                }
 
-                                                        <span className={'IranSansMedium text-primary  mr-2 more-text'}
-                                                              style={{
-                                                                  fontSize: '0.7rem'
-                                                              }}>پنهان کردن اطلاعات بیشتر</span>
-                                                    </div>
+
+                                                            }}
+                                                        >
+                                                            <div
+                                                                className={'w-9 h-9 border flex flex-row justify-center items-center border-deactive-border rounded-xl'}>
+                                                                <img src="/svg/more-arrow.svg"
+                                                                     className={'p-2 up-arrow transition-all duration-300 ease-in-out'}
+                                                                     alt=""/>
+                                                            </div>
+
+                                                            <span
+                                                                className={'IranSansMedium text-primary  mr-2 more-text'}
+                                                                style={{
+                                                                    fontSize: '0.7rem'
+                                                                }}>پنهان کردن اطلاعات بیشتر</span>
+                                                        </div>
+                                                        :
+                                                        <div></div>
+                                                    }
+
+
                                                     <span className={''} style={{
                                                         fontSize: '0.7rem'
                                                     }}>{new Intl.DateTimeFormat('fa-IR', {timeStyle: 'short'}).format(d)}</span>
                                                 </div>
+
 
                                             </div>
 
@@ -293,7 +328,7 @@ const Admin = () => {
                                      }
 
                                      if (currentOpenDialog === "sent") {
-                                         setDialogListData([])
+                                         // setDialogListData([])
                                          setCurrentOpenDialog('')
 
                                      } else {
@@ -312,17 +347,18 @@ const Admin = () => {
 
                                         <div>
                                             <div className={'flex flex-row justify-between items-center'}>
-                                                <div className={'flex w-2/3 flex-row justify-center items-center'}>
-                                                    <div className={'flex flex-row justify-end items-center'}
+                                                <div
+                                                    className={`flex w-2/3 flex-row justify-center items-center ${currentOpenDialog === 'sent' ? 'avatars-opened' : 'avatars-closed'}`}>
+                                                    <div className={'flex flex-row w-12 justify-start items-center'}
                                                          style={{
-                                                             transform: `translateX(${-(sentUsers.length / 4)}rem)`
+                                                             // transform: `translateX(${-(sentUsers.length / 4)}rem)`
                                                          }}>
 
                                                         {
                                                             sentUsers.slice(0, 3).map((avatar, index) => {
                                                                 return (
 
-                                                                    <div key={index + "av"}
+                                                                    <img src={'/img/no-image.png'} key={index + "av"}
                                                                          className={'w-6 h-6 rounded-full bg-yellow-300  border-secondary border-2 shrink-0'}
                                                                          style={{
                                                                              transform: `translateX(${index / 1.5}rem)`
@@ -406,7 +442,9 @@ const Admin = () => {
 
 
                                      if (currentOpenDialog === "unsent") {
-                                         setDialogListData([])
+                                         // setTimeout(()=>{
+                                         //     setDialogListData([])
+                                         // },)
                                          setCurrentOpenDialog('')
 
 
@@ -427,8 +465,9 @@ const Admin = () => {
                                         <div>
 
                                             <div className={'flex flex-row justify-between items-center'}>
-                                                <div className={'flex w-2/3 flex-row justify-center items-center'}>
-                                                    <div className={'flex flex-row w-12 justify-start items-center'}
+                                                <div
+                                                    className={`flex w-2/3 flex-row justify-center items-center  ${currentOpenDialog === 'unsent' ? 'avatars-opened' : 'avatars-closed '} `}>
+                                                    <div className={'flex flex-row w-12 justify-start items-center '}
                                                          style={{
                                                              // transform: `translateX(${-(unsentUsers.length/(unsentUsers.length-1))}rem)`
                                                          }}>
@@ -437,7 +476,7 @@ const Admin = () => {
                                                             unsentUsers.slice(0, 3).map((avatar, index) => {
                                                                 return (
 
-                                                                    <div key={index + "av"}
+                                                                    <img src={'/img/no-image.png'} key={index + "av"}
                                                                          className={'w-6 h-6 rounded-full bg-yellow-300  border-secondary border-2 shrink-0'}
                                                                          style={{
                                                                              transform: `translateX(${index / 1.5}rem)`
@@ -495,7 +534,7 @@ const Admin = () => {
                 style={{
                     left: '20px'
                 }}
-                className={` ${dialogListData.length ? '' : 'hidden pointer-events-none'} unsent-users-list px-3 pb-2 flex flex-col justify-start items-center fixed bottom-20  border border-deactive-border backdrop-blur-2xl rounded-2xl`}>
+                className={` ${currentOpenDialog ? ' animate__faster opacity-100 translate-y-0' : ' pointer-events-none animate__faster opacity-0 translate-y-10'} max-h-[13rem]  transition-all ease-in-out duration-300 users-list  overflow-scroll flex flex-col justify-start items-center fixed bottom-20  border border-deactive-border backdrop-blur-2xl rounded-2xl`}>
 
 
                 {dialogListData.map((item: any, index) => {
@@ -505,7 +544,7 @@ const Admin = () => {
                                     style={{
                                         animationDelay: (index * 100) + 'ms'
                                     }}
-                                    className={'w-full flex flex-row mt-2 border-b-4 border-white justify-start items-start animate__animated animate__fadeIn animate__faster  '}
+                                    className={'w-full flex flex-row h-10 shrink-0 flex flex-row justify-start px-2 items-center border-b-4 border-white justify-start items-start   '}
                                     onClick={() => {
                                         if (currentOpenDialog === 'sent') {
                                             setDialogListData([])

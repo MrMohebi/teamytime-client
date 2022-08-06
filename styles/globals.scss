@@ -5,7 +5,6 @@
 @import "fonts";
 
 
-
 html,
 body {
   @apply bg-secondary;
@@ -15,16 +14,18 @@ body {
   padding: 0;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
-#__next{
+
+#__next {
   height: 100%;
 }
+
 .wrap {
-  white-space: pre-wrap;      /* CSS3 */
+  white-space: pre-wrap; /* CSS3 */
   white-space: -moz-pre-wrap; /* Firefox */
-  white-space: -o-pre-wrap;   /* Opera 7 */
-  word-wrap: break-word;      /* IE */
+  white-space: -o-pre-wrap; /* Opera 7 */
+  word-wrap: break-word; /* IE */
 }
 
 a {
@@ -36,8 +37,8 @@ a {
   box-sizing: border-box;
 }
 
-.hide-scrollbar{
-  &::-webkit-scrollbar{
+.hide-scrollbar {
+  &::-webkit-scrollbar {
     display: none;
   }
 }
@@ -47,38 +48,99 @@ a {
 }
 
 
-
-
 @font-face {
   font-family: "IranSans";
   src: url("/assets/fonts/IranSansFarsiNums/IRANSans(FaNum).ttf");
 }
-.IranSans{
+
+.IranSans {
   font-family: IranSans;
 }
+
 @font-face {
   font-family: "IranSansMedium";
   src: url("/assets/fonts/IranSansFarsiNums/IRANSans(FaNum)_Medium.ttf");
 }
-.IranSansMedium{
+
+.IranSansMedium {
   font-family: IranSansMedium;
 }
+
 @font-face {
   font-family: "IranSansBlack";
   src: url("/assets/fonts/IranSansFarsiNums/IRANSans(FaNum)_Black.ttf");
 }
-.IranSansBlack{
+
+.IranSansBlack {
   font-family: IranSansBlack;
 }
+
 @font-face {
   font-family: "IranSansBold";
   src: url("/assets/fonts/IranSansFarsiNums/IRANSans(FaNum)_Bold.ttf");
 }
-.IranSansBold{
+
+.IranSansBold {
   font-family: IranSansBold;
 }
 
 
-*{
+* {
   user-select: none;
+}
+
+.avatars-opened {
+  position: relative;
+  overflow: hidden;
+
+  div{
+    animation-name: fadeOutUp;
+    animation-duration: 0.4s;
+    animation-direction: normal;
+  }
+
+  &:after {
+    content: "پنهان کردن";
+    width: 100%;
+    height: 100%;
+    background: red;
+    position: absolute;
+    @apply bg-primary-dark text-[0.6rem] flex flex-col justify-center items-center whitespace-nowrap text-text-blue-light IranSans;
+    animation-name: fadeInUp;
+    animation-duration: 0.4s;
+    animation-direction: normal;
+
+  }
+}
+
+
+$avatars-hide-animation-duration:0.4s;
+.avatars-closed {
+  position: relative;
+  overflow: hidden;
+
+  div{
+    animation-name: fadeInDown;
+    animation-duration: $avatars-hide-animation-duration;
+    animation-direction: normal;
+
+  }
+
+  &:after {
+
+
+    opacity: 0;
+    transition-delay: $avatars-hide-animation-duration;
+
+    content: "پنهان کردن";
+    width: 100%;
+    height: 100%;
+    background: red;
+    position: absolute;
+    @apply bg-primary-dark text-[0.6rem] flex flex-col justify-center items-center whitespace-nowrap text-text-blue-light IranSans;
+    animation-name: fadeOutDown;
+    animation-duration: $avatars-hide-animation-duration;
+    animation-direction: normal;
+
+  }
 }
