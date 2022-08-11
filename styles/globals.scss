@@ -144,3 +144,7 @@ $avatars-hide-animation-duration:0.4s;
 
   }
 }
+body
+{
+  overscroll-behavior-y: contain;
+}

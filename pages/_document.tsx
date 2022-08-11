@@ -7,14 +7,15 @@ class MyDocument extends Document {
                 <title>ساعت کاری</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
                 <meta name='theme-color' content={"#1D2731"}/>
-
+                <link rel="manifest" href="/manifest.json"/>
+                <link rel="apple-touch-icon" href="/images/icons/icon-72x72.png"></link>
             </Head>
             <body>
             <Main/>
             <NextScript/>
             </body>
         </Html>
-)
+    )
 }
 
 export default MyDocument
