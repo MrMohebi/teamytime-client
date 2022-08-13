@@ -8,6 +8,9 @@ import {useReactiveVar} from "@apollo/client";
 // @ts-ignore
 import moment from 'moment-jalaali'
 
+export const backDaysLimit = 7;
+
+
 const Header = (props: {
         setDay: Function,
         name?: string,
@@ -17,7 +20,6 @@ const Header = (props: {
     }) => {
 
 
-        const backDaysLimit = 7;
 
 
         const indicatorRef = useRef(null)
