@@ -8,6 +8,7 @@ export const AdminID = makeVar("")
 export const CurrentSelectedDate = makeVar("")
 export const LocalDays = makeVar([] as any)
 export const CompanyRequiredFields = makeVar([] as any)
+export const BaseURL = makeVar("https://time.m3m.dev/")
 
 
 

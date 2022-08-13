@@ -2,9 +2,8 @@ import React, {useEffect, useRef, useState} from 'react';
 
 import {useDebouncedCallback} from "use-debounce";
 
-import {AdminID, CurrentSelectedDate, UserId} from "../../../store/store";
-import {getReportsForAdmin, getUser, getUserReports, getUserReportsRange} from "../../../Requests/Requests";
-import {ifError} from "assert";
+import {AdminID, BaseURL, CurrentSelectedDate, UserId} from "../../../store/store";
+import {getReportsForAdmin, getUserReportsRange} from "../../../Requests/Requests";
 import {useReactiveVar} from "@apollo/client";
 // @ts-ignore
 import moment from 'moment-jalaali'
@@ -13,7 +12,8 @@ const Header = (props: {
         setDay: Function,
         name?: string,
         role?: string,
-        avatarURL?: string
+        profileURL?: string,
+
     }) => {
 
 
@@ -80,7 +80,7 @@ const Header = (props: {
                     if (res.data) {
                         let datesArr = [] as any;
 
-                        Object.keys(res.data).forEach((date, index) => {
+                        Object.keys(res.data).forEach((date) => {
                             datesArr.push(res.data[date])
                         })
                         setLocalDays(datesArr)
@@ -271,7 +271,9 @@ const Header = (props: {
 
                     <div className={'flex flex-row justify-center items-center'}>
                         <div className={'h-14 w-14 rounded-xl bg-primary overflow-hidden'}>
-                            <img src="/img/no-image.png" alt="Arnoya" className={'w-full h-full block object-cover'}/>
+                            <img src={`${props.profileURL ? BaseURL() + props.profileURL : " /img/no-image.png"}`}
+                                 alt="Arnoya"
+                                 className={'w-full h-full block object-cover'}/>
                         </div>
                         <div className={'flex h-full flex-col justify-around items-start mr-3'}>
                             <span className={'block IranSansMedium text-md text-white'}>{props.name ?? ""}</span>

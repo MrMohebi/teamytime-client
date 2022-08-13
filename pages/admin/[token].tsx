@@ -3,7 +3,7 @@ import {getReportsForAdmin} from "../../Requests/Requests";
 import Header from "../../components/utilitis/Header/Header";
 import {ButtonBase, CircularProgress} from "@material-ui/core";
 import {useRouter} from "next/router";
-import {AdminID} from "../../store/store";
+import {AdminID, BaseURL} from "../../store/store";
 
 // @ts-ignore
 import moment from 'moment-jalaali'
@@ -165,8 +165,10 @@ const Admin = () => {
                                                         <div
                                                             className={'h-12 w-12 rounded-xl bg-primary overflow-hidden'}>
                                                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                            <img src="/img/no-image.png" alt="Arnoya"
-                                                                 className={'w-full h-full block object-cover'}/>
+                                                            <img
+                                                                src={`${report.user.profile ? BaseURL() + report.user.profile : "/img/no-image.png"} `}
+                                                                alt="Arnoya"
+                                                                className={'w-full h-full block object-cover'}/>
                                                         </div>
                                                         <div
                                                             className={'flex h-full flex-col justify-around items-start mr-3'}>
@@ -358,11 +360,13 @@ const Admin = () => {
                                                             sentUsers.slice(0, 3).map((avatar, index) => {
                                                                 return (
 
-                                                                    <img src={'/img/no-image.png'} key={index + "av"}
-                                                                         className={'w-6 h-6 rounded-full bg-yellow-300  border-secondary border-2 shrink-0'}
-                                                                         style={{
-                                                                             transform: `translateX(${index / 1.5}rem)`
-                                                                         }}/>
+                                                                    <img
+                                                                        src={avatar.profile ? BaseURL() + avatar.profile : '/img/no-image.png'}
+                                                                        key={index + "av"}
+                                                                        className={'w-6 h-6 rounded-full bg-yellow-300  border-secondary border-2 shrink-0'}
+                                                                        style={{
+                                                                            transform: `translateX(${index / 1.5}rem)`
+                                                                        }}/>
                                                                 )
 
 
@@ -534,7 +538,7 @@ const Admin = () => {
                 style={{
                     left: '20px'
                 }}
-                className={` ${currentOpenDialog ? ' animate__faster opacity-100 translate-y-0' : ' pointer-events-none animate__faster opacity-0 translate-y-10'} max-h-[13rem]  transition-all ease-in-out duration-300 users-list  overflow-scroll flex flex-col justify-start items-center fixed bottom-20  border border-deactive-border backdrop-blur-2xl rounded-2xl`}>
+                className={` ${currentOpenDialog ? ' animate__faster opacity-100 translate-y-0' : ' pointer-events-none animate__faster opacity-0 translate-y-10'} max-h-[13rem] hide-scrollbar  transition-all ease-in-out duration-300 users-list  overflow-scroll flex flex-col justify-start items-center fixed bottom-20  border border-deactive-border backdrop-blur-2xl rounded-2xl`}>
 
 
                 {dialogListData.map((item: any, index) => {
@@ -559,7 +563,8 @@ const Admin = () => {
 
                                     }}
                         >
-                            <img src="/img/no-image.png" className={'rounded-xl h-7 w-7'} alt=""/>
+                            <img src={item.profile ? BaseURL() + item.profile : "/img/no-image.png"}
+                                 className={'rounded-xl h-7 w-7'} alt=""/>
                             <span
                                 className={'text-white mx-3 whitespace-nowrap IranSansMedium'}>{item.name} </span>
                         </ButtonBase>

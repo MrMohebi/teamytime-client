@@ -32,6 +32,8 @@ const Userid = () => {
     const [role, setRole] = useState("");
     const [dayData, setDayData] = useState(Object);
 
+
+    const [profileURL, setProfileURL] = useState("")
     const [day, setDay] = useState("");
     const router = useRouter();
 
@@ -49,12 +51,15 @@ const Userid = () => {
     useEffect(() => {
         if (UserId())
             getUser(UserId()).then((value) => {
+
                 if (value.data) {
                     setName(value.data.name)
                     setRole(value.data.role)
+                    setProfileURL(value.data.profile)
                 }
             })
     }, [UserId()]);
+
 
     useEffect(() => {
 
@@ -80,6 +85,13 @@ const Userid = () => {
             setCompanyGot(true)
 
         })
+
+        setTimeout(() => {
+            console.clear()
+            console.log('what are you looking for here bro?')
+        }, 400)
+
+
     }, [])
 
     const onDayChange = (day: string) => {
@@ -162,7 +174,7 @@ const Userid = () => {
 
                 <div className="bg-secondary">
 
-                    <Header name={name} setDay={onDayChange} role={role}/>
+                    <Header profileURL={profileURL} name={name} setDay={onDayChange} role={role}/>
 
                     {loadingFragment ?
 
