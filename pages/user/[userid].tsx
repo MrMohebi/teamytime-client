@@ -49,6 +49,7 @@ const Userid = () => {
     const [day, setDay] = useState("");
 
     const reactiveCurrentDay = useReactiveVar(CurrentDay)
+    const reactiveUserLocalDays = useReactiveVar(UserLocalDays)
     const router = useRouter();
 
     const {userid} = router.query
@@ -67,6 +68,15 @@ const Userid = () => {
 
 
     }, [reactiveCurrentDay]);
+
+    useEffect(() => {
+
+        console.log(reactiveUserLocalDays)
+
+        if (reactiveUserLocalDays)
+            console.log(document.querySelector('.header-day'));
+        fullDate(0)
+    }, [reactiveUserLocalDays]);
 
 
     useEffect(() => {
@@ -360,9 +370,12 @@ const Userid = () => {
                                 <div className={'shrink-0 w-full'}></div>
 
                                 {
-                                    Object.keys(UserLocalDays()).map((day, index) => {
+                                    Object.keys(reactiveUserLocalDays).map((day, index) => {
 
                                         if (typeof UserLocalDays()[day] === 'object') {
+
+                                            if (day === fullDate(0) && !CurrentDay())
+                                                CurrentDay('d-' + index)
 
                                             return <div
                                                 className={'shrink-0 reports-day w-full h-full report-el overflow-scroll snap-center'}
