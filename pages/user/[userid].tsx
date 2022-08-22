@@ -1,13 +1,28 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useRouter} from "next/router";
 import {getCompany, getUser, getUserReports} from "../../Requests/Requests";
-import {CompanyId, CompanyName, CompanyRequiredFields, UserId, UserLocalDays} from "../../store/store";
+import {
+    CompanyId,
+    CompanyName,
+    CompanyRequiredFields, CompanyTextFields,
+    CompanyTimeFields, CoolDown, CurrentDay,
+    UserId,
+    UserLocalDays
+} from "../../store/store";
 import Header, {backDaysLimit} from "../../components/utilitis/Header/Header";
 import {CircularProgress} from "@material-ui/core";
 import NotYet from "../../components/DayFragments/NotYet";
 import Passed from "../../components/DayFragments/Passed";
 import CanEdit from "../../components/DayFragments/CanEdit";
+import gsap from "gsap";
+import ScrollTrigger from "gsap/dist/ScrollTrigger";
 import {useDebouncedCallback} from "use-debounce";
+import {useSwipeable} from "react-swipeable";
+import {useReactiveVar} from "@apollo/client";
+import {react} from "@babel/types";
+import {GoToThisDay} from "../../components/GoToThis";
+
+gsap.registerPlugin(ScrollTrigger)
 
 const Userid = () => {
 
@@ -15,13 +30,9 @@ const Userid = () => {
     const [loadingFragment, setLoadingFragment] = useState(true);
 
 
-    //report Data
-    const [remainSeconds, setRemainSeconds] = useState(0);
     const [workHours, setWorkHours] = useState(0);
     const [trainingHours, setTrainingHours] = useState(0);
     const [whatDidUserDoInReport, setWhatDidUserDoInReport] = useState("");
-    const [reportSent, setReportSent] = useState(false);
-    const [reportHasData, setReportHasData] = useState(false);
     const [companyGot, setCompanyGot] = useState(false);
 
     const [textFields, setTextFields] = useState([] as any[]);
@@ -36,6 +47,8 @@ const Userid = () => {
 
     const [profileURL, setProfileURL] = useState("")
     const [day, setDay] = useState("");
+
+    const reactiveCurrentDay = useReactiveVar(CurrentDay)
     const router = useRouter();
 
     const {userid} = router.query
@@ -48,11 +61,19 @@ const Userid = () => {
         }
     }, [userid])
 
+    useEffect(() => {
+
+        GoToThisDay(CurrentDay())
+
+
+    }, [reactiveCurrentDay]);
+
 
     useEffect(() => {
+
+
         if (UserId())
             getUser(UserId()).then((value) => {
-
                 if (value.data) {
                     setName(value.data.name)
                     setRole(value.data.role)
@@ -66,6 +87,8 @@ const Userid = () => {
 
         getCompany(CompanyName()).then((res) => {
             CompanyId(res.data.id)
+            CompanyTextFields(res.data.textFields)
+            CompanyTimeFields(res.data.timeFields)
 
             if (res.data.textFields) {
 
@@ -128,67 +151,78 @@ const Userid = () => {
     const dayCame = (day: any) => {
 
 
-        setWorkHours(0)
-        setTrainingHours(0)
-        setWhatDidUserDoInReport("")
+        let editedDay = {};
+
+        if (day.hasOwnProperty('canEdit')) {
+
+            editedDay = day;
 
 
-        setDayData(day)
+            setWorkHours(0)
+            setTrainingHours(0)
+            setWhatDidUserDoInReport("")
 
 
-        if (day) {
-            setRemainSeconds(day.remainTime)
-            setLoadingFragment(false)
+            setDayData(day)
 
-            if (day.createdAt) {
-                setReportHasData(true)
-                setReportSent(true)
 
-                //hours
+            if (day) {
+                setLoadingFragment(false)
 
-                let workHour;
-                if (day.timeFields)
-                    workHour = Object.keys(day.timeFields).map((timeField) => {
-                        if (day.timeFields[timeField].title === 'ساعت کار') {
-                            return day.timeFields[timeField].value
-                        }
-                    })
+                if (day.createdAt) {
+                    day.hasData = true;
 
-                let trainingHour;
-                if (day.timeFields)
-                    trainingHour = Object.keys(day.timeFields).map((timeField) => {
-                        if (day.timeFields[timeField].title === 'ساعت آموزش') {
-                            return day.timeFields[timeField].value
-                        }
-                    })
+                    //hours
 
-                //details
-                let whatDidUserDo;
-                if (day.textFields)
+                    let workHour;
+                    if (day.timeFields)
+                        workHour = Object.keys(day.timeFields).map((timeField) => {
+                            if (day.timeFields[timeField].title === 'ساعت کار') {
+                                return day.timeFields[timeField].value
+                            }
+                        })
 
-                    whatDidUserDo = Object.keys(day.textFields).map((textField) => {
-                        if (day.textFields[textField].title === "شرح اقدامات") {
-                            return day.textFields[textField].value
-                        }
-                    })
+                    day.workHour = workHour;
 
-                if (workHour)
-                    setWorkHours(workHour[0])
-                if (trainingHour)
-                    setTrainingHours(trainingHour[0])
-                if (whatDidUserDo)
-                    setWhatDidUserDoInReport(whatDidUserDo[0])
+                    let trainingHour;
+                    if (day.timeFields)
+                        trainingHour = Object.keys(day.timeFields).map((timeField) => {
+                            if (day.timeFields[timeField].title === 'ساعت آموزش') {
+                                return day.timeFields[timeField].value
+                            }
+                        })
+
+                    day.trainingHour = workHour;
+
+                    //details
+                    let whatDidUserDo;
+                    if (day.textFields)
+
+                        whatDidUserDo = Object.keys(day.textFields).map((textField) => {
+                            if (day.textFields[textField].title === "شرح اقدامات") {
+                                return day.textFields[textField].value
+                            }
+                        })
+
+
+                } else {
+                    day.hasData = false;
+                }
 
             } else {
-                setReportHasData(false)
+                day.hasData = false;
             }
 
-        } else {
-            setReportSent(false)
+
+            return editedDay
         }
 
 
+        return editedDay
+
     }
+
+
     const fullDate = (yearOffset: number) => {
         const d = new Date()
         d.setDate(d.getDate() + yearOffset)
@@ -200,7 +234,8 @@ const Userid = () => {
         }).format(d).split('/'))
 
         let string = arr[2] + "/" + (parseInt(arr[0]) < 10 ? "0" + arr[0] : arr[0]) + "/" + (parseInt(arr[1]) < 10 ? "0" + arr[1] : arr[1])
-        return string.replaceAll(/[a-zA-Z ]/g, '')
+        console.log(string.toString())
+        return string.toString().replace(/[a-zA-Z ]/g, '')
     }
 
 
@@ -228,34 +263,151 @@ const Userid = () => {
     }
 
 
+    const reportsScrollDebounce = useDebouncedCallback((headerDay) => {
+        if (document.getElementById('header-scroll-space-1')) {
+            let sOffset = (-document.getElementById('header-scroll-space-1')!.getBoundingClientRect().width / 2) + (headerDay.offsetLeft + (headerDay.getBoundingClientRect().width / 2))
+            if (document.getElementById("d-scroller")) {
+                document.getElementById("d-scroller")!.scrollTo(sOffset, 0);
+            }
+        }
+
+
+    }, 300)
+    const reportsGsapInit = useRef<boolean>(false)
+    useEffect(() => {
+
+        if (!reportsGsapInit.current)
+            if (document.querySelector('#reports-scroller')) {
+                reportsGsapInit.current = true;
+            }
+
+    });
+
+
+    const coolDown = useRef(false);
+    const changeCoolDown = useDebouncedCallback(() => {
+        coolDown.current = false;
+    }, 1000)
+
+
+    const scrollerStopHandler = useDebouncedCallback(() => {
+    }, 100)
+
+
+    const handlers = useSwipeable({
+        onSwipedRight: (eventData) => {
+            let nextID = 'd-' + (parseInt(CurrentDay().split('-')[1]) + 1)
+
+
+            if ((document.getElementById(nextID))) {
+                console.log('yep there is')
+                CurrentDay(nextID)
+                //
+                //
+                // document.getElementById('d-scroller')!.scrollBy(-(document.getElementById('d-scroller')!.childNodes[1] as HTMLDivElement).getBoundingClientRect().width, 0)
+                // document.getElementById('reports-scroller')!.scrollBy(-(document.getElementById('reports-scroller')!.childNodes[1] as HTMLDivElement).getBoundingClientRect().width, 0)
+            }
+        },
+        onSwipedLeft: (eventData) => {
+
+
+            let nextID = 'd-' + (parseInt(CurrentDay().split('-')[1]) - 1)
+
+            if ((document.getElementById(nextID))) {
+                console.log('yep there is')
+                CurrentDay(nextID)
+                //
+                //
+                // document.getElementById('d-scroller')!.scrollBy(-(document.getElementById('d-scroller')!.childNodes[1] as HTMLDivElement).getBoundingClientRect().width, 0)
+                // document.getElementById('reports-scroller')!.scrollBy(-(document.getElementById('reports-scroller')!.childNodes[1] as HTMLDivElement).getBoundingClientRect().width, 0)
+            }
+
+            if ((document.getElementById('d-scroller'))) {
+                // document.getElementById('d-scroller')!.scrollBy((document.getElementById('d-scroller')!.childNodes[1] as HTMLDivElement).getBoundingClientRect().width, 0)
+                // document.getElementById('reports-scroller')!.scrollBy((document.getElementById('reports-scroller')!.childNodes[1] as HTMLDivElement).getBoundingClientRect().width, 0)
+            }
+        },
+    });
     if (companyGot)
         if (userid) {
             return (
 
 
-                <div className="bg-secondary">
+                <div className="bg-secondary w-full overflow-scroll h-full">
 
-                    <Header profileURL={profileURL} name={name} setDay={onDayChange} role={role}/>
 
-                    {loadingFragment ?
+                    <div className={'h-20 text-white w-full bg-red mt-32 contents pointer-events-auto'} {...handlers} >
+                        <Header
+                            loading={loadingFragment}
+                            profileURL={profileURL}
+                            name={name} setDay={onDayChange} role={role}/>
 
-                        <div
-                            className={'animate__animated animate__fadeIn animate__fast  w-full mt-20 flex flex-col justify-center items-center'}>
-                            <CircularProgress size={50}/>
-                        </div>
 
-                        :
-                        remainSeconds > 3600 * 39 ?
-                            <NotYet remainSeconds={remainSeconds - (39 * 3600)}/>
+                        {loadingFragment ?
+
+                            <div
+                                className={'animate__animated animate__fadeIn animate__fast  w-full mt-20 flex flex-col justify-center items-center'}>
+                                <CircularProgress size={50}/>
+                            </div>
+
                             :
-                            remainSeconds < 0 ?
-                                <Passed dayData={dayData} saved={reportHasData} workHours={workHours}
-                                        trainingHours={trainingHours} whatDidUserDo={whatDidUserDoInReport}/>
-                                :
-                                <CanEdit timeFields={timeFields} textFields={textFields} dayData={dayData}
-                                         remainSeconds={remainSeconds}/>
 
-                    }
+
+                            <div id={'reports-scroller'}
+
+                                 className={'flex flex-row scroll-smooth justify-start items-start w-full pt-48 h-full snap-x overflow-x-hidden snap-mandatory'}
+                                 onScroll={() => {
+                                     scrollerStopHandler()
+                                 }}
+                            >
+                                <div className={'shrink-0 w-full'}></div>
+
+                                {
+                                    Object.keys(UserLocalDays()).map((day, index) => {
+
+                                        if (typeof UserLocalDays()[day] === 'object') {
+
+                                            return <div
+                                                className={'shrink-0 reports-day w-full h-full report-el overflow-scroll snap-center'}
+                                                id={'r-d-' + index}
+                                                key={index}>
+
+                                                {UserLocalDays()[day].remainTime > 3600 * 39 ?
+                                                    <NotYet
+                                                        remainSeconds={UserLocalDays()[day].remainTime - (39 * 3600)}/>
+                                                    :
+                                                    UserLocalDays()[day].remainTime < 0 ?
+                                                        <Passed dayData={UserLocalDays()[day]}
+                                                                saved={(!!UserLocalDays()[day].createdAt)}
+                                                                workHours={6}
+                                                                trainingHours={UserLocalDays()[day].trainingHours}
+                                                                whatDidUserDo={UserLocalDays()[day].whatDidUserDoInReport}/>
+                                                        :
+                                                        <div>
+                                                            <CanEdit companyTimeFields={CompanyTimeFields()}
+                                                                     companyTextFields={CompanyTextFields()}
+                                                                     dayData={UserLocalDays()[day]}
+                                                                     remainSeconds={UserLocalDays()[day].remainTime}/>
+                                                        </div>
+
+
+                                                }
+
+                                            </div>
+
+                                        }
+
+                                    })
+
+                                }
+                                <div className={'shrink-0 w-full'}></div>
+
+
+                            </div>
+
+
+                        }
+                    </div>
 
 
                 </div>

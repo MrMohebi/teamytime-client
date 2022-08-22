@@ -1,31 +1,43 @@
 import React, {useEffect, useRef, useState} from 'react';
 
 import {useDebouncedCallback} from "use-debounce";
-
-import {AdminID, BaseURL, CurrentSelectedDate, UserId} from "../../../store/store";
+import ScrollTrigger from 'gsap/dist/ScrollTrigger'
+import gsap from 'gsap'
+import {AdminID, BaseURL, CoolDown, CurrentDay, CurrentSelectedDate, UserId} from "../../../store/store";
 import {getReportsForAdmin, getUserReportsRange} from "../../../Requests/Requests";
 import {useReactiveVar} from "@apollo/client";
 // @ts-ignore
 import moment from 'moment-jalaali'
+import {transformOperation} from "@apollo/client/link/utils";
+import {CircularProgress} from "@material-ui/core";
+import {LOGICAL_OPERATORS, react} from "@babel/types";
+// @ts-ignore
+import $ from 'jquery'
+import {GoToThisDay} from "../../GoToThis";
 
 export const backDaysLimit = 7;
 
+
+gsap.registerPlugin(ScrollTrigger)
 
 const Header = (props: {
         setDay: Function,
         name?: string,
         role?: string,
         profileURL?: string,
+        loading?: boolean
+        admin?: boolean
+
 
     }) => {
-
-
 
 
         const indicatorRef = useRef(null)
         const scrollerRef = useRef<HTMLDivElement>(null)
         const [currentDay, setCurrentDay] = useState("");
         const [currentMonth, setCurrentMonth] = useState("");
+
+        const reactiveCurrentDay = useReactiveVar(CurrentDay)
 
 
         const [goToPosition, setGoToPosition] = useState('');
@@ -50,10 +62,38 @@ const Header = (props: {
 
             setCurrentMonth(getMonthNameFromNow(0));
 
-            scrollToToday()
 
         }, [])
 
+        useEffect(() => {
+
+            if (!props.loading)
+                setTimeout(() => {
+                    scrollToToday()
+
+                }, 300)
+
+
+        }, [props.loading]);
+
+
+        useEffect(() => {
+
+            console.log('day changed in header')
+            if (props.admin) {
+                GoToThisDay(CurrentDay())
+            }
+
+            let monthOfDay = currentMonth;
+            if (document.getElementById(CurrentDay()))
+                if (document.getElementById(CurrentDay()))
+                    document.getElementById(CurrentDay())!.childNodes.forEach((child) => {
+                        if ((child as HTMLDivElement).classList.contains('month-of-day')) {
+                            monthOfDay = (child as HTMLDivElement).innerText
+                        }
+                    })
+            setCurrentMonth(monthOfDay)
+        }, [reactiveCurrentDay]);
         useEffect(() => {
 
 
@@ -94,19 +134,15 @@ const Header = (props: {
         }, [UserId()]);
 
 
-        useEffect(() => {
-
-            scrollToToday()
-        }, [localDays]);
-
-
         const getDayNameFromNow = (dayOffset: number) => {
             const d = new Date()
             d.setDate(d.getDate() + dayOffset)
-            return (new Intl.DateTimeFormat('fa-IR', {
-                dateStyle: 'full',
-                timeStyle: 'short'
-            }).format(d).split(",")[1].split('،')[0])
+
+            let daysE = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            let days = ['یکشنبه', 'دوشنبه', 'سه شنبه', 'جهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
+
+            let dayName = days[d.getDay()];
+            return dayName
         }
 
         const getFullDateFromNow = (dayOffset: number) => {
@@ -150,7 +186,7 @@ const Header = (props: {
             }).format(d).split('/'))
 
             let string = arr[2] + "/" + (parseInt(arr[0]) < 10 ? "0" + arr[0] : arr[0]) + "/" + (parseInt(arr[1]) < 10 ? "0" + arr[1] : arr[1])
-            return string.replaceAll(/[a-zA-Z ]/g, '')
+            return string.replace(/[a-zA-Z ]/g, '')
         }
 
         const debouncedScrollHandler = useDebouncedCallback(
@@ -178,46 +214,8 @@ const Header = (props: {
 
 
                         if (Math.abs(middleOfTheChild - middleOfIndicator) < 10) {
-                            let itemClassArray = (item.querySelector('.day-indicator')! as HTMLDivElement).className.split('bg')
-                            if (itemClassArray.length > 1) {
-                                setIndicatorColorClass('bg' + itemClassArray[1])
-                            }
 
 
-                            setCurrentDay(item.querySelector('.date-of-day')!.innerHTML);
-
-
-                            let m = moment(fullDate(0), 'jYYYY/jMM/jDD')
-                            let ma = moment(item.querySelector('.date-of-day')!.innerHTML, 'jYYYY/jM/jD')
-
-                            if (fullDate(0) !== item.querySelector('.date-of-day')!.innerHTML) {
-                                if (m.isAfter(ma)) {
-                                    setGoToPosition('left')
-
-                                } else {
-                                    setGoToPosition('right')
-                                }
-                            } else {
-                                setGoToPosition('')
-
-                            }
-
-
-                            if (item.querySelector('.date-of-day')!.innerHTML === fullDate(0)) {
-                                setGoToPosition('')
-                            }
-
-
-                            let monthOfDay = "";
-                            try {
-                                monthOfDay = ((elChildren[index].querySelector('.month-of-day')) as HTMLDivElement).innerHTML
-
-                            } catch (e) {
-
-                            }
-
-                            if (currentMonth !== monthOfDay)
-                                setCurrentMonth(monthOfDay)
                         }
                     })
 
@@ -233,41 +231,161 @@ const Header = (props: {
 
 
         const scrollToToday = () => {
-
-
             if (scrollerRef.current) {
-                scrollerRef.current.style.setProperty('scroll-behavior', 'initial', 'important')
-
-
-                let halfSpace = scrollerRef.current.getBoundingClientRect().width / 2
-                let rest = 0;
-
-                scrollerRef.current.querySelectorAll('.header-day').forEach((item, childIndex) => {
-
-
+                let children = scrollerRef.current.querySelectorAll('.header-day')
+                children.forEach((item, childIndex) => {
                     if (item.querySelector('.date-of-day')!.innerHTML === fullDate(0)) {
-
-                        let childrenLength = Array.from(scrollerRef.current!.querySelectorAll('.header-day')).slice(0, childIndex).length
-                        childrenLength *= item.getBoundingClientRect().width
-                        rest = childrenLength
-                        rest += item.getBoundingClientRect().width / 2
+                        CurrentDay(item.id)
+                        // GoToThisDay(children[childIndex].id)
                     }
 
                 })
 
-                scrollerRef.current.scrollTo(-(rest + halfSpace), 0)
-                scrollerRef.current.style.setProperty('scroll-behavior', '')
+
             }
 
 
         }
 
 
+        //gsap stuff
+
+
+        const debouncedGsapScroll = useDebouncedCallback((index, el) => {
+                setCurrentDay(el.querySelector('.date-of-day').innerHTML)
+                let m = moment(fullDate(0), 'jYYYY/jMM/jDD')
+                let ma = moment(el.querySelector('.date-of-day').innerHTML, 'jYYYY/jM/jD')
+
+
+                if (fullDate(0) !== el.querySelector('.date-of-day').innerHTML) {
+                    if (m.isAfter(ma)) {
+                        setGoToPosition('left')
+
+                    } else {
+                        setGoToPosition('right')
+                    }
+                } else {
+                    setGoToPosition('')
+                }
+
+                if (el.querySelector('.date-of-day')!.innerHTML === fullDate(0)) {
+                    setGoToPosition('')
+                }
+
+
+                let monthOfDay = "";
+                try {
+                    monthOfDay = ((el.querySelector('.month-of-day')) as HTMLDivElement).innerHTML
+
+                } catch (e) {
+
+                }
+
+                if (currentMonth !== monthOfDay)
+                    setCurrentMonth(monthOfDay)
+
+
+                if (document.querySelector("#reports-scroller"))
+                    document.querySelector("#reports-scroller")!.scrollTo((document.querySelector('#reports-scroller')!.childNodes[index] as HTMLDivElement).offsetLeft, 0)
+
+
+            }, 100
+        )
+
+
+        const due = useDebouncedCallback(() => {
+
+            if (scrollerRef.current)
+                scrollerRef.current.childNodes.forEach((child, index) => {
+                    if ((child as HTMLDivElement).classList.contains('header-day')) {
+
+                        console.log(index)
+                        if (index === 8)
+                            debouncedGsapScroll(index, child)
+
+                        // gsap.to(child, {
+                        //
+                        //     onComplete: (e) => {
+                        //
+                        //         debouncedGsapScroll(index, child)
+                        //
+                        //     },
+                        //     onReverseComplete: () => {
+                        //         if (scrollerRef.current)
+                        //             debouncedGsapScroll(index + 1, scrollerRef.current.childNodes[index + 1])
+                        //
+                        //     },
+                        //
+                        //     scrollTrigger: {
+                        //         scroller: '#d-scroller',
+                        //         trigger: child as any,
+                        //         start: 'top center',
+                        //         end: '20px center',
+                        //         horizontal: true,
+                        //         // markers: true,
+                        //         scrub: true
+                        //     }
+                        // })
+                    }
+
+                })
+        }, 1000)
+
+
+        useEffect(() => {
+            due()
+        }, [localDays]);
+
+
+        // const goToThisDay = (id) => {
+        //
+        //     const scroller = $('#d-scroller')[0]
+        //     console.log(scroller)
+        //     if (scroller) {
+        //         try {
+        //             let halfSpace = scroller.getBoundingClientRect().width / 2
+        //             let rest = 0;
+        //             scroller.scrollTo(0, 0)
+        //
+        //             scroller.querySelectorAll('.header-day').forEach((item, childIndex) => {
+        //
+        //
+        //                 if (id === 'd-' + childIndex) {
+        //
+        //                     let childrenLength = Array.from(scroller!.querySelectorAll('.header-day')).slice(0, childIndex).length
+        //                     childrenLength *= item.getBoundingClientRect().width
+        //                     rest = childrenLength
+        //                     rest += item.getBoundingClientRect().width / 2
+        //                 }
+        //
+        //             })
+        //
+        //             scrollerRef.current.scrollTo(-(rest + halfSpace), 0)
+        //
+        //
+        //         } catch (e) {
+        //
+        //         }
+        //
+        //
+        //     }
+        //
+        // }
+
+
         return (
-            <div className={'w-full  bg-primary-dark sticky  z-30'} style={{
-                top: '-4.5rem',
+            <div className={'w-full  bg-primary-dark fixed top-0 left-0  z-30'} style={{
+                // top: '-4.5rem',
                 boxShadow: '0 11px 11px #151e27'
             }}>
+
+                {
+                    <div
+                        className={`${props.loading ? 'opacity-100' : 'opacity-0 pointer-events-none'} delay-1000 transition-all duration-500 bg-background fixed top-0 left-0 z-50 w-full h-full  w-full flex flex-col justify-center items-center`}>
+                        <CircularProgress size={50}/>
+                    </div>
+
+                }
 
                 <div className={'w-full flex flex-row justify-between items-center px-5 pt-4'}>
 
@@ -323,12 +441,17 @@ const Header = (props: {
                     >
                     </div>
 
-                    <div dir={'ltr'} onScroll={debouncedScrollHandler}
-                         className={'w-full flex flex-row-reverse   relative items-center flex-1 flex-grow snap-x snap-mandatory overflow-x-auto relative hide-scrollbar scroll-smooth'}
+
+                    <div dir={'ltr'} id={'d-scroller'} onScroll={(e) => {
+
+                        console.log(e.currentTarget.scrollLeft)
+                        debouncedScrollHandler(e)
+                    }}
+                         className={'w-full pointer-events-none flex flex-row-reverse relative items-center flex-1 flex-grow snap-x snap-mandatory overflow-x-scroll relative hide-scrollbar scroll-smooth'}
                          ref={scrollerRef}>
 
 
-                        <div className={'w-full shrink-0'}></div>
+                        <div id={'header-scroll-space-1'} className={'w-full shrink-0'}></div>
 
 
                         {
@@ -345,43 +468,44 @@ const Header = (props: {
                                     <div key={index}
 
                                          onClick={(e) => {
-                                             if (scrollerRef.current) {
-                                                 try {
-                                                     let halfSpace = scrollerRef.current.getBoundingClientRect().width / 2
-                                                     let rest = 0;
-                                                     scrollerRef.current.scrollTo(0, 0)
-
-                                                     scrollerRef.current.querySelectorAll('.header-day').forEach((item, childIndex) => {
-
-
-                                                         if (e.currentTarget.id === 'd-' + childIndex) {
-
-                                                             let childrenLength = Array.from(scrollerRef.current!.querySelectorAll('.header-day')).slice(0, childIndex).length
-                                                             childrenLength *= item.getBoundingClientRect().width
-                                                             rest = childrenLength
-                                                             rest += item.getBoundingClientRect().width / 2
-                                                         }
-
-                                                     })
-
-                                                     scrollerRef.current.scrollTo(-(rest + halfSpace), 0)
-
-
-                                                 } catch (e) {
-
-                                                 }
-
-
-                                             }
+                                             CurrentDay(e.currentTarget.id)
+                                             // if (scrollerRef.current) {
+                                             //     try {
+                                             //         let halfSpace = scrollerRef.current.getBoundingClientRect().width / 2
+                                             //         let rest = 0;
+                                             //         scrollerRef.current.scrollTo(0, 0)
+                                             //
+                                             //         scrollerRef.current.querySelectorAll('.header-day').forEach((item, childIndex) => {
+                                             //
+                                             //
+                                             //             if (e.currentTarget.id === 'd-' + childIndex) {
+                                             //
+                                             //                 let childrenLength = Array.from(scrollerRef.current!.querySelectorAll('.header-day')).slice(0, childIndex).length
+                                             //                 childrenLength *= item.getBoundingClientRect().width
+                                             //                 rest = childrenLength
+                                             //                 rest += item.getBoundingClientRect().width / 2
+                                             //             }
+                                             //
+                                             //         })
+                                             //
+                                             //         scrollerRef.current.scrollTo(-(rest + halfSpace), 0)
+                                             //
+                                             //
+                                             //     } catch (e) {
+                                             //
+                                             //     }
+                                             //
+                                             //
+                                             // }
 
 
                                          }}
                                          id={'d-' + indx}
-                                         className={'w-16 relative transition-all duration-300 ease-in-out header-day shrink-0 pt-1.5  h-18 snap-center flex flex-col justify-start items-center text-text-blue-light'}>
+                                         className={'pointer-events-auto w-16 relative transition-all duration-300 ease-in-out header-day shrink-0 pt-1.5  h-18 snap-center flex flex-col justify-start items-center text-text-blue-light '}>
                                     <span className={'hidden month-of-day'}
                                           id={'month-' + index}>{getFullDateFromNow(index).split(',')[0].split(' ')[1]}</span>
                                         <span className={'hidden date-of-day'}
-                                              id={'month-' + index}>{fullDate(index)}</span>
+                                              id={'date-' + fullDate(index)}>{fullDate(index)}</span>
 
                                         <span className={"IranSans text-sm "}>{getDayNameFromNow(index)}</span>
 

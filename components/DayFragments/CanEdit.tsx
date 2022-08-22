@@ -5,15 +5,15 @@ import {ButtonBase, CircularProgress} from "@material-ui/core";
 import moment from 'moment-jalaali'
 import TextField from "../utilitis/TextField/TextField";
 import {sendReport} from "../../Requests/Requests";
-import {CompanyId, CompanyRequiredFields, CurrentSelectedDate, UserId} from "../../store/store";
+import {CompanyId, CompanyRequiredFields, CompanyTimeFields, CurrentSelectedDate, UserId} from "../../store/store";
 import Swal from "sweetalert2";
 import {json} from "stream/consumers";
 
 const CanEdit = (props: {
     remainSeconds: number,
     dayData: { textFields: [any], timeFields: [any] },
-    textFields: any[],
-    timeFields: any[]
+    companyTimeFields: any,
+    companyTextFields: any,
 }) => {
 
 
@@ -33,6 +33,7 @@ const CanEdit = (props: {
     moment.loadPersian()
     useEffect(() => {
         moment.relativeTimeThreshold('h', 30);
+
     }, [])
 
 
@@ -100,7 +101,7 @@ const CanEdit = (props: {
                         customClass: 'text-white bg-background',
                         confirmButtonColor: '#68b4eb',
                     }
-                ).then(()=>{
+                ).then(() => {
 
                 })
             } else {
@@ -112,7 +113,7 @@ const CanEdit = (props: {
                         customClass: 'text-white bg-background',
                         confirmButtonColor: '#68b4eb',
                     }
-                ).then(()=>{
+                ).then(() => {
 
                 })
             }
@@ -137,13 +138,22 @@ const CanEdit = (props: {
     }
 
 
+    const sampleOfThisTime = (time: any) => {
+
+        Object.keys(props.companyTimeFields as object).forEach((key) => {
+            if (((props.companyTimeFields as any)[key].title as string) === time.title) {
+                return props.companyTextFields[key].sampleValues as any[]
+            }
+        })
+        return ["05:00", "06:00", "07:00", "08:00"]
+    }
     return (
         <div className={''}>
             <div className={'pager pb-24 w-full flex-col justify-start items-center bg-secondary '}>
 
                 {
 
-                    props.timeFields.map((time: object, index: number) => {
+                    (props.dayData.timeFields ? props.dayData.timeFields : props.companyTimeFields).map((time: object, index: number) => {
 
 
                         return (
@@ -180,7 +190,7 @@ const CanEdit = (props: {
                                                     return true
                                                 }
                                             })[0].value : "00:00"}
-                                            sample={(time as { sampleValues: any[] }).sampleValues}
+                                            sample={sampleOfThisTime(time)}
                                             title={(time as { title: string, sampleValues: any[] }).title}
                                 />
                                 {
@@ -200,7 +210,7 @@ const CanEdit = (props: {
                      className={'w-full bg-secondary flex flex-col justify-start items-center pb-2'}>
 
                     {
-                        props.textFields.map((textField, index) => {
+                        (props.dayData.textFields ?? props.companyTextFields).map((textField, index) => {
 
                             return (
                                 <div key={index + "TFields"} className={'contents'}>
@@ -230,7 +240,6 @@ const CanEdit = (props: {
                                                 }
 
 
-
                                                 textFieldsData.current[textField.title] = text
                                             }}
                                         />
@@ -245,22 +254,25 @@ const CanEdit = (props: {
                     }
 
 
-                    <ButtonBase
-                        className={`w-11/12 left-1/2 max-w-btn-max-width  ${true ? "" : 'translate-y-20'} transition-all duration-300 ease-in-out  fixed bottom-3 z-20 transition-all -translate-x-1/2 fixed  h-14 bg-primary rounded-2xl text-white IranSansMedium `}
-                        onClick={submitClickHandler}
-                    >
+                    <div className={'w-full flex flex-row justify-center items-center'}>
+                        <ButtonBase
+                            className={`w-11/12  max-w-btn-max-width  ${true ? "" : 'translate-y-20'} transition-all duration-300 ease-in-out   mt-5 z-20 transition-all   h-14 bg-primary rounded-2xl text-white IranSansMedium `}
+                            onClick={submitClickHandler}
+                        >
 
-                        {
-                            btnLoading ?
-                                <div className={'text-white'}>
-                                    <CircularProgress color={'inherit'}/>
+                            {
+                                btnLoading ?
+                                    <div className={'text-white'}>
+                                        <CircularProgress color={'inherit'}/>
 
-                                </div>
-                                :
-                                <span className={'text-lg'}>ثبت</span>
+                                    </div>
+                                    :
+                                    <span className={'text-lg'}>ثبت</span>
 
-                        }
-                    </ButtonBase>
+                            }
+                        </ButtonBase>
+                    </div>
+
                 </div>
 
 
