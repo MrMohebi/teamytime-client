@@ -9,6 +9,5 @@ export const fullDate = (dayOffset: number) => {
     }).format(d).split('/'))
 
     let string = arr[2] + "/" + (parseInt(arr[0]) < 10 ? "0" + arr[0] : arr[0]) + "/" + (parseInt(arr[1]) < 10 ? "0" + arr[1] : arr[1])
-    console.log(string.toString())
     return string.toString().replace(/[a-zA-Z ]/g, '')
 }

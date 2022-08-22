@@ -58,7 +58,6 @@ const Admin = () => {
 
                 setReportsLoading(true)
 
-                console.log(e.data)
                 setReportsLoading(false)
                 setAdminRemainingTime(day.remainTime)
 
@@ -140,7 +139,6 @@ const Admin = () => {
 
 
             if ((document.getElementById(nextID))) {
-                console.log('yep there is')
                 CurrentDay(nextID)
                 //
                 //
@@ -154,7 +152,6 @@ const Admin = () => {
             let nextID = 'd-' + (parseInt(CurrentDay().split('-')[1]) - 1)
 
             if ((document.getElementById(nextID))) {
-                console.log('yep there is')
                 CurrentDay(nextID)
                 //
                 //

@@ -43,7 +43,6 @@ export const GoToThisDay = (id:string) => {
             Rscroller.scrollTo(0, 0)
 
             Rscroller.querySelectorAll('.reports-day').forEach((item:any, childIndex:any) => {
-                console.log(item)
 
 
                 if ('r-' + id === 'r-d-' + childIndex) {

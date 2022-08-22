@@ -234,7 +234,6 @@ const Userid = () => {
         }).format(d).split('/'))
 
         let string = arr[2] + "/" + (parseInt(arr[0]) < 10 ? "0" + arr[0] : arr[0]) + "/" + (parseInt(arr[1]) < 10 ? "0" + arr[1] : arr[1])
-        console.log(string.toString())
         return string.toString().replace(/[a-zA-Z ]/g, '')
     }
 
@@ -300,7 +299,6 @@ const Userid = () => {
 
 
             if ((document.getElementById(nextID))) {
-                console.log('yep there is')
                 CurrentDay(nextID)
                 //
                 //
@@ -314,7 +312,6 @@ const Userid = () => {
             let nextID = 'd-' + (parseInt(CurrentDay().split('-')[1]) - 1)
 
             if ((document.getElementById(nextID))) {
-                console.log('yep there is')
                 CurrentDay(nextID)
                 //
                 //

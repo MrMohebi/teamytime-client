@@ -79,7 +79,6 @@ const Header = (props: {
 
         useEffect(() => {
 
-            console.log('day changed in header')
             if (props.admin) {
                 GoToThisDay(CurrentDay())
             }
@@ -299,7 +298,6 @@ const Header = (props: {
                 scrollerRef.current.childNodes.forEach((child, index) => {
                     if ((child as HTMLDivElement).classList.contains('header-day')) {
 
-                        console.log(index)
                         if (index === 8)
                             debouncedGsapScroll(index, child)
 
@@ -444,7 +442,6 @@ const Header = (props: {
 
                     <div dir={'ltr'} id={'d-scroller'} onScroll={(e) => {
 
-                        console.log(e.currentTarget.scrollLeft)
                         debouncedScrollHandler(e)
                     }}
                          className={'w-full pointer-events-none flex flex-row-reverse relative items-center flex-1 flex-grow snap-x snap-mandatory overflow-x-scroll relative hide-scrollbar scroll-smooth'}
