@@ -149,7 +149,7 @@ const CanEdit = (props: {
     }
     return (
         <div className={''}>
-            <div className={'pager pb-24 w-full flex-col justify-start items-center bg-secondary '}>
+            <div className={'pager pb-12 w-full flex-col justify-start items-center bg-secondary '}>
 
                 {
 
@@ -256,7 +256,7 @@ const CanEdit = (props: {
 
                     <div className={'w-full flex flex-row justify-center items-center'}>
                         <ButtonBase
-                            className={`w-11/12  max-w-btn-max-width  ${true ? "" : 'translate-y-20'} transition-all duration-300 ease-in-out   mt-5 z-20 transition-all   h-14 bg-primary rounded-2xl text-white IranSansMedium `}
+                            className={`w-11/12 mt-5 max-w-btn-max-width  ${true ? "" : 'translate-y-20'} transition-all duration-300 ease-in-out   mt-5 z-20 transition-all   h-14 bg-primary rounded-2xl text-white IranSansMedium `}
                             onClick={submitClickHandler}
                         >
 
