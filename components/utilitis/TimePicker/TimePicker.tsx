@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 
 import {useDebouncedCallback} from "use-debounce";
-import {CurrentDay} from "../../../store/store";
 
 const TimePicker = (props: {
     title: string

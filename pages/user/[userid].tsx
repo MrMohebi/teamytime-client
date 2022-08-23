@@ -20,7 +20,6 @@ import ScrollTrigger from "gsap/dist/ScrollTrigger";
 import {useDebouncedCallback} from "use-debounce";
 import {useSwipeable} from "react-swipeable";
 import {useReactiveVar} from "@apollo/client";
-import {react} from "@babel/types";
 import {GoToThisDay} from "../../components/GoToThis";
 import {GetDayNumberByID} from "../../helpers/GetDayNumberByID";
 

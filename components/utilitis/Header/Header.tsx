@@ -16,9 +16,7 @@ import {getReportsForAdmin, getUserReportsRange} from "../../../Requests/Request
 import {useReactiveVar} from "@apollo/client";
 // @ts-ignore
 import moment from 'moment-jalaali'
-import {transformOperation} from "@apollo/client/link/utils";
 import {CircularProgress} from "@material-ui/core";
-import {LOGICAL_OPERATORS, react} from "@babel/types";
 // @ts-ignore
 import $ from 'jquery'
 import {GoToThisDay} from "../../GoToThis";

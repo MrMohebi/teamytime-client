@@ -5,12 +5,11 @@ import {ButtonBase, CircularProgress} from "@material-ui/core";
 import moment from 'moment-jalaali'
 import TextField from "../utilitis/TextField/TextField";
 import {sendReport} from "../../Requests/Requests";
-import {CompanyId, CompanyRequiredFields, CompanyTimeFields, CurrentSelectedDate, UserId} from "../../store/store";
+import {CompanyId, UserId} from "../../store/store";
 import Swal from "sweetalert2";
-import {json} from "stream/consumers";
 
 const CanEdit = (props: {
-    date:string,
+    date: string,
     remainSeconds: number,
     dayData: { textFields: [any], timeFields: [any] },
     companyTimeFields: any,
@@ -84,7 +83,7 @@ const CanEdit = (props: {
         setBtnLoading(true)
 
 
-        sendReport(UserId(), CompanyId(),props.date, JSON.stringify(timeFields), JSON.stringify(textFields)).then((res) => {
+        sendReport(UserId(), CompanyId(), props.date, JSON.stringify(timeFields), JSON.stringify(textFields)).then((res) => {
             setBtnLoading(false)
             if (res.data === 200) {
                 Swal.fire(
