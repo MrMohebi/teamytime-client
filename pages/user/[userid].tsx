@@ -364,7 +364,7 @@ const Userid = () => {
 
                             <div id={'reports-scroller'}
 
-                                 className={' relative w-full h-full  '}
+                                 className={' relative w-full h-full hide-scrollbar '}
 
                             >
                                 {/*<div className={'shrink-0 w-full'}></div>*/}

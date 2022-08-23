@@ -167,7 +167,7 @@ const Admin = () => {
     });
 
     return (
-        <div className={'bg-secondary min-h-full pt-[11.5rem] pb-10 relative'}>
+        <div className={'bg-secondary min-h-full  pb-10 relative'}>
 
             <div className={'h-20 text-white w-full bg-red mt-32 contents pointer-events-auto'} {...handlers}>
 

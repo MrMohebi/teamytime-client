@@ -22,10 +22,11 @@ import $ from 'jquery'
 import {GoToThisDay} from "../../GoToThis";
 import {GetDayNumberByID} from "../../../helpers/GetDayNumberByID";
 
-export const backDaysLimit = 7;
-
 
 gsap.registerPlugin(ScrollTrigger)
+export const backDaysLimit = 7;
+export const backDaysLimitAdmin = 20;
+
 
 const Header = (props: {
         setDay: Function,
@@ -130,8 +131,7 @@ const Header = (props: {
 
 
             if (adminId && localDays.length < 1) {
-
-                getReportsForAdmin("093845b5f724e4a047c9f2221cd903b4", fullDate(-backDaysLimit), fullDate(backDaysLimit)).then((res) => {
+                getReportsForAdmin("093845b5f724e4a047c9f2221cd903b4", fullDate(-backDaysLimitAdmin), fullDate(backDaysLimitAdmin)).then((res) => {
                         if (res.data) {
                             let datesArr = [] as any;
 
@@ -171,7 +171,7 @@ const Header = (props: {
             d.setDate(d.getDate() + dayOffset)
 
             let daysE = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            let days = ['یکشنبه', 'دوشنبه', 'سه شنبه', 'جهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
+            let days = ['یکشنبه', 'دوشنبه', 'سه شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
 
             let dayName = days[d.getDay()];
             return dayName
@@ -490,11 +490,13 @@ const Header = (props: {
                         {
 
                             localDays.map((item: any, indx) => {
+                                console.log(item)
 
                                 let date = new Date()
                                 date.setDate(date.getDate()) + indx
 
-                                let index = indx - backDaysLimit
+
+                                let index = props.admin ? (indx - backDaysLimitAdmin) : (indx - backDaysLimit)
 
 
                                 return (
@@ -502,36 +504,6 @@ const Header = (props: {
 
                                          onClick={(e) => {
                                              CurrentDay(e.currentTarget.id)
-                                             // if (scrollerRef.current) {
-                                             //     try {
-                                             //         let halfSpace = scrollerRef.current.getBoundingClientRect().width / 2
-                                             //         let rest = 0;
-                                             //         scrollerRef.current.scrollTo(0, 0)
-                                             //
-                                             //         scrollerRef.current.querySelectorAll('.header-day').forEach((item, childIndex) => {
-                                             //
-                                             //
-                                             //             if (e.currentTarget.id === 'd-' + childIndex) {
-                                             //
-                                             //                 let childrenLength = Array.from(scrollerRef.current!.querySelectorAll('.header-day')).slice(0, childIndex).length
-                                             //                 childrenLength *= item.getBoundingClientRect().width
-                                             //                 rest = childrenLength
-                                             //                 rest += item.getBoundingClientRect().width / 2
-                                             //             }
-                                             //
-                                             //         })
-                                             //
-                                             //         scrollerRef.current.scrollTo(-(rest + halfSpace), 0)
-                                             //
-                                             //
-                                             //     } catch (e) {
-                                             //
-                                             //     }
-                                             //
-                                             //
-                                             // }
-
-
                                          }}
                                          id={'d-' + indx}
                                          className={'pointer-events-auto w-16 relative transition-all duration-300 ease-in-out header-day shrink-0 pt-1.5  h-18 snap-center flex flex-col justify-start items-center text-text-blue-light '}>
