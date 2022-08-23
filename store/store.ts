@@ -13,6 +13,7 @@ export const CompanyRequiredFields = makeVar([] as any)
 export const BaseURL = makeVar("https://time.m3m.dev/")
 export const CoolDown = makeVar(false)
 export const CurrentDay = makeVar("")
+export const CollapseHeader = makeVar(false)
 
 
 

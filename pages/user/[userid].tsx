@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useRouter} from "next/router";
 import {getCompany, getUser, getUserReports} from "../../Requests/Requests";
 import {
+    CollapseHeader,
     CompanyId,
     CompanyName,
     CompanyRequiredFields, CompanyTextFields,
@@ -21,6 +22,7 @@ import {useSwipeable} from "react-swipeable";
 import {useReactiveVar} from "@apollo/client";
 import {react} from "@babel/types";
 import {GoToThisDay} from "../../components/GoToThis";
+import {GetDayNumberByID} from "../../helpers/GetDayNumberByID";
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -43,6 +45,8 @@ const Userid = () => {
     const [name, setName] = useState("");
     const [role, setRole] = useState("");
     const [dayData, setDayData] = useState(Object);
+
+    const lastScrollTop = useRef(0)
 
 
     const [profileURL, setProfileURL] = useState("")
@@ -71,11 +75,7 @@ const Userid = () => {
 
     useEffect(() => {
 
-        console.log(reactiveUserLocalDays)
 
-        if (reactiveUserLocalDays)
-            console.log(document.querySelector('.header-day'));
-        fullDate(0)
     }, [reactiveUserLocalDays]);
 
 
@@ -304,6 +304,7 @@ const Userid = () => {
 
 
     const handlers = useSwipeable({
+        delta: 200,
         onSwipedRight: (eventData) => {
             let nextID = 'd-' + (parseInt(CurrentDay().split('-')[1]) + 1)
 
@@ -335,12 +336,14 @@ const Userid = () => {
             }
         },
     });
+
+
     if (companyGot)
         if (userid) {
             return (
 
 
-                <div className="bg-secondary w-full overflow-scroll h-full">
+                <div className="bg-secondary w-full overflow-hidden h-full">
 
 
                     <div className={'h-20 text-white w-full bg-red mt-32 contents pointer-events-auto'} {...handlers} >
@@ -362,12 +365,10 @@ const Userid = () => {
 
                             <div id={'reports-scroller'}
 
-                                 className={'flex flex-row scroll-smooth justify-start items-start w-full pt-48 h-full snap-x overflow-x-hidden snap-mandatory'}
-                                 onScroll={() => {
-                                     scrollerStopHandler()
-                                 }}
+                                 className={' relative w-full h-full  '}
+
                             >
-                                <div className={'shrink-0 w-full'}></div>
+                                {/*<div className={'shrink-0 w-full'}></div>*/}
 
                                 {
                                     Object.keys(reactiveUserLocalDays).map((day, index) => {
@@ -378,9 +379,23 @@ const Userid = () => {
                                                 CurrentDay('d-' + index)
 
                                             return <div
-                                                className={'shrink-0 reports-day w-full h-full report-el overflow-scroll snap-center'}
+                                                className={`${index - 1 === GetDayNumberByID(reactiveCurrentDay) ? "opacity-100 scale-100 origin-top " : " opacity-0 scale-50 origin-top pointer-events-none"} transition-all duration-300 shrink-0 absolute  reports-day w-full h-full report-el overflow-scroll `}
                                                 id={'r-d-' + index}
-                                                key={index}>
+                                                key={index}
+                                                onScroll={(e) => {
+
+                                                    if (lastScrollTop.current < e.currentTarget.scrollTop && e.currentTarget.scrollTop> 200) {
+                                                        CollapseHeader(true)
+                                                    }else{
+                                                        if (e.currentTarget.scrollTop < 200)
+                                                        CollapseHeader(false)
+
+                                                    }
+
+                                                    lastScrollTop.current = e.currentTarget.scrollTop
+
+                                                }}
+                                            >
 
                                                 {UserLocalDays()[day].remainTime > 3600 * 39 ?
                                                     <NotYet
@@ -393,15 +408,15 @@ const Userid = () => {
                                                                 trainingHours={UserLocalDays()[day].trainingHours}
                                                                 whatDidUserDo={UserLocalDays()[day].whatDidUserDoInReport}/>
                                                         :
-                                                        <div>
-                                                            <CanEdit date={Object.keys(reactiveUserLocalDays)[index]} companyTimeFields={CompanyTimeFields()}
-                                                                     companyTextFields={CompanyTextFields()}
-                                                                     dayData={UserLocalDays()[day]}
-                                                                     remainSeconds={UserLocalDays()[day].remainTime}/>
-                                                        </div>
+                                                        <CanEdit date={Object.keys(reactiveUserLocalDays)[index]}
+                                                                 companyTimeFields={CompanyTimeFields()}
+                                                                 companyTextFields={CompanyTextFields()}
+                                                                 dayData={UserLocalDays()[day]}
+                                                                 remainSeconds={UserLocalDays()[day].remainTime}/>
 
 
                                                 }
+
 
                                             </div>
 
@@ -410,7 +425,7 @@ const Userid = () => {
                                     })
 
                                 }
-                                <div className={'shrink-0 w-full'}></div>
+                                {/*<div className={'shrink-0 w-full'}></div>*/}
 
 
                             </div>

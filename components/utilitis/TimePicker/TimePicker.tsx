@@ -1,12 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react';
 
 import {useDebouncedCallback} from "use-debounce";
+import {CurrentDay} from "../../../store/store";
 
 const TimePicker = (props: {
     title: string
     sample: any[],
     defaultTime: string,
-    onTimeChange: Function
+    onTimeChange: Function,
 }) => {
 // hi elf
     const [currentActiveHour, setCurrentActiveHour] = useState(0);
@@ -47,30 +48,19 @@ const TimePicker = (props: {
 
 
     useEffect(() => {
-        //
-        // if (props.defaultTime) {
-        //     if (props.defaultTime.split(":").length === 2) {
-        //
-        //         hourScrollTo(parseInt(props.defaultTime.split(':')[0]))
-        //         minuteScrollTo(parseInt(props.defaultTime.split(':')[1]) / 10)
-        //     }
-        // }
-        //
-        //
 
 
-        setTimeout(() => {
-            if (props.defaultTime) {
-                if (props.defaultTime.split(":").length === 2) {
+        if (props.defaultTime) {
+            if (props.defaultTime.split(":").length === 2) {
 
-                    hourScrollTo(parseInt(props.defaultTime.split(':')[0]))
-                    minuteScrollTo(parseInt(props.defaultTime.split(':')[1]) / 10)
-                }
+
+                hourScrollTo(parseInt(props.defaultTime.split(':')[0]))
+                minuteScrollTo(parseInt(props.defaultTime.split(':')[1]) / 10)
             }
-        }, 500)
+        }
 
 
-    }, [props.defaultTime]);
+    }, [props.title]);
 
     const hourScrollTo = (hourIndex: number) => {
         if (customHourRef) {

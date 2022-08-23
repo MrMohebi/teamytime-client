@@ -357,7 +357,7 @@ const Admin = () => {
                                                                     className={'IranSansMedium text-primary  mr-2 more-text'}
                                                                     style={{
                                                                         fontSize: '0.7rem'
-                                                                    }}>پنهان کردن اطلاعات بیشتر</span>
+                                                                    }}>نمایش  اطلاعات بیشتر</span>
                                                             </div>
                                                             :
                                                             <div></div>

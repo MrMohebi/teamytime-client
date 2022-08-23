@@ -3,7 +3,15 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useDebouncedCallback} from "use-debounce";
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
 import gsap from 'gsap'
-import {AdminID, BaseURL, CoolDown, CurrentDay, CurrentSelectedDate, UserId} from "../../../store/store";
+import {
+    AdminID,
+    BaseURL,
+    CollapseHeader,
+    CoolDown,
+    CurrentDay,
+    CurrentSelectedDate,
+    UserId
+} from "../../../store/store";
 import {getReportsForAdmin, getUserReportsRange} from "../../../Requests/Requests";
 import {useReactiveVar} from "@apollo/client";
 // @ts-ignore
@@ -14,6 +22,7 @@ import {LOGICAL_OPERATORS, react} from "@babel/types";
 // @ts-ignore
 import $ from 'jquery'
 import {GoToThisDay} from "../../GoToThis";
+import {GetDayNumberByID} from "../../../helpers/GetDayNumberByID";
 
 export const backDaysLimit = 7;
 
@@ -38,7 +47,9 @@ const Header = (props: {
         const [currentMonth, setCurrentMonth] = useState("");
 
         const reactiveCurrentDay = useReactiveVar(CurrentDay)
+        const reactiveCollapseHeader = useReactiveVar(CollapseHeader)
 
+        const [todayID, setTodayID] = useState("");
 
         const [goToPosition, setGoToPosition] = useState('');
 
@@ -56,6 +67,12 @@ const Header = (props: {
         }, [currentDay])
 
 
+        useEffect(() => {
+
+            if (reactiveCollapseHeader) {
+
+            }
+        }, [reactiveCollapseHeader]);
         useEffect(() => {
 
             CurrentSelectedDate(fullDate(0))
@@ -79,20 +96,38 @@ const Header = (props: {
 
         useEffect(() => {
 
-            if (props.admin) {
-                GoToThisDay(CurrentDay())
-            }
+                if (props.admin) {
+                    GoToThisDay(CurrentDay())
+                }
 
-            let monthOfDay = currentMonth;
-            if (document.getElementById(CurrentDay()))
+                let monthOfDay = currentMonth;
                 if (document.getElementById(CurrentDay()))
-                    document.getElementById(CurrentDay())!.childNodes.forEach((child) => {
-                        if ((child as HTMLDivElement).classList.contains('month-of-day')) {
-                            monthOfDay = (child as HTMLDivElement).innerText
-                        }
-                    })
-            setCurrentMonth(monthOfDay)
-        }, [reactiveCurrentDay]);
+                    if (document.getElementById(CurrentDay()))
+                        document.getElementById(CurrentDay())!.childNodes.forEach((child) => {
+                            if ((child as HTMLDivElement).classList.contains('month-of-day')) {
+                                monthOfDay = (child as HTMLDivElement).innerText
+                            }
+                        })
+                setCurrentMonth(monthOfDay)
+
+
+                if (todayID) {
+                    if (GetDayNumberByID(reactiveCurrentDay) < GetDayNumberByID(todayID) - 2) {
+                        setGoToPosition('left')
+                    } else if (GetDayNumberByID(reactiveCurrentDay) > GetDayNumberByID(todayID) + 2) {
+                        setGoToPosition('right')
+                    } else {
+                        setGoToPosition('')
+
+                    }
+
+
+                }
+            }
+            ,
+            [reactiveCurrentDay]
+        )
+        ;
         useEffect(() => {
 
 
@@ -235,6 +270,7 @@ const Header = (props: {
                 children.forEach((item, childIndex) => {
                     if (item.querySelector('.date-of-day')!.innerHTML === fullDate(0)) {
                         CurrentDay(item.id)
+                        setTodayID(item.id)
                         // GoToThisDay(children[childIndex].id)
                     }
 
@@ -372,10 +408,11 @@ const Header = (props: {
 
 
         return (
-            <div className={'w-full  bg-primary-dark fixed top-0 left-0  z-30'} style={{
-                // top: '-4.5rem',
-                boxShadow: '0 11px 11px #151e27'
-            }}>
+            <div
+                className={`w-full transition-all ease-in-out duration-500 bg-primary-dark top-0 left-0  z-30 ${reactiveCollapseHeader ? '-mt-20' : "-mt-0"}`}
+                style={{
+                    boxShadow: '0 11px 11px #151e27'
+                }}>
 
                 {
                     <div
@@ -430,7 +467,8 @@ const Header = (props: {
                         scrollToToday()
                     }}
                          className={`flex absolute backdrop-blur-lg scale-75 text-white py-2 px-3 rounded-3xl z-20 top-1/2 -translate-y-1/2 ${!goToPosition ? 'hidden' : ''} ${goToPosition === "left" ? "flex-row-reverse left-0" : 'flex-row'}  justify-between items-center`}>
-                        <img className={`${goToPosition === 'left' ? 'rotate-180' : ''}`} src="/svg/right-arro.svg" alt=""/>
+                        <img className={`${goToPosition === 'left' ? 'rotate-180' : ''}`} src="/svg/right-arro.svg"
+                             alt=""/>
                         <span className={'IranSansMedium'}>برو به امروز</span>
                     </div>
                     <div className={'w-full h-full  absolute z-10 top-0 left-0  pointer-events-none'} style={{

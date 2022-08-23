@@ -149,7 +149,7 @@ const CanEdit = (props: {
         return ["05:00", "06:00", "07:00", "08:00"]
     }
     return (
-        <div className={''}>
+        <div className={'pb-20'}>
             <div className={'pager pb-12 w-full flex-col justify-start items-center bg-secondary '}>
 
                 {
