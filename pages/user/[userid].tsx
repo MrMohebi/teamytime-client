@@ -394,7 +394,7 @@ const Userid = () => {
                                                                 whatDidUserDo={UserLocalDays()[day].whatDidUserDoInReport}/>
                                                         :
                                                         <div>
-                                                            <CanEdit companyTimeFields={CompanyTimeFields()}
+                                                            <CanEdit date={Object.keys(reactiveUserLocalDays)[index]} companyTimeFields={CompanyTimeFields()}
                                                                      companyTextFields={CompanyTextFields()}
                                                                      dayData={UserLocalDays()[day]}
                                                                      remainSeconds={UserLocalDays()[day].remainTime}/>
