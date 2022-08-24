@@ -4,7 +4,6 @@ on:
   push:
       branches:
         - master
-        - update-CI/CD
 
 jobs:
   
@@ -53,7 +52,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           user: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY}}
-      - name: action-slack
+      - name: send err log
         if: failure()
         uses: fjogeleit/http-request-action@v1
         with:
