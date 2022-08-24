@@ -39,9 +39,6 @@ const TimePicker = (props: {
     }, [currentActiveMinute, currentActiveHour])
 
 
-
-
-
     const resetMinutes = () => {
         if (customMinuteRef.current) {
             customMinuteRef.current.scrollTo(0, 300)
@@ -147,8 +144,13 @@ const TimePicker = (props: {
     )
     return (
         <div className={'time-picker bg-secondary '}>
-            <div className={'w-full h-10 text-white IranSans pt-2 pr-3'}>{props.title}</div>
-            <div className={'w-full h-5 text-white IranSans pr-3'}>{currentActiveHour<10?"0"+currentActiveHour:currentActiveHour}:{currentActiveMinute<10?"0"+currentActiveMinute:currentActiveMinute}</div>
+            <div className={'w-full flex flex-row justify-between items-center'}>
+
+                <div className={' h-10 text-white IranSans pt-2 pr-3'}>{props.title}</div>
+                <div
+                    className={'text-left pl-3 opacity-50 h-5 text-white IranSans pr-3'}>{currentActiveHour < 10 ? "0" + currentActiveHour : currentActiveHour}:{currentActiveMinute < 10 ? "0" + currentActiveMinute : currentActiveMinute}</div>
+
+            </div>
             <div className={'w-full flex flex-row justify-between items-center px-5'}>
 
 
