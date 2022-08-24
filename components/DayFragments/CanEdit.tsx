@@ -66,7 +66,6 @@ const CanEdit = (props: {
 
     }, [props.dayData]);
 
-
     const submitClickHandler = () => {
 
 
