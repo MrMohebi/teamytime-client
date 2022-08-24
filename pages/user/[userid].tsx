@@ -378,7 +378,7 @@ const Userid = () => {
                                                 CurrentDay('d-' + index)
 
                                             return <div
-                                                className={`${index - 1 === GetDayNumberByID(reactiveCurrentDay) ? "opacity-100 scale-100 origin-top " : " opacity-0 scale-50 origin-top pointer-events-none"} transition-all duration-300 shrink-0 absolute  reports-day w-full h-full report-el overflow-scroll `}
+                                                className={`${index - 1 === GetDayNumberByID(reactiveCurrentDay) ? "opacity-100  " : " opacity-0  pointer-events-none"} transition-all duration-300 shrink-0 absolute  reports-day w-full h-full report-el overflow-scroll `}
                                                 id={'r-d-' + index}
                                                 key={index}
                                                 onScroll={(e) => {
@@ -407,7 +407,7 @@ const Userid = () => {
                                                                 trainingHours={UserLocalDays()[day].trainingHours}
                                                                 whatDidUserDo={UserLocalDays()[day].whatDidUserDoInReport}/>
                                                         :
-                                                        <CanEdit date={Object.keys(reactiveUserLocalDays)[index]}
+                                                        <CanEdit loading={loadingFragment} date={Object.keys(reactiveUserLocalDays)[index]}
                                                                  companyTimeFields={CompanyTimeFields()}
                                                                  companyTextFields={CompanyTextFields()}
                                                                  dayData={UserLocalDays()[day]}

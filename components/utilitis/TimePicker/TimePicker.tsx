@@ -7,6 +7,7 @@ const TimePicker = (props: {
     sample: any[],
     defaultTime: string,
     onTimeChange: Function,
+    loading: boolean
 }) => {
 // hi elf
     const [currentActiveHour, setCurrentActiveHour] = useState(0);
@@ -38,9 +39,15 @@ const TimePicker = (props: {
     }, [currentActiveMinute, currentActiveHour])
 
 
+
+
+
     const resetMinutes = () => {
-        if (customMinuteRef.current)
+        if (customMinuteRef.current) {
+            customMinuteRef.current.scrollTo(0, 300)
             customMinuteRef.current.scrollTo(0, 0)
+        }
+
         setCurrentActiveMinute(0)
         setCurrentActiveHour(currentActiveHour)
     }
@@ -52,14 +59,23 @@ const TimePicker = (props: {
         if (props.defaultTime) {
             if (props.defaultTime.split(":").length === 2) {
 
+                setCurrentActiveHour(parseInt(props.defaultTime.split(':')[0]))
+                setCurrentActiveMinute(parseInt(props.defaultTime.split(':')[1]))
 
-                hourScrollTo(parseInt(props.defaultTime.split(':')[0]))
-                minuteScrollTo(parseInt(props.defaultTime.split(':')[1]) / 10)
+                resetMinutes()
+
+
+                setTimeout(() => {
+                    hourScrollTo(parseInt(props.defaultTime.split(':')[0]))
+                    minuteScrollTo(parseInt(props.defaultTime.split(':')[1]) / 10)
+                }, 500)
+
+
             }
         }
 
 
-    }, [props.title]);
+    }, [props.loading]);
 
     const hourScrollTo = (hourIndex: number) => {
         if (customHourRef) {
@@ -132,6 +148,7 @@ const TimePicker = (props: {
     return (
         <div className={'time-picker bg-secondary '}>
             <div className={'w-full h-10 text-white IranSans pt-2 pr-3'}>{props.title}</div>
+            <div className={'w-full h-5 text-white IranSans pr-3'}>{currentActiveHour<10?"0"+currentActiveHour:currentActiveHour}:{currentActiveMinute<10?"0"+currentActiveMinute:currentActiveMinute}</div>
             <div className={'w-full flex flex-row justify-between items-center px-5'}>
 
 

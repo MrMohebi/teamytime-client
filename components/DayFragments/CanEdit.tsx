@@ -14,6 +14,7 @@ const CanEdit = (props: {
     dayData: { textFields: [any], timeFields: [any] },
     companyTimeFields: any,
     companyTextFields: any,
+    loading: boolean
 }) => {
 
 
@@ -75,13 +76,14 @@ const CanEdit = (props: {
             timeFields.push({title: key, value: timeFieldsData.current[key]})
         })
 
+
         let textFields = [] as any[]
 
         Object.keys(textFieldsData.current).forEach((key, index) => {
             textFields.push({title: key, value: textFieldsData.current[key]})
         })
-        setBtnLoading(true)
 
+        setBtnLoading(true)
 
         sendReport(UserId(), CompanyId(), props.date, JSON.stringify(timeFields), JSON.stringify(textFields)).then((res) => {
             setBtnLoading(false)
@@ -181,7 +183,7 @@ const CanEdit = (props: {
                                 }
 
 
-                                <TimePicker onTimeChange={(selectedTime: string) => {
+                                <TimePicker loading={props.loading} onTimeChange={(selectedTime: string) => {
                                     timeFieldsData.current[(time as { title: string, sampleValues: any[] }).title] = selectedTime
 
                                 }}
