@@ -53,4 +53,9 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           user: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY}}
-          
+      - name: action-slack
+        if: failure()
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: 'https://log.m3m.dev/api/time-work-clint-deploy.php?token=ed2456914e48c1e17b7bd922177291ef8b7f553edf1b1f66b6fc1a076524b22f'
+          method: 'GET'
