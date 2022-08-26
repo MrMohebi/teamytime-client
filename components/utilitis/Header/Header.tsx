@@ -490,7 +490,6 @@ const Header = (props: {
                         {
 
                             localDays.map((item: any, indx) => {
-                                console.log(item)
 
                                 let date = new Date()
                                 date.setDate(date.getDate()) + indx

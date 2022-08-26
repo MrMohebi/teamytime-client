@@ -51,12 +51,20 @@ const Userid = () => {
     const [profileURL, setProfileURL] = useState("")
     const [day, setDay] = useState("");
 
+    const [noTimeLimit, setNoTimeLimit] = useState(false);
     const reactiveCurrentDay = useReactiveVar(CurrentDay)
     const reactiveUserLocalDays = useReactiveVar(UserLocalDays)
     const router = useRouter();
 
     const {userid} = router.query
 
+
+    useEffect(() => {
+        const params = router.query
+        if (params.noTimeLimit) {
+            setNoTimeLimit(true)
+        }
+    }, [router.query])
 
     useEffect(() => {
         if (userid) {
@@ -289,6 +297,7 @@ const Userid = () => {
                 reportsGsapInit.current = true;
             }
 
+
     });
 
 
@@ -383,11 +392,11 @@ const Userid = () => {
                                                 key={index}
                                                 onScroll={(e) => {
 
-                                                    if (lastScrollTop.current < e.currentTarget.scrollTop && e.currentTarget.scrollTop> 200) {
+                                                    if (lastScrollTop.current < e.currentTarget.scrollTop && e.currentTarget.scrollTop > 200) {
                                                         CollapseHeader(true)
-                                                    }else{
+                                                    } else {
                                                         if (e.currentTarget.scrollTop < 200)
-                                                        CollapseHeader(false)
+                                                            CollapseHeader(false)
 
                                                     }
 
@@ -396,22 +405,33 @@ const Userid = () => {
                                                 }}
                                             >
 
-                                                {UserLocalDays()[day].remainTime > 3600 * 39 ?
-                                                    <NotYet
-                                                        remainSeconds={UserLocalDays()[day].remainTime - (39 * 3600)}/>
-                                                    :
-                                                    UserLocalDays()[day].remainTime < 0 ?
-                                                        <Passed dayData={UserLocalDays()[day]}
-                                                                saved={(!!UserLocalDays()[day].createdAt)}
-                                                                workHours={6}
-                                                                trainingHours={UserLocalDays()[day].trainingHours}
-                                                                whatDidUserDo={UserLocalDays()[day].whatDidUserDoInReport}/>
-                                                        :
-                                                        <CanEdit loading={loadingFragment} date={Object.keys(reactiveUserLocalDays)[index]}
+                                                {
+
+                                                    noTimeLimit ?
+                                                        <CanEdit loading={loadingFragment}
+                                                                 date={Object.keys(reactiveUserLocalDays)[index]}
                                                                  companyTimeFields={CompanyTimeFields()}
                                                                  companyTextFields={CompanyTextFields()}
                                                                  dayData={UserLocalDays()[day]}
                                                                  remainSeconds={UserLocalDays()[day].remainTime}/>
+                                                        :
+                                                        UserLocalDays()[day].remainTime > 3600 * 39 ?
+                                                            <NotYet
+                                                                remainSeconds={UserLocalDays()[day].remainTime - (39 * 3600)}/>
+                                                            :
+                                                            UserLocalDays()[day].remainTime < 0 ?
+                                                                <Passed dayData={UserLocalDays()[day]}
+                                                                        saved={(!!UserLocalDays()[day].createdAt)}
+                                                                        workHours={6}
+                                                                        trainingHours={UserLocalDays()[day].trainingHours}
+                                                                        whatDidUserDo={UserLocalDays()[day].whatDidUserDoInReport}/>
+                                                                :
+                                                                <CanEdit loading={loadingFragment}
+                                                                         date={Object.keys(reactiveUserLocalDays)[index]}
+                                                                         companyTimeFields={CompanyTimeFields()}
+                                                                         companyTextFields={CompanyTextFields()}
+                                                                         dayData={UserLocalDays()[day]}
+                                                                         remainSeconds={UserLocalDays()[day].remainTime}/>
 
 
                                                 }

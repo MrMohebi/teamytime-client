@@ -222,7 +222,7 @@ const CanEdit = (props: {
                                         <TextField
                                             required={textField.required}
                                             title={textField.title}
-                                            maxLength={150}
+                                            maxLength={250}
                                             onChange={(text: string) => {
 
 
