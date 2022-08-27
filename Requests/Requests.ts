@@ -22,7 +22,7 @@ export const getUser = (userID: string) => {
     });
 }
 
-export const sendReport = (userID: string, companyID: string, jalaliDate: string, timeFields: string, textFields: string) => {
+export const sendReport = (userID: string, companyID: string, jalaliDate: string, timeFields: string, textFields: string, autoTime: string) => {
 
     return axios.get("https://time.m3m.dev/api/upsertReport.php", {
         params: {
@@ -30,7 +30,8 @@ export const sendReport = (userID: string, companyID: string, jalaliDate: string
             companyID: companyID,
             jalaliDate,
             timeFields,
-            textFields
+            textFields,
+            autoTime
         }
 
     })
@@ -57,13 +58,13 @@ export const getUserReportsRange = (userID: string, startDate: string, endDate: 
         });
 }
 
-export const getReportsForAdmin = (token: string,startDate:string,endDate:string) => {
+export const getReportsForAdmin = (token: string, startDate: string, endDate: string) => {
     return axios.get(BASE_URL + 'getAdminReports.php',
         {
-            headers:{
+            headers: {
                 token
             },
-            params:{
+            params: {
                 startDate,
                 endDate
             }

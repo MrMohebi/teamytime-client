@@ -6,7 +6,7 @@ import {
     CompanyId,
     CompanyName,
     CompanyRequiredFields, CompanyTextFields,
-    CompanyTimeFields, CoolDown, CurrentDay,
+    CompanyTimeFields, CurrentDay,
     UserId,
     UserLocalDays
 } from "../../store/store";
@@ -17,11 +17,11 @@ import Passed from "../../components/DayFragments/Passed";
 import CanEdit from "../../components/DayFragments/CanEdit";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
-import {useDebouncedCallback} from "use-debounce";
 import {useSwipeable} from "react-swipeable";
 import {useReactiveVar} from "@apollo/client";
 import {GoToThisDay} from "../../components/GoToThis";
 import {GetDayNumberByID} from "../../helpers/GetDayNumberByID";
+import {fullDate} from "../../helpers/FullDate";
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -29,31 +29,20 @@ const Userid = () => {
 
 
     const [loadingFragment, setLoadingFragment] = useState(true);
-
-
-    const [workHours, setWorkHours] = useState(0);
-    const [trainingHours, setTrainingHours] = useState(0);
-    const [whatDidUserDoInReport, setWhatDidUserDoInReport] = useState("");
     const [companyGot, setCompanyGot] = useState(false);
-
-    const [textFields, setTextFields] = useState([] as any[]);
-    const [timeFields, setTimeFields] = useState([] as any[]);
-
-
     const [userId, setUserId] = useState("");
     const [name, setName] = useState("");
     const [role, setRole] = useState("");
-    const [dayData, setDayData] = useState(Object);
 
     const lastScrollTop = useRef(0)
 
 
     const [profileURL, setProfileURL] = useState("")
-    const [day, setDay] = useState("");
 
     const [noTimeLimit, setNoTimeLimit] = useState(false);
     const reactiveCurrentDay = useReactiveVar(CurrentDay)
     const reactiveUserLocalDays = useReactiveVar(UserLocalDays)
+    const reactiveUserId = useReactiveVar(UserId)
     const router = useRouter();
 
     const {userid} = router.query
@@ -74,20 +63,11 @@ const Userid = () => {
     }, [userid])
 
     useEffect(() => {
-
         GoToThisDay(CurrentDay())
-
-
     }, [reactiveCurrentDay]);
 
-    useEffect(() => {
-
-
-    }, [reactiveUserLocalDays]);
-
 
     useEffect(() => {
-
 
         if (UserId())
             getUser(UserId()).then((value) => {
@@ -97,7 +77,7 @@ const Userid = () => {
                     setProfileURL(value.data.profile)
                 }
             })
-    }, [UserId()]);
+    }, [reactiveUserId]);
 
 
     useEffect(() => {
@@ -118,10 +98,6 @@ const Userid = () => {
                         }
                     }
                 })
-                setTextFields((res.data.textFields))
-            }
-            if (res.data.timeFields) {
-                setTimeFields((res.data.timeFields))
             }
             setCompanyGot(true)
 
@@ -140,7 +116,7 @@ const Userid = () => {
 
         if (userId) {
             getUserReports(UserId(), fullDate(-backDaysLimit), fullDate(backDaysLimit)).then((res) => {
-                (Object.keys(res.data)).forEach((day, index) => {
+                (Object.keys(res.data)).forEach((day) => {
                     let dayOBJ = res.data[day]
                     makeLocalDays(day, dayOBJ)
 
@@ -174,13 +150,6 @@ const Userid = () => {
 
             editedDay = day;
 
-
-            setWorkHours(0)
-            setTrainingHours(0)
-            setWhatDidUserDoInReport("")
-
-
-            setDayData(day)
 
 
             if (day) {
@@ -240,27 +209,10 @@ const Userid = () => {
     }
 
 
-    const fullDate = (yearOffset: number) => {
-        const d = new Date()
-        d.setDate(d.getDate() + yearOffset)
-
-        let arr = (new Intl.DateTimeFormat('en-US-u-ca-persian', {
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric'
-        }).format(d).split('/'))
-
-        let string = arr[2] + "/" + (parseInt(arr[0]) < 10 ? "0" + arr[0] : arr[0]) + "/" + (parseInt(arr[1]) < 10 ? "0" + arr[1] : arr[1])
-        return string.toString().replace(/[a-zA-Z ]/g, '')
-    }
-
-
     const onDayChange = (day: string) => {
 
-        setDay(day)
 
         setLoadingFragment(true)
-
         if (UserLocalDays()[day]) {
             dayCame(UserLocalDays()[day])
 
@@ -269,7 +221,6 @@ const Userid = () => {
         }
 
         getUserReports(UserId(), day, day).then((res) => {
-
             let day = res.data[Object.keys(res.data)[0]]
             dayCame(day)
             makeLocalDays(Object.keys(res.data)[0], day)
@@ -279,41 +230,9 @@ const Userid = () => {
     }
 
 
-    const reportsScrollDebounce = useDebouncedCallback((headerDay) => {
-        if (document.getElementById('header-scroll-space-1')) {
-            let sOffset = (-document.getElementById('header-scroll-space-1')!.getBoundingClientRect().width / 2) + (headerDay.offsetLeft + (headerDay.getBoundingClientRect().width / 2))
-            if (document.getElementById("d-scroller")) {
-                document.getElementById("d-scroller")!.scrollTo(sOffset, 0);
-            }
-        }
-
-
-    }, 300)
-    const reportsGsapInit = useRef<boolean>(false)
-    useEffect(() => {
-
-        if (!reportsGsapInit.current)
-            if (document.querySelector('#reports-scroller')) {
-                reportsGsapInit.current = true;
-            }
-
-
-    });
-
-
-    const coolDown = useRef(false);
-    const changeCoolDown = useDebouncedCallback(() => {
-        coolDown.current = false;
-    }, 1000)
-
-
-    const scrollerStopHandler = useDebouncedCallback(() => {
-    }, 100)
-
-
     const handlers = useSwipeable({
         delta: 200,
-        onSwipedRight: (eventData) => {
+        onSwipedRight: () => {
             let nextID = 'd-' + (parseInt(CurrentDay().split('-')[1]) + 1)
 
 
@@ -325,7 +244,7 @@ const Userid = () => {
                 // document.getElementById('reports-scroller')!.scrollBy(-(document.getElementById('reports-scroller')!.childNodes[1] as HTMLDivElement).getBoundingClientRect().width, 0)
             }
         },
-        onSwipedLeft: (eventData) => {
+        onSwipedLeft: () => {
 
 
             let nextID = 'd-' + (parseInt(CurrentDay().split('-')[1]) - 1)
@@ -408,7 +327,7 @@ const Userid = () => {
                                                 {
 
                                                     noTimeLimit ?
-                                                        <CanEdit loading={loadingFragment}
+                                                        <CanEdit noTimeLimit={true} loading={loadingFragment}
                                                                  date={Object.keys(reactiveUserLocalDays)[index]}
                                                                  companyTimeFields={CompanyTimeFields()}
                                                                  companyTextFields={CompanyTextFields()}
@@ -426,7 +345,7 @@ const Userid = () => {
                                                                         trainingHours={UserLocalDays()[day].trainingHours}
                                                                         whatDidUserDo={UserLocalDays()[day].whatDidUserDoInReport}/>
                                                                 :
-                                                                <CanEdit loading={loadingFragment}
+                                                                <CanEdit noTimeLimit={false} loading={loadingFragment}
                                                                          date={Object.keys(reactiveUserLocalDays)[index]}
                                                                          companyTimeFields={CompanyTimeFields()}
                                                                          companyTextFields={CompanyTextFields()}

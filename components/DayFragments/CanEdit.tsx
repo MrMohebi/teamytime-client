@@ -5,7 +5,7 @@ import {ButtonBase, CircularProgress} from "@material-ui/core";
 import moment from 'moment-jalaali'
 import TextField from "../utilitis/TextField/TextField";
 import {sendReport} from "../../Requests/Requests";
-import {CompanyId, UserId} from "../../store/store";
+import {CompanyId, CompanyRequiredFields, UserId} from "../../store/store";
 import Swal from "sweetalert2";
 
 const CanEdit = (props: {
@@ -14,7 +14,8 @@ const CanEdit = (props: {
     dayData: { textFields: [any], timeFields: [any] },
     companyTimeFields: any,
     companyTextFields: any,
-    loading: boolean
+    loading: boolean,
+    noTimeLimit?: boolean
 }) => {
 
 
@@ -22,11 +23,8 @@ const CanEdit = (props: {
     const timeFieldsData = useRef({} as any)
 
 
-    const [allowedToSubmit, setAllowedToSubmit] = useState(true);
-
     const [btnLoading, setBtnLoading] = useState(false);
 
-    const requirements = useRef(0)
     const [requirementsFilled, setRequirementsFilled] = useState("");
 
     const textFieldsHolder = useRef<HTMLDivElement>(null)
@@ -34,6 +32,8 @@ const CanEdit = (props: {
     moment.loadPersian()
     useEffect(() => {
         moment.relativeTimeThreshold('h', 30);
+        console.log(props.dayData)
+        console.log(CompanyRequiredFields())
 
     }, [])
 
@@ -45,9 +45,9 @@ const CanEdit = (props: {
             if (textFieldsHolder.current) {
                 let children = textFieldsHolder.current.querySelectorAll('.t-field')
                 if (props.dayData.textFields)
-                    props.dayData.textFields.forEach((tField, index) => {
+                    props.dayData.textFields.forEach((tField) => {
 
-                        children.forEach((tElement, index) => {
+                        children.forEach((tElement) => {
 
                             if (tElement.querySelector('.t-title')?.innerHTML === tField.title) {
                                 tElement.querySelector('textarea')!.value = tField.value
@@ -71,20 +71,20 @@ const CanEdit = (props: {
 
         let timeFields = [] as any[]
 
-        Object.keys(timeFieldsData.current).forEach((key, index) => {
+        Object.keys(timeFieldsData.current).forEach((key) => {
             timeFields.push({title: key, value: timeFieldsData.current[key]})
         })
 
 
         let textFields = [] as any[]
 
-        Object.keys(textFieldsData.current).forEach((key, index) => {
+        Object.keys(textFieldsData.current).forEach((key) => {
             textFields.push({title: key, value: textFieldsData.current[key]})
         })
 
         setBtnLoading(true)
 
-        sendReport(UserId(), CompanyId(), props.date, JSON.stringify(timeFields), JSON.stringify(textFields)).then((res) => {
+        sendReport(UserId(), CompanyId(), props.date, JSON.stringify(timeFields), JSON.stringify(textFields), props.noTimeLimit ? "1" : "0").then((res) => {
             setBtnLoading(false)
             if (res.data === 200) {
                 Swal.fire(
@@ -119,23 +119,6 @@ const CanEdit = (props: {
                 })
             }
         })
-    }
-
-
-    const getDefaultTime = (title: string) => {
-
-
-        if (props.dayData.timeFields)
-
-            props.dayData.timeFields.forEach((savedTime, index) => {
-                if (savedTime.title === title) {
-                    return savedTime.value
-                }
-            })
-
-
-        return "00:00"
-
     }
 
 
@@ -220,7 +203,7 @@ const CanEdit = (props: {
                                     }}/>
                                     <div className={'w-full t-field '}>
                                         <TextField
-                                            required={textField.required}
+                                            required={CompanyRequiredFields().includes(textField.title)}
                                             title={textField.title}
                                             maxLength={250}
                                             onChange={(text: string) => {
@@ -257,7 +240,7 @@ const CanEdit = (props: {
 
                     <div className={'w-full flex flex-row justify-center items-center'}>
                         <ButtonBase
-                            className={`w-11/12 mt-5 max-w-btn-max-width  ${true ? "" : 'translate-y-20'} transition-all duration-300 ease-in-out   mt-5 z-20 transition-all   h-14 bg-primary rounded-2xl text-white IranSansMedium `}
+                            className={`w-11/12 mt-5 max-w-btn-max-width  translate-y-20 transition-all duration-300 ease-in-out   mt-5 z-20 transition-all   h-14 bg-primary rounded-2xl text-white IranSansMedium `}
                             onClick={submitClickHandler}
                         >
 
