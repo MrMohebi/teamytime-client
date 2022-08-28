@@ -7,7 +7,6 @@ import TextField from "../utilitis/TextField/TextField";
 import {sendReport} from "../../Requests/Requests";
 import {CollapseHeader, CompanyId, CompanyRequiredFields, UserId} from "../../store/store";
 import Swal from "sweetalert2";
-import {useReactiveVar} from "@apollo/client";
 
 const CanEdit = (props: {
     date: string,
@@ -29,7 +28,6 @@ const CanEdit = (props: {
     const [requirementsFilled, setRequirementsFilled] = useState("");
 
     const textFieldsHolder = useRef<HTMLDivElement>(null)
-    const reactiveCollapseHeader = useReactiveVar(CollapseHeader)
     const lastScrollTop = useRef(0)
 
     moment.loadPersian()
@@ -137,9 +135,10 @@ const CanEdit = (props: {
     return (
         <div className={'h-full w-full relative'}>
             <div
-                className={`absolute left-0 ${reactiveCollapseHeader ? "bottom-32" : "bottom-52"} transition-all duration-500  w-full flex flex-col justify-center items-center pointer-events-none`}>
+                className={`fixed left-0 bottom-5 z-50  transition-all duration-500  w-full flex flex-col justify-center items-center pointer-events-none`}>
+
                 <ButtonBase
-                    className={`w-11/12 max-w-btn-max-width transition-all duration-300 ease-in-out mt-5 z-20 transition-all h-14 bg-primary rounded-2xl text-white IranSansMedium `}
+                    className={`w-11/12  max-w-btn-max-width pointer-events-auto transition-all duration-300 ease-in-out mt-5 z-20 transition-all h-14 bg-primary rounded-2xl text-white IranSansMedium `}
                     onClick={submitClickHandler}
                 >
                     {
