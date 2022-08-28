@@ -119,7 +119,6 @@ const Userid = () => {
                 (Object.keys(res.data)).forEach((day) => {
                     let dayOBJ = res.data[day]
                     makeLocalDays(day, dayOBJ)
-
                 })
 
 
@@ -149,7 +148,6 @@ const Userid = () => {
         if (day.hasOwnProperty('canEdit')) {
 
             editedDay = day;
-
 
 
             if (day) {
@@ -295,7 +293,7 @@ const Userid = () => {
                                  className={' relative w-full h-full hide-scrollbar '}
 
                             >
-                                {/*<div className={'shrink-0 w-full'}></div>*/}
+
 
                                 {
                                     Object.keys(reactiveUserLocalDays).map((day, index) => {

@@ -5,8 +5,9 @@ import {ButtonBase, CircularProgress} from "@material-ui/core";
 import moment from 'moment-jalaali'
 import TextField from "../utilitis/TextField/TextField";
 import {sendReport} from "../../Requests/Requests";
-import {CompanyId, CompanyRequiredFields, UserId} from "../../store/store";
+import {CollapseHeader, CompanyId, CompanyRequiredFields, UserId} from "../../store/store";
 import Swal from "sweetalert2";
+import {useReactiveVar} from "@apollo/client";
 
 const CanEdit = (props: {
     date: string,
@@ -28,6 +29,8 @@ const CanEdit = (props: {
     const [requirementsFilled, setRequirementsFilled] = useState("");
 
     const textFieldsHolder = useRef<HTMLDivElement>(null)
+    const reactiveCollapseHeader = useReactiveVar(CollapseHeader)
+    const lastScrollTop = useRef(0)
 
     moment.loadPersian()
     useEffect(() => {
@@ -132,137 +135,155 @@ const CanEdit = (props: {
         return ["05:00", "06:00", "07:00", "08:00"]
     }
     return (
-        <div className={'pb-20'}>
-            <div className={'pager pb-12 w-full flex-col justify-start items-center bg-secondary '}>
+        <div className={'h-full w-full relative'}>
+            <div
+                className={`absolute left-0 ${reactiveCollapseHeader ? "bottom-32" : "bottom-52"} transition-all duration-500  w-full flex flex-col justify-center items-center pointer-events-none`}>
+                <ButtonBase
+                    className={`w-11/12 max-w-btn-max-width transition-all duration-300 ease-in-out mt-5 z-20 transition-all h-14 bg-primary rounded-2xl text-white IranSansMedium `}
+                    onClick={submitClickHandler}
+                >
+                    {
+                        btnLoading ?
+                            <div className={'text-white'}>
+                                <CircularProgress color={'inherit'}/>
 
-                {
+                            </div>
+                            :
+                            <span className={'text-lg'}>ثبت</span>
 
-                    (props.dayData.timeFields ? props.dayData.timeFields : props.companyTimeFields).map((time: object, index: number) => {
+                    }
+                </ButtonBase>
 
+            </div>
+            <div className={'pb-44 h-full overflow-scroll'}
+                 onScroll={(e) => {
 
-                        return (
-                            <div key={index + 'timePickers'} className={'contents  '}>
+                     if (lastScrollTop.current < e.currentTarget.scrollTop && e.currentTarget.scrollTop > 200) {
+                         CollapseHeader(true)
+                     } else {
+                         if (e.currentTarget.scrollTop < 200)
+                             CollapseHeader(false)
 
+                     }
 
-                                {
-                                    index === 0 ?
-                                        <div
-                                            className={'w-full bg-background pb-2 text-right text-hint-text IranSansMedium text-sm pt-2 px-3'}>
-                                            برای این روز شما تا
-                                            {" "}
-                                            {moment.duration(props.remainSeconds ?? 0, 'seconds').humanize()}
-                                            {" "}
-                                            دیگر میتوانید گزارش بنویسید
-                                        </div>
-                                        :
-                                        index === 1 ?
-                                            <div
-                                                className={'w-full  bg-background pb-2 text-right text-hint-text IranSansMedium text-sm pt-2 px-3'}>
-                                                میتوانید از گزینه های سمت راست برای سرعت بیشتر استفاده کنید
-                                            </div>
-                                            :
-                                            null
-                                }
+                     lastScrollTop.current = e.currentTarget.scrollTop
 
+                 }}
+            >
 
-                                <TimePicker loading={props.loading} onTimeChange={(selectedTime: string) => {
-                                    timeFieldsData.current[(time as { title: string, sampleValues: any[] }).title] = selectedTime
-
-                                }}
-                                            defaultTime={props.dayData.timeFields ? props.dayData.timeFields.filter((item) => {
-                                                if (item.title === (time as { title: string }).title) {
-                                                    return true
-                                                }
-                                            })[0].value : "00:00"}
-                                            sample={sampleOfThisTime(time)}
-                                            title={(time as { title: string, sampleValues: any[] }).title}
-                                />
-                                {
-                                    index === 0 ?
-                                        <div className={'h-3 bg-secondary'}></div>
-                                        :
-                                        null
-                                }
-
-                            </div>)
-
-                    })
-
-                }
-
-                <div ref={textFieldsHolder}
-                     className={'w-full bg-secondary flex flex-col justify-start items-center pb-2'}>
+                <div className={'pager pb-12 w-full flex-col justify-start items-center bg-secondary '}>
 
                     {
-                        (props.dayData.textFields ?? props.companyTextFields).map((textField, index) => {
+
+                        (props.dayData.timeFields ? props.dayData.timeFields : props.companyTimeFields).map((time: object, index: number) => {
+
 
                             return (
-                                <div key={index + "TFields"} className={'contents'}>
-                                    <div className={'w-11/12 bg-background mt-3'} style={{
-                                        height: '1.5px'
-                                    }}/>
-                                    <div className={'w-full t-field '}>
-                                        <TextField
-                                            required={CompanyRequiredFields().includes(textField.title)}
-                                            title={textField.title}
-                                            maxLength={250}
-                                            onChange={(text: string) => {
+                                <div key={index + 'timePickers'} className={'contents  '}>
 
 
-                                                if (text) {
-                                                    if (textField.required) {
-                                                        if (requirementsFilled.substring(textField.title)) {
+                                    {
+                                        index === 0 ?
+                                            <div
+                                                className={'w-full bg-background pb-2 text-right text-hint-text IranSansMedium text-sm pt-2 px-3'}>
+                                                برای این روز شما تا
+                                                {" "}
+                                                {moment.duration(props.remainSeconds ?? 0, 'seconds').humanize()}
+                                                {" "}
+                                                دیگر میتوانید گزارش بنویسید
+                                            </div>
+                                            :
+                                            index === 1 ?
+                                                <div
+                                                    className={'w-full  bg-background pb-2 text-right text-hint-text IranSansMedium text-sm pt-2 px-3'}>
+                                                    میتوانید از گزینه های سمت راست برای سرعت بیشتر استفاده کنید
+                                                </div>
+                                                :
+                                                null
+                                    }
 
-                                                        } else {
-                                                            setRequirementsFilled(requirementsFilled + textField.title)
-                                                        }
+
+                                    <TimePicker loading={props.loading} onTimeChange={(selectedTime: string) => {
+                                        timeFieldsData.current[(time as { title: string, sampleValues: any[] }).title] = selectedTime
+
+                                    }}
+                                                defaultTime={props.dayData.timeFields ? props.dayData.timeFields.filter((item) => {
+                                                    if (item.title === (time as { title: string }).title) {
+                                                        return true
                                                     }
-                                                } else {
-                                                    if (requirementsFilled.substring(textField.title)) {
-                                                        setRequirementsFilled(requirementsFilled.replace(textField.title, ''))
-                                                    }
-                                                }
+                                                })[0].value : "00:00"}
+                                                sample={sampleOfThisTime(time)}
+                                                title={(time as { title: string, sampleValues: any[] }).title}
+                                    />
+                                    {
+                                        index === 0 ?
+                                            <div className={'h-3 bg-secondary'}></div>
+                                            :
+                                            null
+                                    }
 
-
-                                                textFieldsData.current[textField.title] = text
-                                            }}
-                                        />
-
-                                    </div>
-                                </div>
-
-
-                            )
+                                </div>)
 
                         })
+
                     }
 
+                    <div ref={textFieldsHolder}
+                         className={'w-full bg-secondary flex flex-col justify-start items-center pb-2'}>
 
-                    <div className={'w-full flex flex-row justify-center items-center'}>
-                        <ButtonBase
-                            className={`w-11/12 mt-5 max-w-btn-max-width  translate-y-20 transition-all duration-300 ease-in-out   mt-5 z-20 transition-all   h-14 bg-primary rounded-2xl text-white IranSansMedium `}
-                            onClick={submitClickHandler}
-                        >
+                        {
+                            (props.dayData.textFields ?? props.companyTextFields).map((textField, index) => {
 
-                            {
-                                btnLoading ?
-                                    <div className={'text-white'}>
-                                        <CircularProgress color={'inherit'}/>
+                                return (
+                                    <div key={index + "TFields"} className={'contents'}>
+                                        <div className={'w-11/12 bg-background mt-3'} style={{
+                                            height: '1.5px'
+                                        }}/>
+                                        <div className={'w-full t-field '}>
+                                            <TextField
+                                                required={CompanyRequiredFields().includes(textField.title)}
+                                                title={textField.title}
+                                                maxLength={250}
+                                                onChange={(text: string) => {
 
+
+                                                    if (text) {
+                                                        if (textField.required) {
+                                                            if (requirementsFilled.substring(textField.title)) {
+
+                                                            } else {
+                                                                setRequirementsFilled(requirementsFilled + textField.title)
+                                                            }
+                                                        }
+                                                    } else {
+                                                        if (requirementsFilled.substring(textField.title)) {
+                                                            setRequirementsFilled(requirementsFilled.replace(textField.title, ''))
+                                                        }
+                                                    }
+
+
+                                                    textFieldsData.current[textField.title] = text
+                                                }}
+                                            />
+
+                                        </div>
                                     </div>
-                                    :
-                                    <span className={'text-lg'}>ثبت</span>
 
-                            }
-                        </ButtonBase>
+
+                                )
+
+                            })
+                        }
+
+
                     </div>
+
 
                 </div>
 
-
             </div>
-
         </div>
+
     );
 };
 
