@@ -325,7 +325,7 @@ const Userid = () => {
                                                 {
 
                                                     noTimeLimit ?
-                                                        <CanEdit noTimeLimit={true} loading={loadingFragment}
+                                                        <CanEdit active={index - 1 === GetDayNumberByID(reactiveCurrentDay)} noTimeLimit={true} loading={loadingFragment}
                                                                  date={Object.keys(reactiveUserLocalDays)[index]}
                                                                  companyTimeFields={CompanyTimeFields()}
                                                                  companyTextFields={CompanyTextFields()}
@@ -343,7 +343,7 @@ const Userid = () => {
                                                                         trainingHours={UserLocalDays()[day].trainingHours}
                                                                         whatDidUserDo={UserLocalDays()[day].whatDidUserDoInReport}/>
                                                                 :
-                                                                <CanEdit noTimeLimit={false} loading={loadingFragment}
+                                                                <CanEdit active={index - 1 === GetDayNumberByID(reactiveCurrentDay)} noTimeLimit={false} loading={loadingFragment}
                                                                          date={Object.keys(reactiveUserLocalDays)[index]}
                                                                          companyTimeFields={CompanyTimeFields()}
                                                                          companyTextFields={CompanyTextFields()}

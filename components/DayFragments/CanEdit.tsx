@@ -15,7 +15,8 @@ const CanEdit = (props: {
     companyTimeFields: any,
     companyTextFields: any,
     loading: boolean,
-    noTimeLimit?: boolean
+    noTimeLimit?: boolean,
+    active: boolean
 }) => {
 
 
@@ -138,7 +139,7 @@ const CanEdit = (props: {
                 className={`fixed left-0 bottom-5 z-50  transition-all duration-500  w-full flex flex-col justify-center items-center pointer-events-none`}>
 
                 <ButtonBase
-                    className={`w-11/12  max-w-btn-max-width pointer-events-auto transition-all duration-300 ease-in-out mt-5 z-20 transition-all h-14 bg-primary rounded-2xl text-white IranSansMedium `}
+                    className={`w-11/12 max-w-btn-max-width ${props.active ? "pointer-events-auto" : 'pointer-events-none'} transition-all duration-300 ease-in-out mt-5 z-20 transition-all h-14 bg-primary rounded-2xl text-white IranSansMedium `}
                     onClick={submitClickHandler}
                 >
                     {

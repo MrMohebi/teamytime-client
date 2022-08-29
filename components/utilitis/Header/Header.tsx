@@ -21,6 +21,7 @@ import {CircularProgress} from "@material-ui/core";
 import $ from 'jquery'
 import {GoToThisDay} from "../../GoToThis";
 import {GetDayNumberByID} from "../../../helpers/GetDayNumberByID";
+import {fullDate} from "../../../helpers/FullDate";
 
 
 gsap.registerPlugin(ScrollTrigger)
@@ -101,12 +102,24 @@ const Header = (props: {
 
                 let monthOfDay = currentMonth;
                 if (document.getElementById(CurrentDay()))
-                    if (document.getElementById(CurrentDay()))
+                    if (document.getElementById(CurrentDay())) {
+                        if (document.getElementById(CurrentDay())!.getElementsByClassName('date-of-day')) {
+                            try {
+                                console.log()
+
+                                if (document.getElementById(CurrentDay())!.getElementsByClassName('date-of-day')[0].innerHTML === fullDate(0)){
+                                    setGoToPosition('')
+                                }
+                            } catch (e) {
+                            }
+                        }
                         document.getElementById(CurrentDay())!.childNodes.forEach((child) => {
                             if ((child as HTMLDivElement).classList.contains('month-of-day')) {
                                 monthOfDay = (child as HTMLDivElement).innerText
                             }
                         })
+                    }
+
                 setCurrentMonth(monthOfDay)
 
 
@@ -206,19 +219,6 @@ const Header = (props: {
             return (new Intl.DateTimeFormat('fa-IR', {
                 year: 'numeric'
             }).format(d))
-        }
-        const fullDate = (yearOffset: number) => {
-            const d = new Date()
-            d.setDate(d.getDate() + yearOffset)
-
-            let arr = (new Intl.DateTimeFormat('en-US-u-ca-persian', {
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric'
-            }).format(d).split('/'))
-
-            let string = arr[2] + "/" + (parseInt(arr[0]) < 10 ? "0" + arr[0] : arr[0]) + "/" + (parseInt(arr[1]) < 10 ? "0" + arr[1] : arr[1])
-            return string.replace(/[a-zA-Z ]/g, '')
         }
 
         const debouncedScrollHandler = useDebouncedCallback(

@@ -12,6 +12,7 @@ import gsap from 'gsap'
 import {useSwipeable} from "react-swipeable";
 import {useReactiveVar} from "@apollo/client";
 import {fullDate} from "../../helpers/FullDate";
+import AdminNoReports from "../../components/DayFragments/AdminNoReports";
 
 moment.loadPersian()
 const Admin = () => {
@@ -179,26 +180,30 @@ const Admin = () => {
                         }}/>
 
                 {
-                    adminRemainingTime > 1 ?
-                        <div
-                            className={'w-full  pb-2 text-right text-hint-text IranSansMedium bg-background text-sm pt-2 px-3'}>
+                    reports.length ?
+                        adminRemainingTime > 1 ?
+                            <div
+                                className={'w-full  pb-2 text-right text-hint-text IranSansMedium bg-background text-sm pt-2 px-3'}>
                         <span>
                                     کارمندان تا
                         </span>
-                            {" "}
-                            {moment.duration(adminRemainingTime ?? 0, 'seconds').humanize()}
-                            {" "}
-                            <span>
+                                {" "}
+                                {moment.duration(adminRemainingTime ?? 0, 'seconds').humanize()}
+                                {" "}
+                                <span>
                                     دیگر میتوانند گزارش ثبت کنند
 
                         </span>
-                        </div>
-                        :
-                        <div
-                            className={'w-full  pb-2 text-right text-hint-text IranSansMedium bg-background text-sm pt-2 px-3'}>
-                            <span>مهلت ثبت گزارش برای این روز به پایان رسیده است</span>
+                            </div>
+                            :
+                            <div
+                                className={'w-full  pb-2 text-right text-hint-text IranSansMedium bg-background text-sm pt-2 px-3'}>
+                                <span>مهلت ثبت گزارش برای این روز به پایان رسیده است</span>
 
-                        </div>
+                            </div>
+
+                        :
+                        null
 
                 }
 
@@ -267,8 +272,8 @@ const Admin = () => {
 
                                                             <div
                                                                 className={'rounded-xl border border-deactive-border flex flex-row justify-center items-center   py-1.5'}>
-                            <span
-                                className={'IranSansMedium text-primary mx-3 text-sm '}>{report.timeFields[0] ? report.timeFields[1].value : "00:00"}</span>
+                                                                <span
+                                                                    className={'IranSansMedium text-primary mx-3 text-sm '}>{report.timeFields[0] ? report.timeFields[1].value : "00:00"}</span>
                                                                 <img className={'ml-2 w-5'}
                                                                      src="/svg/training-glyph.svg"
                                                                      alt=""/>
@@ -297,7 +302,7 @@ const Admin = () => {
                                                                               style={{
                                                                                   fontSize: '0.75rem'
                                                                               }}>{textField.title}</span>
-                                                                            <p className={'text-white text-justify IranSansMedium select-all mt-2'}
+                                                                            <p className={'text-white text-justify IranSansMedium select-all mt-2 whitespace-pre-line'}
                                                                                style={{
                                                                                    fontSize: '0.7rem'
                                                                                }}>{textField.value}</p>
@@ -376,232 +381,238 @@ const Admin = () => {
                                             )
                                         })
                                         :
-                                        null
+                                        <AdminNoReports/>
                                 }
                             </div>
 
-                            <div
-                                className={'fixed max-w-md bottom-0 left-1/2 -translate-x-1/2 w-full  h-20 flex flex-row justify-center items-center py-2'}>
+                            {reports.length ?
+                                <div
+                                    className={'fixed max-w-md bottom-0 left-1/2 -translate-x-1/2 w-full  h-20 flex flex-row justify-center items-center py-2'}>
 
-                                <div ref={sentUsersHolderRef}
-                                     className={' bg-primary-dark shrink-0 border-2 border-primary rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}
-                                     style={{
-                                         width: '25%'
-                                     }}
-                                     onClick={(e) => {
-                                         if (usersListRef.current) {
-                                             usersListRef.current.style.transition = 'all .3s'
-                                             usersListRef.current.style.opacity = "0"
-                                             usersListRef.current.style.transition = ''
+                                    <div ref={sentUsersHolderRef}
+                                         className={' bg-primary-dark shrink-0 border-2 border-primary rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}
+                                         style={{
+                                             width: '25%'
+                                         }}
+                                         onClick={(e) => {
+                                             if (usersListRef.current) {
+                                                 usersListRef.current.style.transition = 'all .3s'
+                                                 usersListRef.current.style.opacity = "0"
+                                                 usersListRef.current.style.transition = ''
 
-                                             usersListRef.current.style.right = (Math.abs(e.currentTarget.getBoundingClientRect().right - document.body.getBoundingClientRect().width)) + "px"
-                                             usersListRef.current.style.left = ""
-                                             usersListRef.current.style.transition = 'all .3s'
+                                                 usersListRef.current.style.right = (Math.abs(e.currentTarget.getBoundingClientRect().right - document.body.getBoundingClientRect().width)) + "px"
+                                                 usersListRef.current.style.left = ""
+                                                 usersListRef.current.style.transition = 'all .3s'
 
-                                             usersListRef.current.style.opacity = "1"
+                                                 usersListRef.current.style.opacity = "1"
 
-                                         }
+                                             }
 
-                                         if (currentOpenDialog === "sent") {
-                                             // setDialogListData([])
-                                             setCurrentOpenDialog('')
+                                             if (currentOpenDialog === "sent") {
+                                                 // setDialogListData([])
+                                                 setCurrentOpenDialog('')
 
-                                         } else {
-                                             setDialogListData(sentUsers)
-                                             setCurrentOpenDialog('sent')
+                                             } else {
+                                                 setDialogListData(sentUsers)
+                                                 setCurrentOpenDialog('sent')
 
-                                         }
-
-
-                                     }}
-                                >
+                                             }
 
 
-                                    {
-                                        sentUsers.length ?
-
-                                            <div>
-                                                <div className={'flex flex-row justify-between items-center'}>
-                                                    <div
-                                                        className={`flex w-2/3 flex-row justify-center items-center ${currentOpenDialog === 'sent' ? 'avatars-opened' : 'avatars-closed'}`}>
-                                                        <div className={'flex flex-row w-12 justify-start items-center'}
-                                                             style={{
-                                                                 // transform: `translateX(${-(sentUsers.length / 4)}rem)`
-                                                             }}>
-
-                                                            {
-                                                                sentUsers.slice(0, 3).map((avatar, index) => {
-                                                                    return (
-
-                                                                        <img
-                                                                            src={avatar.profile ? BaseURL() + avatar.profile : '/img/no-image.png'}
-                                                                            key={index + "av"}
-                                                                            className={'w-6 h-6 rounded-full bg-yellow-300  border-secondary border-2 shrink-0'}
-                                                                            style={{
-                                                                                transform: `translateX(${index / 1.5}rem)`
-                                                                            }}/>
-                                                                    )
+                                         }}
+                                    >
 
 
-                                                                })
-                                                            }
+                                        {
+                                            sentUsers.length ?
+
+                                                <div>
+                                                    <div className={'flex flex-row justify-between items-center'}>
+                                                        <div
+                                                            className={`flex w-2/3 flex-row justify-center items-center ${currentOpenDialog === 'sent' ? 'avatars-opened' : 'avatars-closed'}`}>
+                                                            <div
+                                                                className={'flex flex-row w-12 justify-start items-center'}
+                                                                style={{
+                                                                    // transform: `translateX(${-(sentUsers.length / 4)}rem)`
+                                                                }}>
+
+                                                                {
+                                                                    sentUsers.slice(0, 3).map((avatar, index) => {
+                                                                        return (
+
+                                                                            <img
+                                                                                src={avatar.profile ? BaseURL() + avatar.profile : '/img/no-image.png'}
+                                                                                key={index + "av"}
+                                                                                className={'w-6 h-6 rounded-full object-fill  border-2 shrink-0'}
+                                                                                style={{
+                                                                                    transform: `translateX(${index / 1.5}rem)`
+                                                                                }}/>
+                                                                        )
+
+
+                                                                    })
+                                                                }
+
+
+                                                            </div>
 
 
                                                         </div>
-
-
+                                                        <div className={'rotate-180'}></div>
+                                                        <img src="/svg/more-arrow-blue.svg"
+                                                             className={`h-5 w-5 transition-all duration-500 ease-in-out ${currentOpenDialog === 'sent' ? "" : 'rotate-180'}`}
+                                                             alt=""/>
                                                     </div>
-                                                    <div className={'rotate-180'}></div>
-                                                    <img src="/svg/more-arrow-blue.svg"
-                                                         className={`h-5 w-5 transition-all duration-500 ease-in-out ${currentOpenDialog === 'sent' ? "" : 'rotate-180'}`}
-                                                         alt=""/>
-                                                </div>
 
 
-                                                <span
-                                                    className={'IranSansMedium pt-1 text-primary  whitespace-nowrap block w-full text-center '}
-                                                    style={{
-                                                        fontSize: '0.7rem'
-                                                    }}>
+                                                    <span
+                                                        className={'IranSansMedium pt-1 text-primary  whitespace-nowrap block w-full text-center '}
+                                                        style={{
+                                                            fontSize: '0.7rem'
+                                                        }}>
 
 
                                     {sentUsers.length}
-                                                    {" "}
+                                                        {" "}
 
 
-                                                    نفر ثبت شده</span>
+                                                        نفر ثبت شده</span>
 
-                                            </div>
+                                                </div>
 
-                                            :
-                                            <div className={'w-full flex flex-col justify-center items-center'}>
+                                                :
+                                                <div className={'w-full flex flex-col justify-center items-center'}>
                                                 <span
                                                     className={'IranSansMedium text-primary text-sm whitespace-nowrap'}>تا الان گزارشی</span>
-                                                <span className={'IranSansMedium text-primary text-sm'}>ثبت نشده</span>
-                                            </div>
+                                                    <span
+                                                        className={'IranSansMedium text-primary text-sm'}>ثبت نشده</span>
+                                                </div>
 
-                                    }
-
-
-                                </div>
+                                        }
 
 
-                                <ButtonBase
-                                    className={' shrink-0 mx-2 bg-primary rounded-xl h-full flex flex-row justify-center items-center  IranSansMedium text-white'}
-                                    style={{
-                                        width: '45%'
-                                    }}>
-                                    دانـلود گـزارش
-                                </ButtonBase>
+                                    </div>
 
 
-                                <div ref={unsentUsersHolderRef}
-                                     className={'bg-primary-dark shrink-0 border-2 border-deactive-border rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}
-
-                                     style={{
-                                         width: '25%'
-                                     }}
-                                     onClick={(e) => {
-
-
-                                         if (usersListRef.current) {
-                                             usersListRef.current.style.transition = 'all .3s'
-                                             usersListRef.current.style.opacity = "0"
-                                             usersListRef.current.style.transition = ''
-
-                                             usersListRef.current.style.left = (Math.abs(e.currentTarget.getBoundingClientRect().left)) + "px"
-                                             usersListRef.current.style.right = ""
-                                             usersListRef.current.style.transition = 'all .3s'
-
-                                             usersListRef.current.style.opacity = "1"
-
-                                         }
+                                    <ButtonBase
+                                        className={' shrink-0 mx-2 bg-primary rounded-xl h-full flex flex-row justify-center items-center  IranSansMedium text-white'}
+                                        style={{
+                                            width: '45%'
+                                        }}>
+                                        دانـلود گـزارش
+                                    </ButtonBase>
 
 
-                                         if (currentOpenDialog === "unsent") {
-                                             // setTimeout(()=>{
-                                             //     setDialogListData([])
-                                             // },)
-                                             setCurrentOpenDialog('')
+                                    <div ref={unsentUsersHolderRef}
+                                         className={'bg-primary-dark shrink-0 border-2 border-deactive-border rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}
+
+                                         style={{
+                                             width: '25%'
+                                         }}
+                                         onClick={(e) => {
 
 
-                                         } else {
-                                             setDialogListData(unsentUsers)
-                                             setCurrentOpenDialog('unsent')
+                                             if (usersListRef.current) {
+                                                 usersListRef.current.style.transition = 'all .3s'
+                                                 usersListRef.current.style.opacity = "0"
+                                                 usersListRef.current.style.transition = ''
 
-                                         }
+                                                 usersListRef.current.style.left = (Math.abs(e.currentTarget.getBoundingClientRect().left)) + "px"
+                                                 usersListRef.current.style.right = ""
+                                                 usersListRef.current.style.transition = 'all .3s'
+
+                                                 usersListRef.current.style.opacity = "1"
+
+                                             }
 
 
-                                     }}
+                                             if (currentOpenDialog === "unsent") {
+                                                 // setTimeout(()=>{
+                                                 //     setDialogListData([])
+                                                 // },)
+                                                 setCurrentOpenDialog('')
 
-                                >
+
+                                             } else {
+                                                 setDialogListData(unsentUsers)
+                                                 setCurrentOpenDialog('unsent')
+
+                                             }
 
 
-                                    {
-                                        unsentUsers.length ?
-                                            <div>
+                                         }}
 
-                                                <div className={'flex flex-row justify-between items-center'}>
-                                                    <div
-                                                        className={`flex w-2/3 flex-row justify-center items-center  ${currentOpenDialog === 'unsent' ? 'avatars-opened' : 'avatars-closed '} `}>
+                                    >
+
+
+                                        {
+                                            unsentUsers.length ?
+                                                <div>
+
+                                                    <div className={'flex flex-row justify-between items-center'}>
                                                         <div
-                                                            className={'flex flex-row w-12 justify-start items-center '}
-                                                            style={{
-                                                                // transform: `translateX(${-(unsentUsers.length/(unsentUsers.length-1))}rem)`
-                                                            }}>
+                                                            className={`flex w-2/3 flex-row justify-center items-center  ${currentOpenDialog === 'unsent' ? 'avatars-opened' : 'avatars-closed '} `}>
+                                                            <div
+                                                                className={'flex flex-row w-12 justify-start items-center '}
+                                                                style={{
+                                                                    // transform: `translateX(${-(unsentUsers.length/(unsentUsers.length-1))}rem)`
+                                                                }}>
 
-                                                            {
-                                                                unsentUsers.slice(0, 3).map((avatar, index) => {
-                                                                    return (
+                                                                {
+                                                                    unsentUsers.slice(0, 3).map((avatar, index) => {
+                                                                        return (
 
-                                                                        <img src={'/img/no-image.png'}
-                                                                             key={index + "av"}
-                                                                             className={'w-6 h-6 rounded-full bg-yellow-300  border-secondary border-2 shrink-0'}
-                                                                             style={{
-                                                                                 transform: `translateX(${index / 1.5}rem)`
-                                                                             }}/>
-                                                                    )
+                                                                            <img src={'/img/no-image.png'}
+                                                                                 key={index + "av"}
+                                                                                 className={'w-6 h-6 rounded-full object-center border-secondary border-2 shrink-0'}
+                                                                                 style={{
+                                                                                     transform: `translateX(${index / 1.5}rem)`
+                                                                                 }}/>
+                                                                        )
 
 
-                                                                })
-                                                            }
+                                                                    })
+                                                                }
+
+
+                                                            </div>
 
 
                                                         </div>
-
-
+                                                        <img src="/svg/more-arrow.svg"
+                                                             className={`h-5 w-5 transition-all duration-500 ease-in-out ${currentOpenDialog === 'unsent' ? "" : 'rotate-180'}`}
+                                                             alt=""/>
                                                     </div>
-                                                    <img src="/svg/more-arrow.svg"
-                                                         className={`h-5 w-5 transition-all duration-500 ease-in-out ${currentOpenDialog === 'unsent' ? "" : 'rotate-180'}`}
-                                                         alt=""/>
-                                                </div>
 
-                                                <span
-                                                    className={'IranSansMedium  pt-1 text-text-blue-light  whitespace-nowrap block w-full text-center '}
-                                                    style={{
-                                                        fontSize: '0.7rem'
-                                                    }}>
+                                                    <span
+                                                        className={'IranSansMedium  pt-1 text-text-blue-light  whitespace-nowrap block w-full text-center '}
+                                                        style={{
+                                                            fontSize: '0.7rem'
+                                                        }}>
 
                                     {unsentUsers.length}
 
-                                                    {" "}
+                                                        {" "}
 
-                                                    نفر ثبت نشده
+                                                        نفر ثبت نشده
                                 </span>
 
-                                            </div>
-                                            :
-                                            <div className={'w-full flex flex-col justify-center items-center'}>
+                                                </div>
+                                                :
+                                                <div className={'w-full flex flex-col justify-center items-center'}>
                                             <span
                                                 className={'IranSansMedium text-text-blue-light text-sm'}> گزارش همه</span>
-                                                <span
-                                                    className={'IranSansMedium text-text-blue-light text-sm'}>ثبت شده</span>
-                                            </div>
+                                                    <span
+                                                        className={'IranSansMedium text-text-blue-light text-sm'}>ثبت شده</span>
+                                                </div>
 
-                                    }
+                                        }
 
+                                    </div>
                                 </div>
-                            </div>
+                                :
+                                null
+                            }
 
                         </div>
 
