@@ -14,7 +14,8 @@ const Passed = (props: {
     const [filteredTextFields, setFilteredTextFields] = useState([]);
 
     useEffect(() => {
-        setFilteredTextFields(props.dayData.textFields.filter((textField: any) => textField.value))
+        if (props.dayData.textFields)
+            setFilteredTextFields(props.dayData.textFields.filter((textField: any) => textField.value))
 
     }, [props.dayData]);
     return (
@@ -89,11 +90,11 @@ const Passed = (props: {
 
 
                         {
-                            props.dayData.textFields.map((tField: any) => {
+                            props.dayData.textFields.map((tField: any, index:number) => {
                                 if (tField.value)
                                     if (tField.value.replaceAll(" ", ""))
-                                        return <div
-                                            className={'flex flex-col justify-center items-center mt-6 px-4'}>
+                                        return <div key={index + "tf"}
+                                                    className={'flex flex-col justify-center items-center mt-6 px-4'}>
                                             <span
                                                 className={'text-primary IranSansMedium text-sm '}>{tField.title}</span>
                                             <p className={'whitespace-pre-line IranSansMedium text-sm mt-2'}>{tField.value.replace(/\n/g, '\n')}</p>

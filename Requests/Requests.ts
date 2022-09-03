@@ -71,4 +71,24 @@ export const getReportsForAdmin = (token: string, startDate: string, endDate: st
 
         });
 }
+export const editAdminReview = (token: string, userID: string, companyID: string, adminReview: string, jalaliDate: string) => {
+    return axios.post(BASE_URL + 'editAdminReview.php',
+        {
+            // headers: {
+            //     token
+            // },
+            // params: {
+            userID,
+            companyID,
+            adminReview,
+            jalaliDate
+            // }
+
+        }, {
+            headers: {
+                token: token,
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+}
 

@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {getReportsForAdmin} from "../../Requests/Requests";
+import {getCompany, getReportsForAdmin} from "../../Requests/Requests";
 import Header from "../../components/utilitis/Header/Header";
-import {ButtonBase, CircularProgress} from "@material-ui/core";
+import {Button, ButtonBase, CircularProgress} from "@material-ui/core";
 import {useRouter} from "next/router";
-import {AdminID, BaseURL, CurrentDay} from "../../store/store";
+import {AdminID, BaseURL, CompanyId, CurrentDay} from "../../store/store";
 // @ts-ignore
 import $ from 'jquery'
 // @ts-ignore
@@ -13,6 +13,8 @@ import {useSwipeable} from "react-swipeable";
 import {useReactiveVar} from "@apollo/client";
 import {fullDate} from "../../helpers/FullDate";
 import AdminNoReports from "../../components/DayFragments/AdminNoReports";
+import VerifyReportDialog from "../../components/VerifyReportDialog/VerifyReportDialog";
+import produce from 'immer'
 
 moment.loadPersian()
 const Admin = () => {
@@ -34,9 +36,21 @@ const Admin = () => {
     const unsentUsersHolderRef = useRef<HTMLDivElement>(null)
     const sentUsersHolderRef = useRef<HTMLDivElement>(null)
     const usersListRef = useRef<HTMLDivElement>(null)
+    const defaultColorIndicatorHeight = '50%'
 
     const currentDayReactive = useReactiveVar(CurrentDay)
     const [currentOpenDialog, setCurrentOpenDialog] = useState('');
+
+    const [currentUserData, setCurrentUserData] = useState({
+        name: "",
+        role: '',
+        jalaliDate: '',
+        userID: "",
+        workingHours: "00:00",
+        trainingHours: "00:00"
+    });
+
+    const [showVerifyDialog, setShowVerifyDialog] = useState(false);
     const router = useRouter()
     const {token} = router.query
 
@@ -49,6 +63,12 @@ const Admin = () => {
     }, [token]);
 
     useEffect(() => {
+        fetchDay()
+
+    }, [currentDay]);
+
+
+    const fetchDay = () => {
         setDialogListData([])
         setCurrentOpenDialog('')
         setReportsLoading(true)
@@ -74,9 +94,7 @@ const Admin = () => {
                     })
 
             })
-    }, [currentDay]);
-
-
+    }
     useEffect(() => {
         let day = currentDay;
         if (CurrentDay())
@@ -115,6 +133,17 @@ const Admin = () => {
         }
     }, [dayData]);
 
+
+    useEffect(() => {
+        getCompany('arnoya').then((value) => {
+            try {
+                console.log(value)
+                CompanyId(value.data.id)
+            } catch (e) {
+
+            }
+        })
+    }, []);
 
     const isThisReportEmpty = (report: any) => {
 
@@ -170,6 +199,14 @@ const Admin = () => {
     return (
         <div className={'bg-secondary min-h-full  pb-10 relative'}>
 
+            <VerifyReportDialog jalaliDate={currentUserData.jalaliDate} show={showVerifyDialog} onClose={() => {
+
+                fetchDay()
+                setShowVerifyDialog(false)
+            }} userID={currentUserData.userID} workingHours={currentUserData.workingHours}
+                                trainingHours={currentUserData.trainingHours} name={currentUserData.name}
+                                role={currentUserData.role}/>
+
             <div className={'h-20 text-white w-full bg-red mt-32 contents pointer-events-auto'} {...handlers}>
 
 
@@ -223,19 +260,31 @@ const Admin = () => {
 
 
                                 {
-                                    reports.length ?
-                                        reports.map((report, index) => {
+                                    reports.length ? reports.map((report, index) => {
 
 
                                             const d = new Date((report.updatedAt ?? report.createdAt) * 1000)
+
+                                            let reportState = "";
+                                            let reportVerifiedBy = "";
+                                            try {
+                                                reportState = report.adminReview[0].state
+                                                reportVerifiedBy = report.adminReview[0].name
+                                            } catch (e) {
+
+                                            }
 
                                             return (
 
                                                 <div key={'rep-' + index} style={{
                                                     animationDelay: ((index + 1) * 50) + 'ms'
                                                 }}
-                                                     className={'each-user transition-all mt-4 animate__animated animate__fadeInUp animate__faster  bg-primary-dark rounded-2xl pb-3  w-full shadow-md'}>
+                                                     className={'each-user overflow-hidden relative transition-all mt-4 animate__animated animate__fadeInUp animate__faster  bg-primary-dark rounded-2xl pb-3  w-full shadow-md'}>
 
+                                                    <div style={{
+                                                        height: defaultColorIndicatorHeight
+                                                    }}
+                                                         className={`color-indicator absolute right-0 top-1/2 -translate-y-1/2 ${reportState === 'verified' ? "bg-primary" : reportState === "warning" ? 'bg-red' : reportState === 'improvement' ? "bg-green" : 'bg-gray-600'}  w-[3px] rounded-tl-xl rounded-bl-xl`}></div>
                                                     <div
                                                         className={' flex flex-row justify-between  items-start px-3 pt-3'}>
                                                         <div
@@ -261,12 +310,14 @@ const Admin = () => {
                                                         </div>
 
 
-                                                        <div className={'flex flex-col justify-center items-center  '}>
+                                                        <div
+                                                            className={'flex flex-col justify-center items-center  '}>
                                                             <div
                                                                 className={'rounded-xl border mb-2 border-deactive-border flex flex-row justify-center items-center   py-1.5  '}>
                                                             <span
                                                                 className={'IranSansMedium text-primary mx-3 text-sm '}>{report.timeFields[0] ? report.timeFields[0].value : "00:00"}</span>
-                                                                <img className={'ml-2 w-5'} src="/svg/work-glyph.svg"
+                                                                <img className={'ml-2 w-5'}
+                                                                     src="/svg/work-glyph.svg"
                                                                      alt=""/>
                                                             </div>
 
@@ -296,8 +347,9 @@ const Admin = () => {
                                                             (report.textFields as any[]).map((textField, index) => {
                                                                 if (textField.value)
                                                                     return (
-                                                                        <div key={'e-rep' + report.userID + index}
-                                                                             className={"w-full flex flex-col mt-4 justify-start items-start"}>
+                                                                        <div
+                                                                            key={'e-rep' + report.userID + index}
+                                                                            className={"w-full flex flex-col mt-4 justify-start items-start"}>
                                                                         <span className={'text-primary IranSansMedium '}
                                                                               style={{
                                                                                   fontSize: '0.75rem'
@@ -320,53 +372,158 @@ const Admin = () => {
 
 
                                                     <div
-                                                        className={'w-full h-7 flex flex-row justify-between items-end text-white IranSansMedium px-3'}>
-
-                                                        {!isThisReportEmpty(report) ?
-
-                                                            <div
-                                                                className={'flex flex-row justify-center items-center  '}
-                                                                onClick={(e) => {
-                                                                    let el = (e.currentTarget as HTMLDivElement).parentElement!.parentElement!.querySelector('.report-details')!
-                                                                    let arrow = e.currentTarget.querySelector('.up-arrow') ?? document.createElement('div')
-                                                                    let text = e.currentTarget.querySelector('.more-text') ?? document.createElement('div')
-                                                                    if (el.className.includes('h--0')) {
-                                                                        el.className = el.className.replace("h--0", "h--auto");
-                                                                        gsap.to(el, {
-                                                                            height: 'auto',
-                                                                            duration: '0.3'
-                                                                        });
-                                                                        (text as HTMLSpanElement).innerText = "پنهان کردن اطلاعات بیشتر"
-                                                                        arrow.classList.add('rotate-180')
-                                                                    } else {
-                                                                        el.className = el.className.replace("h--auto", "h--0");
-                                                                        gsap.to(el, {
-                                                                            height: '0px',
-                                                                            duration: '0.3'
-                                                                        });
-                                                                        (text as HTMLSpanElement).innerText = "نمایش  اطلاعات بیشتر"
-                                                                        arrow.classList.remove('rotate-180')
-                                                                    }
-
-
-                                                                }}
-                                                            >
+                                                        className={'w-full flex flex-row justify-between items-end text-white IranSansMedium px-3'}>
+                                                        <div
+                                                            className={'flex flex-row justify-start items-center'}>
+                                                            {!isThisReportEmpty(report) ?
                                                                 <div
-                                                                    className={'w-9 h-9 border flex flex-row justify-center items-center border-deactive-border rounded-xl'}>
-                                                                    <img src="/svg/more-arrow.svg"
-                                                                         className={'p-2 up-arrow transition-all duration-300 ease-in-out'}
-                                                                         alt=""/>
-                                                                </div>
+                                                                    className={'flex flex-row justify-center items-center  '}
+                                                                    onClick={(e) => {
+                                                                        let el = (e.currentTarget as HTMLDivElement).parentElement!.parentElement!.parentElement!.querySelector('.report-details')!
+                                                                        let arrow = e.currentTarget.querySelector('.up-arrow') ?? document.createElement('div')
+                                                                        let text = e.currentTarget.querySelector('.more-text') ?? document.createElement('div')
+                                                                        let verifyReportButton = e.currentTarget.parentElement!.parentElement!.querySelector('.verify-btn') ?? document.createElement('div')
 
-                                                                <span
-                                                                    className={'IranSansMedium text-primary  mr-2 more-text'}
-                                                                    style={{
-                                                                        fontSize: '0.7rem'
-                                                                    }}>نمایش  اطلاعات بیشتر</span>
-                                                            </div>
-                                                            :
-                                                            <div></div>
-                                                        }
+                                                                        if (el.className.includes('h--0')) {
+                                                                            el.className = el.className.replace("h--0", "h--auto");
+                                                                            gsap.to(el, {
+                                                                                height: 'auto',
+                                                                                duration: '0.3'
+                                                                            });
+                                                                            gsap.to(verifyReportButton, {
+                                                                                opacity: '1',
+                                                                                pointerEvents: 'auto',
+                                                                                duration: '0'
+                                                                            });
+                                                                            gsap.to(text, {
+                                                                                width: '0px',
+                                                                                pointerEvents: 'none',
+                                                                                duration: '0'
+                                                                            });
+
+                                                                            if ((el.parentElement!.querySelector('.color-indicator'))) {
+                                                                                gsap.to((el.parentElement!.querySelector('.color-indicator')), {
+                                                                                    height: "70%",
+                                                                                    duration: '0.3'
+                                                                                });
+
+                                                                            }
+
+                                                                            arrow.classList.add('rotate-180')
+
+
+                                                                            console.log(verifyReportButton)
+                                                                        } else {
+                                                                            el.className = el.className.replace("h--auto", "h--0");
+                                                                            gsap.to(el, {
+                                                                                height: '0px',
+                                                                                duration: '0.3'
+                                                                            });
+                                                                            gsap.to(text, {
+                                                                                width: 'auto',
+                                                                                pointerEvents: 'auto',
+                                                                                duration: '0',
+                                                                                overflow: 'hidden'
+                                                                            });
+                                                                            gsap.to(verifyReportButton, {
+                                                                                opacity: '0',
+                                                                                pointerEvents: 'none',
+                                                                                duration: '0'
+                                                                            });
+                                                                            if ((el.parentElement!.querySelector('.color-indicator'))) {
+                                                                                gsap.to((el.parentElement!.querySelector('.color-indicator')), {
+                                                                                    height: defaultColorIndicatorHeight,
+                                                                                    duration: '0.3'
+                                                                                });
+                                                                            }
+
+
+                                                                            arrow.classList.remove('rotate-180')
+                                                                        }
+
+
+                                                                    }}
+                                                                >
+                                                                    <div
+                                                                        className={'w-9 h-9 border flex flex-row justify-center items-center border-deactive-border rounded-xl'}>
+                                                                        <img src="/svg/more-arrow.svg"
+                                                                             className={'p-2 up-arrow transition-all duration-300 ease-in-out'}
+                                                                             alt=""/>
+                                                                    </div>
+
+
+                                                                    <span
+                                                                        className={'IranSansMedium text-primary  mr-2 more-text overflow-hidden'}
+                                                                        style={{
+                                                                            fontSize: '0.7rem'
+                                                                        }}>نمایش  اطلاعات بیشتر</span>
+                                                                </div>
+                                                                :
+                                                                <div></div>
+                                                            }
+
+
+                                                            {
+                                                                reportState ?
+                                                                    <Button style={{
+                                                                        pointerEvents: 'none',
+                                                                        opacity: '0'
+                                                                    }}
+                                                                            onClick={() => {
+                                                                                setCurrentUserData(
+                                                                                    produce((draft) => {
+                                                                                        draft.userID = report.userID;
+                                                                                        draft.jalaliDate = report.jalaliDate;
+                                                                                        draft.workingHours = report.timeFields[0] ? report.timeFields[0].value : "00:00"
+                                                                                        draft.trainingHours = report.timeFields[1] ? report.timeFields[1].value : "00:00"
+                                                                                        draft.name = report.user.name
+                                                                                        draft.role = report.user.role
+                                                                                    })
+                                                                                )
+
+                                                                                setShowVerifyDialog(true)
+
+
+                                                                            }}
+                                                                            className={`border-solid flex flex-row justify-center items-center verify-btn mr-1 border ${reportState === 'verified' ? "border-primary text-primary" : reportState === "warning" ? 'border-red text-red' : reportState === 'improvement' ? "border-green text-green" : 'border-gray-600'} border-primary rounded-xl text-primary px-4 `}>
+                                                                    <span className={'IranSansMedium text-inherit'}>
+{
+    reportVerifiedBy
+}
+                                                                    </span>
+                                                                        <img
+                                                                            src={("/svg/") + (reportState === 'verified' ? "edit-blue" : reportState === "warning" ? 'edit-red' : reportState === 'improvement' ? "edit-green" : 'bg-gray-600') + '.svg'}
+                                                                            className={'h-5 w-5 mr-2'} alt="edit report"/>
+                                                                    </Button> :
+                                                                    <Button style={{
+                                                                        pointerEvents: 'none',
+                                                                        opacity: '0'
+                                                                    }}
+                                                                            onClick={() => {
+                                                                                setCurrentUserData(
+                                                                                    produce((draft) => {
+                                                                                        draft.userID = report.userID;
+                                                                                        draft.jalaliDate = report.jalaliDate;
+                                                                                        draft.workingHours = report.timeFields[0] ? report.timeFields[0].value : "00:00"
+                                                                                        draft.trainingHours = report.timeFields[1] ? report.timeFields[1].value : "00:00"
+                                                                                        draft.name = report.user.name
+                                                                                        draft.role = report.user.role
+                                                                                    })
+                                                                                )
+                                                                                setShowVerifyDialog(true)
+
+
+                                                                            }}
+                                                                            className={'border-solid verify-btn mr-1 border border-primary rounded-xl text-primary px-4 '}>
+                                                                    <span className={'IranSansMedium'}>
+                                                                                            تایید گزارش
+
+                                                                    </span>
+                                                                    </Button>
+                                                            }
+
+
+                                                        </div>
 
 
                                                         <span className={''} style={{
@@ -440,7 +597,7 @@ const Admin = () => {
                                                                     sentUsers.slice(0, 3).map((avatar, index) => {
                                                                         return (
 
-                                                                            <img
+                                                                            <img alt={'avatar'}
                                                                                 src={avatar.profile ? BaseURL() + avatar.profile : '/img/no-image.png'}
                                                                                 key={index + "av"}
                                                                                 className={'w-6 h-6 rounded-full object-fill  border-2 shrink-0'}
@@ -562,7 +719,7 @@ const Admin = () => {
                                                                     unsentUsers.slice(0, 3).map((avatar, index) => {
                                                                         return (
 
-                                                                            <img src={'/img/no-image.png'}
+                                                                            <img alt={'no-image'} src={'/img/no-image.png'}
                                                                                  key={index + "av"}
                                                                                  className={'w-6 h-6 rounded-full object-center border-secondary border-2 shrink-0'}
                                                                                  style={{

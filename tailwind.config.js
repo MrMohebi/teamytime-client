@@ -20,7 +20,8 @@ module.exports = {
                 'deactive-border': '#304050',
                 'hint-text': '#4E5760',
                 'red': '#EB6868',
-
+                'green': '#68EB99',
+                //from last version
                 'primary': '#68B4EB',
                 'primary-light': '#f1f5f8',
                 'default': '#f0f2f5',
