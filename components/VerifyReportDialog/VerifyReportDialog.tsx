@@ -90,17 +90,14 @@ const VerifyReportDialog = (props: {
         fetch("https://time.m3m.dev/api/editAdminReview.php", requestOptions)
             .then(response => {
                 response.text()
-                console.log(response)
                 setBtnLoading(false)
 
                 props.onClose(adminReview)
             })
             .then(result => {
-                console.log(result)
                 setBtnLoading(false)
             })
             .catch(error => {
-                console.log('error', error)
                 setBtnLoading(false)
             })
         // editAdminReview(AdminID(), userId, CompanyId(), "[{}]", fullDate(0)).then((value) => {

@@ -21,7 +21,6 @@ const Passed = (props: {
         if (props.dayData.textFields)
             setFilteredTextFields(props.dayData.textFields.filter((textField: any) => textField.value))
 
-        console.log(props.reportState)
     }, [props.dayData]);
 
     const lotieRef = useRef<any>()

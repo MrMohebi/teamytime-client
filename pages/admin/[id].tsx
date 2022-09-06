@@ -60,8 +60,6 @@ const Admin = () => {
     const [showVerifyDialog, setShowVerifyDialog] = useState(false);
     const router = useRouter()
     const {id} = router.query
-    console.log(id)
-    console.log('its id')
 
     const reportsHolder = useRef<HTMLDivElement>(null)
 
@@ -89,14 +87,9 @@ const Admin = () => {
 
                     }
                 }
-                console.log(admin)
             })
     }, [id]);
-    useEffect(() => {
 
-        if (admin)
-            console.log(admin)
-    }, [admin]);
 
     useEffect(() => {
         if (admin.token)
@@ -174,7 +167,6 @@ const Admin = () => {
     useEffect(() => {
         getCompany('arnoya').then((value) => {
             try {
-                console.log(value)
                 CompanyId(value.data.id)
             } catch (e) {
 
@@ -311,8 +303,7 @@ const Admin = () => {
 
                                             const d = new Date((report.updatedAt ?? report.createdAt) * 1000)
 
-                                            console.log(report)
-                                            console.log(report.adminReview)
+
                                             let reportState = "";
                                             let reportVerifiedBy = "";
                                             try {
@@ -460,7 +451,6 @@ const Admin = () => {
                                                                             arrow.classList.add('rotate-180')
 
 
-                                                                            console.log(verifyReportButton)
                                                                         } else {
                                                                             el.className = el.className.replace("h--auto", "h--0");
                                                                             gsap.to(el, {
