@@ -31,6 +31,7 @@ const CanEdit = (props: {
     const textFieldsHolder = useRef<HTMLDivElement>(null)
     const lastScrollTop = useRef(0)
 
+    const canEditScroller = useRef<HTMLDivElement>()
     moment.loadPersian()
     useEffect(() => {
         moment.relativeTimeThreshold('h', 30);
@@ -153,7 +154,7 @@ const CanEdit = (props: {
                 </ButtonBase>
 
             </div>
-            <div className={'pb-44 h-full overflow-scroll'}
+            <div ref={canEditScroller as any} className={'pb-44 h-full overflow-scroll scroll-smooth'}
                  onScroll={(e) => {
 
                      if (lastScrollTop.current < e.currentTarget.scrollTop && e.currentTarget.scrollTop > 200) {
@@ -239,6 +240,17 @@ const CanEdit = (props: {
                                         }}/>
                                         <div className={'w-full t-field '}>
                                             <TextField
+                                                onFocus={(e: any) => {
+                                                    let scrollOffset = 250;
+                                                    let scrollOffsetCollapsed = 160;
+                                                    try {
+                                                        let offset = (e.currentTarget as HTMLDivElement).getBoundingClientRect().top - (CollapseHeader() ? scrollOffsetCollapsed : scrollOffset);
+                                                        (canEditScroller.current as HTMLDivElement).scrollBy(0, offset)
+                                                    } catch (e) {
+
+                                                    }
+
+                                                }}
                                                 required={CompanyRequiredFields().includes(textField.title)}
                                                 title={textField.title}
                                                 maxLength={250}
