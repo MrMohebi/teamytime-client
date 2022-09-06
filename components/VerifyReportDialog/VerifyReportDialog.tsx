@@ -107,7 +107,7 @@ const VerifyReportDialog = (props: {
 
                     <div className={'flex flex-col justify-center items-center  mt-5'}>
                         <div
-                            className={'rounded-xl border border-deactive-border flex flex-row justify-center items-center py-2'}>
+                            className={'rounded-xl border border-inactive-border flex flex-row justify-center items-center py-2'}>
                             {/*todo change the index to text*/}
                             <span
                                 className={'IranSansMedium text-primary mx-3 text-xl '}>{props.workingHours ?? "00:00"}</span>
@@ -116,7 +116,7 @@ const VerifyReportDialog = (props: {
                         </div>
 
                         <div
-                            className={'rounded-xl border border-deactive-border flex flex-row justify-center items-center mt-3 py-2'}>
+                            className={'rounded-xl border border-inactive-border flex flex-row justify-center items-center mt-3 py-2'}>
                             <span
                                 className={'IranSansMedium text-primary mx-3 text-xl '}>{props.trainingHours ?? "00:00"}</span>
                             <img className={'ml-2'} src="/svg/training-glyph.svg" alt=""/>

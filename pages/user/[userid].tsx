@@ -22,6 +22,9 @@ import {useReactiveVar} from "@apollo/client";
 import {GoToThisDay} from "../../components/GoToThis";
 import {GetDayNumberByID} from "../../helpers/GetDayNumberByID";
 import {fullDate} from "../../helpers/FullDate";
+// @ts-ignore
+import moment from 'moment-jalaali'
+import {thisExpression} from "@babel/types";
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -298,11 +301,28 @@ const Userid = () => {
                                 {
                                     Object.keys(reactiveUserLocalDays).map((day, index) => {
 
+                                        let date = new Date()
+                                        date.setSeconds(0)
+                                        date.setMinutes(0)
+                                        date.setHours(0)
+                                        let passedSeconds = Math.abs(date.getTime() - (new Date()).getTime()) / 1000
+
+
                                         if (typeof UserLocalDays()[day] === 'object') {
 
                                             if (day === fullDate(0) && !CurrentDay())
                                                 CurrentDay('d-' + index)
 
+
+                                            let reportState = ''
+                                            let reportVerifiedBy = ''
+                                            try {
+                                                reportState = UserLocalDays()[day].adminReview[0].state
+                                                reportVerifiedBy = UserLocalDays()[day].adminReview[0].name
+
+                                            }catch (e) {
+
+                                            }
                                             return <div
                                                 className={`${index - 1 === GetDayNumberByID(reactiveCurrentDay) ? "opacity-100  " : " opacity-0  pointer-events-none"} transition-all duration-300 shrink-0 absolute  reports-day w-full h-full report-el overflow-scroll `}
                                                 id={'r-d-' + index}
@@ -325,31 +345,38 @@ const Userid = () => {
                                                 {
 
                                                     noTimeLimit ?
-                                                        <CanEdit active={index - 1 === GetDayNumberByID(reactiveCurrentDay)} noTimeLimit={true} loading={loadingFragment}
-                                                                 date={Object.keys(reactiveUserLocalDays)[index]}
-                                                                 companyTimeFields={CompanyTimeFields()}
-                                                                 companyTextFields={CompanyTextFields()}
-                                                                 dayData={UserLocalDays()[day]}
-                                                                 remainSeconds={UserLocalDays()[day].remainTime}/>
+                                                        <CanEdit
+                                                            active={index - 1 === GetDayNumberByID(reactiveCurrentDay)}
+                                                            noTimeLimit={true} loading={loadingFragment}
+                                                            date={Object.keys(reactiveUserLocalDays)[index]}
+                                                            companyTimeFields={CompanyTimeFields()}
+                                                            companyTextFields={CompanyTextFields()}
+                                                            dayData={UserLocalDays()[day]}
+                                                            remainSeconds={UserLocalDays()[day].remainTime}/>
                                                         :
                                                         UserLocalDays()[day].remainTime > 3600 * 39 ?
                                                             <NotYet
-                                                                remainSeconds={UserLocalDays()[day].remainTime - (39 * 3600)}/>
+                                                                remainSeconds={UserLocalDays()[day].remainTime}/>
                                                             :
                                                             UserLocalDays()[day].remainTime < 0 ?
-                                                                <Passed dayData={UserLocalDays()[day]}
+                                                                <Passed reportVerifiedBy={reportVerifiedBy} reportState={reportState} dayData={UserLocalDays()[day]}
                                                                         saved={(!!UserLocalDays()[day].createdAt)}
                                                                         workHours={6}
                                                                         trainingHours={UserLocalDays()[day].trainingHours}
                                                                         whatDidUserDo={UserLocalDays()[day].whatDidUserDoInReport}/>
                                                                 :
-                                                                <CanEdit active={index - 1 === GetDayNumberByID(reactiveCurrentDay)} noTimeLimit={false} loading={loadingFragment}
-                                                                         date={Object.keys(reactiveUserLocalDays)[index]}
-                                                                         companyTimeFields={CompanyTimeFields()}
-                                                                         companyTextFields={CompanyTextFields()}
-                                                                         dayData={UserLocalDays()[day]}
-                                                                         remainSeconds={UserLocalDays()[day].remainTime}/>
+                                                                UserLocalDays()[day].blockTime < passedSeconds ?
+                                                                    <CanEdit
+                                                                        active={index - 1 === GetDayNumberByID(reactiveCurrentDay)}
+                                                                        noTimeLimit={false} loading={loadingFragment}
+                                                                        date={Object.keys(reactiveUserLocalDays)[index]}
+                                                                        companyTimeFields={CompanyTimeFields()}
+                                                                        companyTextFields={CompanyTextFields()}
+                                                                        dayData={UserLocalDays()[day]}
+                                                                        remainSeconds={UserLocalDays()[day].remainTime}/>
 
+                                                                    : <NotYet
+                                                                        remainSeconds={UserLocalDays()[day].blockTime - passedSeconds}/>
 
                                                 }
 

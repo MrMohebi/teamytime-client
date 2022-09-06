@@ -28,7 +28,7 @@ const TextField = (props: {
             <div className={'w-full flex flex-row justify-center items-center px-3'}>
                 <textarea id={props.title} defaultValue={props.defaultValue} draggable={false} name="Works"
                           maxLength={props.maxLength}
-                          className={'border-2 select-all m-auto bg-background h-32 w-11/12  transition-all ease-in-out duration-300 IranSans rounded-lg text-white border-deactive-border focus:border-primary outline-0 p-2 text-sm '}
+                          className={'border-2 select-all m-auto bg-background h-32 w-11/12  transition-all ease-in-out duration-300 IranSans rounded-lg text-white border-inactive-border focus:border-primary outline-0 p-2 text-sm '}
                           onChange={(e) => {
                               setText(e.currentTarget.value)
                           }}

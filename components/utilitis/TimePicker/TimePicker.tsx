@@ -168,7 +168,7 @@ const TimePicker = (props: {
                                 <div key={index + 'hours'}
 
 
-                                     className={`h-10 w-12 bg-background  border-2 transition-all ease-in-out  flex flex-col justify-center items-center rounded-xl ${(hour === currentActiveHour && currentActiveMinute === 0) ? 'border-primary text-primary' : 'border-deactive-border text-deactive-border'}`}
+                                     className={`h-10 w-12 bg-background  border-2 transition-all ease-in-out  flex flex-col justify-center items-center rounded-xl ${(hour === currentActiveHour && currentActiveMinute === 0) ? 'border-primary text-primary' : 'border-inactive-border text-inactive-border'}`}
                                      onClick={() => {
                                          if (customHourRef.current) {
                                              let timeHeight = customHourRef.current.children[2].getBoundingClientRect().height
@@ -190,7 +190,7 @@ const TimePicker = (props: {
                     {/*            <div key={index + 'hours'}*/}
 
 
-                    {/*                 className={`h-10 w-12  border-2 transition-all ease-in-out  flex flex-col justify-center items-center rounded-xl ${(index + 1 === currentActiveHour && currentActiveMinute === 0) ? 'border-primary text-primary' : 'border-deactive-border text-deactive-border'}`}*/}
+                    {/*                 className={`h-10 w-12  border-2 transition-all ease-in-out  flex flex-col justify-center items-center rounded-xl ${(index + 1 === currentActiveHour && currentActiveMinute === 0) ? 'border-primary text-primary' : 'border-inactive-border text-inactive-border'}`}*/}
                     {/*                 onClick={() => {*/}
                     {/*                     if (customHourRef.current) {*/}
                     {/*                         let timeHeight = customHourRef.current.children[2].getBoundingClientRect().height*/}

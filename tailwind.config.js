@@ -17,7 +17,7 @@ module.exports = {
                 'primary-dark': '#202E3B',
                 'secondary': '#1D2731',
                 'text-blue-light': '#D8EEFF',
-                'deactive-border': '#304050',
+                'inactive-border': '#304050',
                 'hint-text': '#4E5760',
                 'red': '#EB6868',
                 'green': '#68EB99',

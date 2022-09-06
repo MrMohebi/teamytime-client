@@ -262,9 +262,10 @@ const Admin = () => {
                                 {
                                     reports.length ? reports.map((report, index) => {
 
-
                                             const d = new Date((report.updatedAt ?? report.createdAt) * 1000)
 
+                                            console.log(report)
+                                            console.log(report.adminReview)
                                             let reportState = "";
                                             let reportVerifiedBy = "";
                                             try {
@@ -313,7 +314,7 @@ const Admin = () => {
                                                         <div
                                                             className={'flex flex-col justify-center items-center  '}>
                                                             <div
-                                                                className={'rounded-xl border mb-2 border-deactive-border flex flex-row justify-center items-center   py-1.5  '}>
+                                                                className={'rounded-xl border mb-2 border-inactive-border flex flex-row justify-center items-center   py-1.5  '}>
                                                             <span
                                                                 className={'IranSansMedium text-primary mx-3 text-sm '}>{report.timeFields[0] ? report.timeFields[0].value : "00:00"}</span>
                                                                 <img className={'ml-2 w-5'}
@@ -322,7 +323,7 @@ const Admin = () => {
                                                             </div>
 
                                                             <div
-                                                                className={'rounded-xl border border-deactive-border flex flex-row justify-center items-center   py-1.5'}>
+                                                                className={'rounded-xl border border-inactive-border flex flex-row justify-center items-center   py-1.5'}>
                                                                 <span
                                                                     className={'IranSansMedium text-primary mx-3 text-sm '}>{report.timeFields[0] ? report.timeFields[1].value : "00:00"}</span>
                                                                 <img className={'ml-2 w-5'}
@@ -445,7 +446,7 @@ const Admin = () => {
                                                                     }}
                                                                 >
                                                                     <div
-                                                                        className={'w-9 h-9 border flex flex-row justify-center items-center border-deactive-border rounded-xl'}>
+                                                                        className={'w-9 h-9 border flex flex-row justify-center items-center border-inactive-border rounded-xl'}>
                                                                         <img src="/svg/more-arrow.svg"
                                                                              className={'p-2 up-arrow transition-all duration-300 ease-in-out'}
                                                                              alt=""/>
@@ -598,12 +599,12 @@ const Admin = () => {
                                                                         return (
 
                                                                             <img alt={'avatar'}
-                                                                                src={avatar.profile ? BaseURL() + avatar.profile : '/img/no-image.png'}
-                                                                                key={index + "av"}
-                                                                                className={'w-6 h-6 rounded-full object-fill  border-2 shrink-0'}
-                                                                                style={{
-                                                                                    transform: `translateX(${index / 1.5}rem)`
-                                                                                }}/>
+                                                                                 src={avatar.profile ? BaseURL() + avatar.profile : '/img/no-image.png'}
+                                                                                 key={index + "av"}
+                                                                                 className={'w-6 h-6 rounded-full object-fill  border-2 shrink-0'}
+                                                                                 style={{
+                                                                                     transform: `translateX(${index / 1.5}rem)`
+                                                                                 }}/>
                                                                         )
 
 
@@ -661,7 +662,7 @@ const Admin = () => {
 
 
                                     <div ref={unsentUsersHolderRef}
-                                         className={'bg-primary-dark shrink-0 border-2 border-deactive-border rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}
+                                         className={'bg-primary-dark shrink-0 border-2 border-inactive-border rounded-xl h-full flex-col justify-start items-center pt-2 px-2'}
 
                                          style={{
                                              width: '25%'
@@ -719,7 +720,8 @@ const Admin = () => {
                                                                     unsentUsers.slice(0, 3).map((avatar, index) => {
                                                                         return (
 
-                                                                            <img alt={'no-image'} src={'/img/no-image.png'}
+                                                                            <img alt={'no-image'}
+                                                                                 src={'/img/no-image.png'}
                                                                                  key={index + "av"}
                                                                                  className={'w-6 h-6 rounded-full object-center border-secondary border-2 shrink-0'}
                                                                                  style={{
@@ -781,7 +783,7 @@ const Admin = () => {
                     style={{
                         left: '20px'
                     }}
-                    className={` ${currentOpenDialog ? ' animate__faster opacity-100 translate-y-0' : ' pointer-events-none animate__faster opacity-0 translate-y-10'} max-h-[13rem] hide-scrollbar  transition-all ease-in-out duration-300 users-list  overflow-scroll flex flex-col justify-start items-center fixed bottom-20  border border-deactive-border backdrop-blur-2xl rounded-2xl`}>
+                    className={` ${currentOpenDialog ? ' animate__faster opacity-100 translate-y-0' : ' pointer-events-none animate__faster opacity-0 translate-y-10'} max-h-[13rem] hide-scrollbar  transition-all ease-in-out duration-300 users-list  overflow-scroll flex flex-col justify-start items-center fixed bottom-20  border border-inactive-border backdrop-blur-2xl rounded-2xl`}>
 
 
                     {dialogListData.map((item: any, index) => {
