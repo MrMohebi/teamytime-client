@@ -154,3 +154,10 @@ body
 {
   overscroll-behavior-y: contain;
 }
+
+.all-pointer-none{
+  pointer-events: none;
+  *{
+    pointer-events: none;
+  }
+}

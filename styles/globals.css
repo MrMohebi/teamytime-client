@@ -163,4 +163,11 @@ body {
   overscroll-behavior-y: contain;
 }
 
+.all-pointer-none {
+  pointer-events: none;
+}
+.all-pointer-none * {
+  pointer-events: none;
+}
+
 /*# sourceMappingURL=globals.css.map */

@@ -55,7 +55,7 @@ const Passed = (props: {
                                             })
                                         }}
                                         style={{border: 'solid'}}
-                                        className={`rounded-xl px-3 text-primary IranSansMedium bg-background border-primary `}>
+                                        className={`rounded-xl px-3 text-primary IranSansMedium bg-background border-primary z-[51] `}>
                                             <span className={"IranSansMedium"}>{collapsedDetails ?
                                                 "نمایش بیشتر"
                                                 :
@@ -113,14 +113,17 @@ const Passed = (props: {
 
                         <div className={'flex flex-col justify-center items-start'}>
                             <span className={'IranSansMedium text-primary'}>گزارش برای این روز ثبت شده</span>
-                            <Button style={{}} onClick={() => {
-                                if (props.reportState === 'improvement')
-                                    try {
+
+                            <Button style={{}} onClick={(e) => {
+
+                                try {
+                                    if (props.reportState === 'improvement' && (e.target as any).id === e.currentTarget.id)
                                         lotieRef.current.play();
+                                } catch (e) {
 
-                                    } catch (e) {
+                                }
 
-                                    }
+
                             }}
 
                                     className={`border-solid  flex flex-row justify-center items-center verify-btn  border ${props.reportState === 'verified' ? "border-primary text-primary" : props.reportState === "warning" ? 'border-red text-red' : props.reportState === 'improvement' ? "border-green text-green" : 'border-gray-400 text-gray-400'} border-primary rounded-xl  px-4 mt-6 `}>
@@ -133,11 +136,12 @@ const Passed = (props: {
                                                                     </span>
 
                                 <div
-                                    className={`absolute  pb-3 overflow-visible ${props.reportState === 'improvement' ? '' : 'hidden'}`}>
+                                    className={`absolute all-pointer-none pb-3 overflow-visible ${props.reportState === 'improvement' ? '' : 'hidden pointer-events-none'}`}>
                                     <Player
                                         ref={lotieRef}
                                         src='/lottie/cheers.json'
-                                        style={{height: '300px', width: '300px'}}
+                                        style={{height: '300px', width: '300px', pointerEvents: 'none'}}
+
                                     >
                                     </Player>
 
