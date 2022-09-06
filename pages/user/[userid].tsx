@@ -287,9 +287,7 @@ const Userid = () => {
                                 className={'animate__animated animate__fadeIn animate__fast  w-full mt-20 flex flex-col justify-center items-center'}>
                                 <CircularProgress size={50}/>
                             </div>
-
                             :
-
 
                             <div id={'reports-scroller'}
 
@@ -313,14 +311,13 @@ const Userid = () => {
                                             if (day === fullDate(0) && !CurrentDay())
                                                 CurrentDay('d-' + index)
 
-
                                             let reportState = ''
                                             let reportVerifiedBy = ''
                                             try {
                                                 reportState = UserLocalDays()[day].adminReview[0].state
                                                 reportVerifiedBy = UserLocalDays()[day].adminReview[0].name
 
-                                            }catch (e) {
+                                            } catch (e) {
 
                                             }
                                             return <div
@@ -359,13 +356,15 @@ const Userid = () => {
                                                                 remainSeconds={UserLocalDays()[day].remainTime}/>
                                                             :
                                                             UserLocalDays()[day].remainTime < 0 ?
-                                                                <Passed reportVerifiedBy={reportVerifiedBy} reportState={reportState} dayData={UserLocalDays()[day]}
+                                                                <Passed reportVerifiedBy={reportVerifiedBy}
+                                                                        reportState={reportState}
+                                                                        dayData={UserLocalDays()[day]}
                                                                         saved={(!!UserLocalDays()[day].createdAt)}
                                                                         workHours={6}
                                                                         trainingHours={UserLocalDays()[day].trainingHours}
                                                                         whatDidUserDo={UserLocalDays()[day].whatDidUserDoInReport}/>
                                                                 :
-                                                                UserLocalDays()[day].blockTime < passedSeconds ?
+                                                                UserLocalDays()[day].blockTime < passedSeconds || UserLocalDays()[day].remainTime < UserLocalDays()[day].blockTime ?
                                                                     <CanEdit
                                                                         active={index - 1 === GetDayNumberByID(reactiveCurrentDay)}
                                                                         noTimeLimit={false} loading={loadingFragment}
