@@ -10,6 +10,9 @@ module.exports = {
             maxWidth: {
                 'btn-max-width': '26rem',
             },
+            fontSize:{
+                'small':'0.75rem'
+            },
             colors: {
 
 

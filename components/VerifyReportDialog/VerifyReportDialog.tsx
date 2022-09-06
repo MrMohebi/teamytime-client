@@ -52,9 +52,10 @@ const VerifyReportDialog = (props: {
         fetch("https://time.m3m.dev/api/editAdminReview.php", requestOptions)
             .then(response => {
                 response.text()
+                console.log(response)
                 setBtnLoading(false)
 
-                props.onClose()
+                props.onClose(adminReview)
             })
             .then(result => {
                 console.log(result)
@@ -74,103 +75,103 @@ const VerifyReportDialog = (props: {
         <div id={'verify-dialog-container'}
              onClick={(event) => {
                  if ((event.target as HTMLDivElement).id === event.currentTarget.id)
-                     props.onClose()
+                     props.onClose("")
              }}
              className={`fixed h-full w-full left-0 top-0 z-50 bg-black/30 backdrop-blur transition-all ${props.show ? "" : "opacity-0 pointer-events-none"}`}>
             <div
-                className={'bottom-5 fixed left-1/2 -translate-x-1/2 w-11/12 rounded-2xl bg-background grid grid-rows-3 grid-cols-1 max-w-lg '}>
-                <div className={'row-span-2 flex flex-row justify-between items-start pt-6 px-6'}>
-                    <div className={'flex flex-col justify-start items-start'}>
-                        <span className={'IranSansMedium text-white text-lg'}>تایید گزارش</span>
-                        <div
-                            className={'flex flex-row justify-center items-center shrink-0 mt-5'}>
+                className={'bottom-5 fixed left-1/2 -translate-x-1/2 w-11/12 rounded-2xl bg-primary-dark overflow-hidden max-w-lg '}>
+                <div className={'relative w-full h-full grid grid-rows-3 grid-cols-1'}>
+
+                    <div
+                        className={`absolute z-50 bg-primary-dark w-full h-full flex flex-col justify-center items-center transition-all ${btnLoading ? "opacity-100" : 'opacity-0 pointer-events-none'}`}>
+                        <div className={'text-primary '}>
+                            <CircularProgress color={"inherit"}/>
+                        </div>
+                    </div>
+
+                    <div className={'row-span-2 flex flex-row justify-between items-start pt-3 px-3'}>
+                        <div className={'flex flex-col justify-start items-start'}>
+                            <span className={'IranSansMedium text-text-blue-light text-lg'}>تایید گزارش</span>
                             <div
-                                className={'h-12 w-12 rounded-xl bg-primary overflow-hidden '}>
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                    src={` /img/no-image.png `}
-                                    alt="Arnoya"
-                                    className={'w-full h-full block object-cover ml-2'}/>
-                            </div>
-                            <div
-                                className={'flex h-full flex-col justify-around items-start mr-3'}>
+                                className={'flex flex-row justify-center items-center shrink-0 mt-3'}>
+                                <div
+                                    className={'h-12 w-12 rounded-xl bg-primary overflow-hidden '}>
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                        src={` /img/no-image.png `}
+                                        alt="Arnoya"
+                                        className={'w-full h-full block object-cover ml-2'}/>
+                                </div>
+                                <div
+                                    className={'flex h-full flex-col justify-around items-start mr-3'}>
                                             <span
                                                 className={'block IranSansMedium text-md text-white'}>{props.name}</span>
-                                <span
-                                    className={'block text-text-blue-light mt-1 IranSansMedium '}
-                                    style={{
-                                        fontSize: '0.8rem'
-                                    }}>{props.role}</span>
+                                    <span
+                                        className={'block text-text-blue-light mt-1 IranSansMedium '}
+                                        style={{
+                                            fontSize: '0.8rem'
+                                        }}>{props.role}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className={'flex flex-col justify-center items-center  mt-5'}>
-                        <div
-                            className={'rounded-xl border border-inactive-border flex flex-row justify-center items-center py-2'}>
-                            {/*todo change the index to text*/}
+                        <div className={'flex flex-col justify-center items-center mt-3'}>
+                            <div
+                                className={'rounded-xl border border-inactive-border flex flex-row justify-center items-center py-2'}>
+                                {/*todo change the index to text*/}
+                                <span
+                                    className={'IranSansMedium text-primary mx-3 text-sm '}>{props.workingHours ?? "00:00"}</span>
+                                <img className={'ml-2'} src="/svg/work-glyph.svg" alt=""/>
+
+                            </div>
+
+                            <div
+                                className={'rounded-xl border border-inactive-border flex flex-row justify-center items-center mt-3 py-2'}>
                             <span
-                                className={'IranSansMedium text-primary mx-3 text-xl '}>{props.workingHours ?? "00:00"}</span>
-                            <img className={'ml-2'} src="/svg/work-glyph.svg" alt=""/>
+                                className={'IranSansMedium text-primary mx-3 text-sm '}>{props.trainingHours ?? "00:00"}</span>
+                                <img className={'ml-2'} src="/svg/training-glyph.svg" alt=""/>
+
+                            </div>
+
 
                         </div>
-
-                        <div
-                            className={'rounded-xl border border-inactive-border flex flex-row justify-center items-center mt-3 py-2'}>
-                            <span
-                                className={'IranSansMedium text-primary mx-3 text-xl '}>{props.trainingHours ?? "00:00"}</span>
-                            <img className={'ml-2'} src="/svg/training-glyph.svg" alt=""/>
-
-                        </div>
-
-
                     </div>
-                </div>
 
-                <div className={'row-span-1 flex flex-row justify-around items-center w-full mt-4 mb-2 '}>
-                    <Button onClick={() => {
-                        verifyReport('آقای یزدانی', "warning", props.userID)
-                    }} style={{}} className={'w-1/3 border-solid border-2 border-red h-14 text-red rounded-xl mx-1'}>
+                    <div className={'row-span-1 flex flex-row justify-around items-center w-full mt-2 mb-2 '}>
+                        <Button onClick={() => {
+                            verifyReport('آقای یزدانی', "warning", props.userID)
+                        }} style={{}}
+                                className={'w-1/3 border-solid border-2 border-red py-3 text-red rounded-xl mx-1'}>
 
-                        {
-                            btnLoading ?
-                                <div className={'text-red'}>
-                                    <CircularProgress color={"inherit"}/>
-                                </div> :
-                                <span className={'IranSansMedium'}> اخطار افت کاری</span>
+                            {
 
+                                <span className={'IranSansMedium text-small'}>نیاز به رشد</span>
 
-                        }
-                    </Button>
-                    <Button onClick={() => {
-                        verifyReport('آقای یزدانی', "verified", props.userID)
-                    }} style={{}}
-                            className={'w-1/3 border-solid border-2 border-primary h-14 text-primary rounded-xl mx-1'}>
-                        {
-                            btnLoading ?
-                                <CircularProgress/> :
-                                <span className={'IranSansMedium '}>تایید گزارش</span>
+                            }
+                        </Button>
+                        <Button onClick={() => {
+                            verifyReport('آقای یزدانی', "verified", props.userID)
+                        }} style={{}}
+                                className={'w-1/3 border-solid border-2 border-primary py-3 text-primary rounded-xl mx-1'}>
+                            {
 
+                                <span className={'IranSansMedium text-small '}>ممنون از گزارش</span>
 
-                        }
-                    </Button>
-                    <Button onClick={() => {
-                        verifyReport('آقای یزدانی', "improvement", props.userID)
-                    }} style={{}}
-                            className={'w-1/3 border-solid border-2 border-green h-14 text-green rounded-xl mx-1'}>
-                        {
-                            btnLoading ?
-                                <div className={'text-green'}>
-                                    <CircularProgress color={"inherit"}/>
-                                </div>
-                                :
-                                <span className={'IranSansMedium'}>پیشرفت کاری</span>
-
-
-                        }
-                    </Button>
+                            }
+                        </Button>
+                        <Button onClick={() => {
+                            verifyReport('آقای یزدانی', "improvement", props.userID)
+                        }} style={{}}
+                                className={'w-1/3 border-solid border-2 border-green py-3 text-green rounded-xl mx-1'}>
+                            {
+                                <span className={'IranSansMedium text-small'}>ایول دمت گرم</span>
+                            }
+                        </Button>
+                    </div>
 
                 </div>
+
+
             </div>
         </div>
     );

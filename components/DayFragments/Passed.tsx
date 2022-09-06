@@ -53,7 +53,7 @@ const Passed = (props: {
                                             })
                                         }}
                                         style={{border: 'solid'}}
-                                        className={`w-32 rounded-2xl h-12   text-primary IranSansMedium bg-background border-primary `}>
+                                        className={`rounded-xl px-3 text-primary IranSansMedium bg-background border-primary `}>
                                             <span className={"IranSansMedium"}>{collapsedDetails ?
                                                 "نمایش بیشتر"
                                                 :
@@ -107,7 +107,7 @@ const Passed = (props: {
 
 
                         <div
-                            className={`color-indicator absolute right-0 top-1/2 h-1/2 -translate-y-1/2 ${props.reportState === 'verified' ? "bg-primary" : props.reportState === "warning" ? 'bg-red' : props.reportState === 'improvement' ? "bg-green" : 'bg-gray-600'}  w-[3px] rounded-tl-xl rounded-bl-xl`}></div>
+                            className={`color-indicator absolute right-0 top-1/2 h-1/2 -translate-y-1/2 ${props.reportState === 'verified' ? "bg-primary" : props.reportState === "warning" ? 'bg-red' : props.reportState === 'improvement' ? "bg-green" : 'bg-gray-600'}  w-1 rounded-tl-xl rounded-bl-xl`}></div>
 
                         <div className={'flex flex-col justify-center items-start'}>
                             <span className={'IranSansMedium text-primary'}>گزارش برای این روز ثبت شده</span>
@@ -117,7 +117,7 @@ const Passed = (props: {
                                                                     <span className={'IranSansMedium text-inherit'}>
 
                                                                         {
-                                                                            props.reportState === 'verified' ? "تایید شده" : props.reportState === "warning" ? 'اخطار افت کاری' : props.reportState === 'improvement' ? "پیشرفت کاری" : 'تایید نشده'
+                                                                            props.reportState === 'verified' ? "ممنون از گزارش" : props.reportState === "warning" ? 'نیاز به رشد' : props.reportState === 'improvement' ? "ایول دمت گرم" : 'تایید نشده'
                                                                         }
 
                                                                     </span>

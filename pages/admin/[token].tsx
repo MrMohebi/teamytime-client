@@ -199,11 +199,20 @@ const Admin = () => {
     return (
         <div className={'bg-secondary min-h-full  pb-10 relative'}>
 
-            <VerifyReportDialog jalaliDate={currentUserData.jalaliDate} show={showVerifyDialog} onClose={() => {
+            <VerifyReportDialog jalaliDate={currentUserData.jalaliDate} show={showVerifyDialog}
+                                onClose={(adminReviewObj: any) => {
 
-                fetchDay()
-                setShowVerifyDialog(false)
-            }} userID={currentUserData.userID} workingHours={currentUserData.workingHours}
+                                    if (adminReviewObj)
+                                        setReports(
+                                            produce(draft => {
+                                                draft.filter((item) => {
+                                                    return item.userID === currentUserData.userID
+                                                })[0].adminReview = adminReviewObj
+                                            })
+                                        )
+                                    // fetchDay()
+                                    setShowVerifyDialog(false)
+                                }} userID={currentUserData.userID} workingHours={currentUserData.workingHours}
                                 trainingHours={currentUserData.trainingHours} name={currentUserData.name}
                                 role={currentUserData.role}/>
 
@@ -285,7 +294,7 @@ const Admin = () => {
                                                     <div style={{
                                                         height: defaultColorIndicatorHeight
                                                     }}
-                                                         className={`color-indicator absolute right-0 top-1/2 -translate-y-1/2 ${reportState === 'verified' ? "bg-primary" : reportState === "warning" ? 'bg-red' : reportState === 'improvement' ? "bg-green" : 'bg-gray-600'}  w-[3px] rounded-tl-xl rounded-bl-xl`}></div>
+                                                         className={`color-indicator absolute right-0 top-1/2 -translate-y-1/2 ${reportState === 'verified' ? "bg-primary" : reportState === "warning" ? 'bg-red' : reportState === 'improvement' ? "bg-green" : 'bg-gray-600'}  w-1 rounded-tl-xl rounded-bl-xl`}></div>
                                                     <div
                                                         className={' flex flex-row justify-between  items-start px-3 pt-3'}>
                                                         <div
