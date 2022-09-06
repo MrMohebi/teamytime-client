@@ -35,7 +35,8 @@ const Header = (props: {
         role?: string,
         profileURL?: string,
         loading?: boolean
-        admin?: boolean
+        admin?: boolean,
+        adminToken?: string
 
 
     }) => {
@@ -107,7 +108,7 @@ const Header = (props: {
                             try {
                                 console.log()
 
-                                if (document.getElementById(CurrentDay())!.getElementsByClassName('date-of-day')[0].innerHTML === fullDate(0)){
+                                if (document.getElementById(CurrentDay())!.getElementsByClassName('date-of-day')[0].innerHTML === fullDate(0)) {
                                     setGoToPosition('')
                                 }
                             } catch (e) {
@@ -144,7 +145,7 @@ const Header = (props: {
 
 
             if (adminId && localDays.length < 1) {
-                getReportsForAdmin("093845b5f724e4a047c9f2221cd903b4", fullDate(-backDaysLimitAdmin), fullDate(backDaysLimitAdmin)).then((res) => {
+                getReportsForAdmin(adminId, fullDate(-backDaysLimitAdmin), fullDate(backDaysLimitAdmin)).then((res) => {
                         if (res.data) {
                             let datesArr = [] as any;
 

@@ -29,8 +29,6 @@ const Passed = (props: {
         <div className={'w-full flex flex-col justify-start items-center overflow-scroll pb-96'}>
 
 
-
-
             <img className={'w-20 h-20 mt-14'}
                  src={`${props.saved ? '/svg/passed-saved.svg' : '/svg/passed-unsaved.svg'} `} alt="Report Saved"/>
 
@@ -116,13 +114,14 @@ const Passed = (props: {
 
                         <div className={'flex flex-col justify-center items-start'}>
                             <span className={'IranSansMedium text-primary'}>گزارش برای این روز ثبت شده</span>
-                            <Button style={{}} onClick={()=>{
-                                try {
-                                    lotieRef.current.play();
+                            <Button style={{}} onClick={() => {
+                                if (props.reportState === 'improvement')
+                                    try {
+                                        lotieRef.current.play();
 
-                                }catch (e) {
-                                    
-                                }
+                                    } catch (e) {
+
+                                    }
                             }}
 
                                     className={`border-solid  flex flex-row justify-center items-center verify-btn  border ${props.reportState === 'verified' ? "border-primary text-primary" : props.reportState === "warning" ? 'border-red text-red' : props.reportState === 'improvement' ? "border-green text-green" : 'border-gray-400 text-gray-400'} border-primary rounded-xl  px-4 mt-6 `}>
@@ -134,7 +133,8 @@ const Passed = (props: {
 
                                                                     </span>
 
-                                <div className={'absolute  pb-3 overflow-visible'}>
+                                <div
+                                    className={`absolute  pb-3 overflow-visible ${props.reportState === 'improvement' ? '' : 'hidden'}`}>
                                     <Player
                                         ref={lotieRef}
                                         src='/lottie/cheers.json'
@@ -143,6 +143,7 @@ const Passed = (props: {
                                     </Player>
 
                                 </div>
+
 
                             </Button>
                         </div>

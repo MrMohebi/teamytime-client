@@ -1,4 +1,5 @@
 import axios from "axios";
+import {BaseURL} from "../store/store";
 
 
 const BASE_URL = "https://time.m3m.dev/api/"
@@ -71,7 +72,7 @@ export const getReportsForAdmin = (token: string, startDate: string, endDate: st
 
         });
 }
-export const editAdminReview = (token: string, userID: string, companyID: string, adminReview: string, jalaliDate: string) => {
+export const editAdminReview = (token: string, userID: string, companyID: string, adminReview: string, jalaliDate: string, adminID:string) => {
     return axios.post(BASE_URL + 'editAdminReview.php',
         {
             // headers: {
@@ -81,6 +82,7 @@ export const editAdminReview = (token: string, userID: string, companyID: string
             userID,
             companyID,
             adminReview,
+            adminID,
             jalaliDate
             // }
 
@@ -92,3 +94,12 @@ export const editAdminReview = (token: string, userID: string, companyID: string
         });
 }
 
+
+export const getAdminById = (id: string) => {
+
+    return axios.get(BASE_URL + "getAdminByID.php", {
+        params: {
+            adminID: id
+        }
+    })
+}

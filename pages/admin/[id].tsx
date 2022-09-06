@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {getCompany, getReportsForAdmin} from "../../Requests/Requests";
+import {getAdminById, getCompany, getReportsForAdmin} from "../../Requests/Requests";
 import Header from "../../components/utilitis/Header/Header";
 import {Button, ButtonBase, CircularProgress} from "@material-ui/core";
 import {useRouter} from "next/router";
@@ -30,6 +30,13 @@ const Admin = () => {
 
     const [dialogListData, setDialogListData] = useState([] as any[]);
 
+    const [admin, setAdmin] = useState({
+        name: '',
+        role: '',
+        token: '',
+        id: ""
+    });
+
     const [adminRemainingTime, setAdminRemainingTime] = useState(0);
 
 
@@ -52,20 +59,50 @@ const Admin = () => {
 
     const [showVerifyDialog, setShowVerifyDialog] = useState(false);
     const router = useRouter()
-    const {token} = router.query
+    const {id} = router.query
+    console.log(id)
+    console.log('its id')
 
     const reportsHolder = useRef<HTMLDivElement>(null)
 
 
     useEffect(() => {
-        if (token)
-            AdminID(token as string)
-    }, [token]);
+        if (admin.token)
+            AdminID(admin.token)
+    }, [admin]);
+
+    //get admin
+    useEffect(() => {
+
+        if (id)
+            getAdminById((id as any)).then((value) => {
+                if (value.data.token) {
+                    try {
+                        setAdmin(
+                            produce(draft => {
+                                draft.name = value.data.name;
+                                draft.role = value.data.role;
+                                draft.token = value.data.token;
+                            })
+                        )
+                    } catch (e) {
+
+                    }
+                }
+                console.log(admin)
+            })
+    }, [id]);
+    useEffect(() => {
+
+        if (admin)
+            console.log(admin)
+    }, [admin]);
 
     useEffect(() => {
-        fetchDay()
+        if (admin.token)
+            fetchDay()
 
-    }, [currentDay]);
+    }, [currentDay, admin]);
 
 
     const fetchDay = () => {
@@ -73,7 +110,7 @@ const Admin = () => {
         setCurrentOpenDialog('')
         setReportsLoading(true)
         if (currentDay)
-            getReportsForAdmin("093845b5f724e4a047c9f2221cd903b4", currentDay, currentDay).then((e) => {
+            getReportsForAdmin(admin.token, currentDay, currentDay).then((e) => {
                 let day = e.data[Object.keys(e.data)[0]]
                 setDayData(e.data[Object.keys(e.data)[0]])
 
@@ -198,8 +235,9 @@ const Admin = () => {
 
     return (
         <div className={'bg-secondary min-h-full  pb-10 relative'}>
-
-            <VerifyReportDialog jalaliDate={currentUserData.jalaliDate} show={showVerifyDialog}
+            {/* @ts-ignore*/}
+            <VerifyReportDialog adminName={admin.name} adminID={id} jalaliDate={currentUserData.jalaliDate}
+                                show={showVerifyDialog}
                                 onClose={(adminReviewObj: any) => {
 
                                     if (adminReviewObj)
@@ -219,7 +257,7 @@ const Admin = () => {
             <div className={'h-20 text-white w-full bg-red mt-32 contents pointer-events-auto'} {...handlers}>
 
 
-                <Header admin={true} loading={loading} name={'آقای یزدانی'} role={"مدیریت منابع انسانی"}
+                <Header admin={true} loading={loading} name={admin.name} role={admin.role}
                         setDay={(day: string) => {
                             setReportsLoading(true)
                             setCurrentDay(day)

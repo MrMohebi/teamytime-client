@@ -34,8 +34,6 @@ const CanEdit = (props: {
     moment.loadPersian()
     useEffect(() => {
         moment.relativeTimeThreshold('h', 30);
-        console.log(props.dayData)
-        console.log(CompanyRequiredFields())
 
     }, [])
 

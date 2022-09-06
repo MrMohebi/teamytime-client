@@ -3,7 +3,6 @@ import {AdminID, BaseURL, CompanyId} from "../../store/store";
 import {Button} from "@material-ui/core";
 import {editAdminReview} from "../../Requests/Requests";
 import {fullDate} from "../../helpers/FullDate";
-import token from "../../pages/admin/[token]";
 import {CircularProgress} from "@material-ui/core";
 
 const VerifyReportDialog = (props: {
@@ -14,7 +13,10 @@ const VerifyReportDialog = (props: {
     role: string,
     show: boolean,
     onClose: Function,
-    jalaliDate: string
+    jalaliDate: string,
+    adminName: string
+
+    adminID: string
 }) => {
 
 
@@ -26,11 +28,46 @@ const VerifyReportDialog = (props: {
         //states = warning,verified,improvement
         const adminReview = [
             {
-                name: "آقای یزدانی",
-                state: state
+                name: props.adminName,
+                state: state,
+                adminId: props.adminID
             }
         ]
         setBtnLoading(true)
+
+
+        // let myHeaders = new Headers();
+        // myHeaders.append("token", AdminID());
+        // myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+        //
+        // let urlencoded = new URLSearchParams();
+        // urlencoded.append("userID", userId);
+        // urlencoded.append("companyID", CompanyId());
+        // urlencoded.append("jalaliDate", props.jalaliDate);
+        // urlencoded.append("adminReview", JSON.stringify(adminReview));
+        //
+        // let requestOptions = {
+        //     method: 'POST',
+        //     headers: myHeaders,
+        //     body: urlencoded,
+        // };
+        //
+        // fetch("https://time.m3m.dev/api/editAdminReview.php", requestOptions)
+        //     .then(response => {
+        //         response.text()
+        //         console.log(response)
+        //         setBtnLoading(false)
+        //
+        //         props.onClose(adminReview)
+        //     })
+        //     .then(result => {
+        //         console.log(result)
+        //         setBtnLoading(false)
+        //     })
+        //     .catch(error => {
+        //         console.log('error', error)
+        //         setBtnLoading(false)
+        //     })
 
 
         let myHeaders = new Headers();
@@ -47,6 +84,7 @@ const VerifyReportDialog = (props: {
             method: 'POST',
             headers: myHeaders,
             body: urlencoded,
+
         };
 
         fetch("https://time.m3m.dev/api/editAdminReview.php", requestOptions)
@@ -65,8 +103,6 @@ const VerifyReportDialog = (props: {
                 console.log('error', error)
                 setBtnLoading(false)
             })
-
-
         // editAdminReview(AdminID(), userId, CompanyId(), "[{}]", fullDate(0)).then((value) => {
         //     console.log(value)
         // })
@@ -139,7 +175,7 @@ const VerifyReportDialog = (props: {
 
                     <div className={'row-span-1 flex flex-row justify-around items-center w-full mt-2 mb-2 '}>
                         <Button onClick={() => {
-                            verifyReport('آقای یزدانی', "warning", props.userID)
+                            verifyReport(props.adminName, "warning", props.userID)
                         }} style={{}}
                                 className={'w-1/3 border-solid border-2 border-red py-3 text-red rounded-xl mx-1'}>
 
@@ -150,7 +186,7 @@ const VerifyReportDialog = (props: {
                             }
                         </Button>
                         <Button onClick={() => {
-                            verifyReport('آقای یزدانی', "verified", props.userID)
+                            verifyReport(props.adminName, "verified", props.userID)
                         }} style={{}}
                                 className={'w-1/3 border-solid border-2 border-primary py-3 text-primary rounded-xl mx-1'}>
                             {
@@ -160,7 +196,7 @@ const VerifyReportDialog = (props: {
                             }
                         </Button>
                         <Button onClick={() => {
-                            verifyReport('آقای یزدانی', "improvement", props.userID)
+                            verifyReport(props.adminName, "improvement", props.userID)
                         }} style={{}}
                                 className={'w-1/3 border-solid border-2 border-green py-3 text-green rounded-xl mx-1'}>
                             {
