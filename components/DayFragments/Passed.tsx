@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Button} from "@material-ui/core";
 import produce from "immer";
+import {Player, Controls} from '@lottiefiles/react-lottie-player';
 
 const Passed = (props: {
     saved: boolean
@@ -22,8 +23,12 @@ const Passed = (props: {
 
         console.log(props.reportState)
     }, [props.dayData]);
+
+    const lotieRef = useRef<any>()
     return (
         <div className={'w-full flex flex-col justify-start items-center overflow-scroll pb-96'}>
+
+
 
 
             <img className={'w-20 h-20 mt-14'}
@@ -74,7 +79,7 @@ const Passed = (props: {
                         {
                             props.dayData.textFields.map((tField: any, index: number) => {
                                 if (tField.value)
-                                    if (tField.value.replaceAll(" ", ""))
+                                    if (tField.value.replace(/ /g, ""))
                                         return <div key={index + "tf"}
                                                     className={'flex flex-col justify-center items-center mt-6 px-4'}>
                                             <span
@@ -111,9 +116,16 @@ const Passed = (props: {
 
                         <div className={'flex flex-col justify-center items-start'}>
                             <span className={'IranSansMedium text-primary'}>گزارش برای این روز ثبت شده</span>
-                            <Button style={{}}
+                            <Button style={{}} onClick={()=>{
+                                try {
+                                    lotieRef.current.play();
 
-                                    className={`border-solid flex flex-row justify-center items-center verify-btn  border ${props.reportState === 'verified' ? "border-primary text-primary" : props.reportState === "warning" ? 'border-red text-red' : props.reportState === 'improvement' ? "border-green text-green" : 'border-gray-400 text-gray-400'} border-primary rounded-xl  px-4 mt-6 `}>
+                                }catch (e) {
+                                    
+                                }
+                            }}
+
+                                    className={`border-solid  flex flex-row justify-center items-center verify-btn  border ${props.reportState === 'verified' ? "border-primary text-primary" : props.reportState === "warning" ? 'border-red text-red' : props.reportState === 'improvement' ? "border-green text-green" : 'border-gray-400 text-gray-400'} border-primary rounded-xl  px-4 mt-6 `}>
                                                                     <span className={'IranSansMedium text-inherit'}>
 
                                                                         {
@@ -121,6 +133,16 @@ const Passed = (props: {
                                                                         }
 
                                                                     </span>
+
+                                <div className={'absolute  pb-3 overflow-visible'}>
+                                    <Player
+                                        ref={lotieRef}
+                                        src='/lottie/cheers.json'
+                                        style={{height: '300px', width: '300px'}}
+                                    >
+                                    </Player>
+
+                                </div>
 
                             </Button>
                         </div>
