@@ -3,7 +3,7 @@ import {getAdminById, getCompany, getReportsForAdmin} from "../../Requests/Reque
 import Header from "../../components/utilitis/Header/Header";
 import {Button, ButtonBase, CircularProgress} from "@material-ui/core";
 import {useRouter} from "next/router";
-import {AdminID, BaseURL, CompanyId, CurrentDay} from "../../store/store";
+import {AdminID, BaseURL, CompanyId, CompanyName, CurrentDay} from "../../store/store";
 // @ts-ignore
 import $ from 'jquery'
 // @ts-ignore
@@ -165,7 +165,20 @@ const Admin = () => {
 
 
     useEffect(() => {
-        getCompany('arnoya').then((value) => {
+        const urlSplitArray = document.baseURI.split('.unimun')
+        let companyName;
+
+        companyName = urlSplitArray[0]
+        companyName = companyName.replace('http://', '')
+        companyName = companyName.replace('https://', '')
+        if ((companyName as string).includes('/'))
+            companyName = 'arnoya'
+
+        CompanyName(companyName)
+        console.log(companyName)
+        console.log('comp name split')
+
+        getCompany(CompanyName()).then((value) => {
             try {
                 CompanyId(value.data.id)
             } catch (e) {
