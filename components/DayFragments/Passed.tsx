@@ -1,8 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Button} from "@material-ui/core";
-import produce from "immer";
-import {Player, Controls} from '@lottiefiles/react-lottie-player';
-
+import {Player} from '@lottiefiles/react-lottie-player';
+/* eslint-disable @next/next/no-img-element */
 const Passed = (props: {
     saved: boolean
     workHours: number
@@ -10,7 +9,7 @@ const Passed = (props: {
     whatDidUserDo: string
     dayData: any,
     reportState: string
-    reportVerifiedBy: string
+    adminReview: [any]
 }) => {
 
 
@@ -21,12 +20,13 @@ const Passed = (props: {
         if (props.dayData.textFields)
             setFilteredTextFields(props.dayData.textFields.filter((textField: any) => textField.value))
 
+        console.log(props.adminReview)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.dayData]);
 
-    const lotieRef = useRef<any>()
+    const lotieRef = useRef<any>([])
     return (
         <div className={'w-full flex flex-col justify-start items-center overflow-scroll pb-96'}>
-
 
             <img className={'w-20 h-20 mt-14'}
                  src={`${props.saved ? '/svg/passed-saved.svg' : '/svg/passed-unsaved.svg'} `} alt="Report Saved"/>
@@ -114,41 +114,68 @@ const Passed = (props: {
                         <div className={'flex flex-col justify-center items-start'}>
                             <span className={'IranSansMedium text-primary'}>گزارش برای این روز ثبت شده</span>
 
-                            <Button style={{}} onClick={(e) => {
 
-                                try {
-                                    if (props.reportState === 'improvement' && (e.target as any).id === e.currentTarget.id)
-                                        lotieRef.current.play();
-                                } catch (e) {
+                            <div
+                                className={'flex flex-row justify-start items-center w-full  h-10 mt-6 overflow-x-scroll overflow-y-hidden pl-10'}>
 
-                                }
+                                {
+                                    props.adminReview.length ?
+                                        props.adminReview.map((item, index) => {
+                                            return <Button key={index + 'i'}
+                                                           style={{}}
+                                                           onClick={(e) => {
+
+                                                               try {
+                                                                   if (item.state === 'improvement' && (e.target as any).id === e.currentTarget.id)
+                                                                       lotieRef.current[index].play();
+                                                               } catch (e) {
+
+                                                               }
 
 
-                            }}
-
-                                    className={`border-solid  flex flex-row justify-center items-center verify-btn  border ${props.reportState === 'verified' ? "border-primary text-primary" : props.reportState === "warning" ? 'border-red text-red' : props.reportState === 'improvement' ? "border-green text-green" : 'border-gray-400 text-gray-400'} border-primary rounded-xl  px-4 mt-6 `}>
+                                                           }}
+                                                           className={`border-solid shrink-0 mx-2 flex flex-row justify-center items-center verify-btn  border ${item.state === 'verified' ? "border-primary text-primary" : item.state === "warning" ? 'border-red text-red' : item.state === 'improvement' ? "border-green text-green" : 'border-gray-400 text-gray-400'} border-primary rounded-xl  px-4  `}>
                                                                     <span className={'IranSansMedium text-inherit'}>
 
                                                                         {
-                                                                            props.reportState === 'verified' ? "ممنون از گزارش" : props.reportState === "warning" ? 'نیاز به رشد' : props.reportState === 'improvement' ? "ایول دمت گرم" : 'تایید نشده'
+                                                                            item.state === 'verified' ? "ممنون از گزارش" : item.state === "warning" ? 'نیاز به رشد' : item.state === 'improvement' ? "ایول دمت گرم" : 'تایید نشده'
                                                                         }
 
                                                                     </span>
 
-                                <div
-                                    className={`absolute all-pointer-none pb-3 overflow-visible ${props.reportState === 'improvement' ? '' : 'hidden pointer-events-none'}`}>
-                                    <Player
-                                        ref={lotieRef}
-                                        src='/lottie/cheers.json'
-                                        style={{height: '300px', width: '300px', pointerEvents: 'none'}}
+                                                <div
+                                                    className={`absolute all-pointer-none pb-3 overflow-visible ${item.state === 'improvement' ? '' : 'hidden pointer-events-none'}`}>
+                                                    <Player
+                                                        ref={el => lotieRef.current[index] = el}
+                                                        src='/lottie/cheers.json'
+                                                        style={{height: '100px', width: '100px', pointerEvents: 'none'}}
 
-                                    >
-                                    </Player>
+                                                    >
+                                                    </Player>
 
-                                </div>
+                                                </div>
 
 
-                            </Button>
+                                            </Button>
+                                        })
+                                        :
+                                        <Button
+                                            className={`border-solid shrink-0 mx-2 flex flex-row justify-center items-center verify-btn  border border-gray-400 text-gray-400 border-primary rounded-xl  px-4  `}>
+                                                                    <span className={'IranSansMedium text-inherit'}>
+
+                                                                        {
+                                                                            'تایید نشده'
+                                                                        }
+
+                                                                    </span>
+
+                                        </Button>
+                                }
+
+
+                            </div>
+
+
                         </div>
                         <div className={'flex flex-col justify-center items-start'}>
 

@@ -1,8 +1,6 @@
 import React, {useState} from 'react';
-import {AdminID, BaseURL, CompanyId} from "../../store/store";
+import {AdminID, CompanyId} from "../../store/store";
 import {Button} from "@material-ui/core";
-import {editAdminReview} from "../../Requests/Requests";
-import {fullDate} from "../../helpers/FullDate";
 import {CircularProgress} from "@material-ui/core";
 
 const VerifyReportDialog = (props: {
@@ -14,8 +12,8 @@ const VerifyReportDialog = (props: {
     show: boolean,
     onClose: Function,
     jalaliDate: string,
-    adminName: string
-
+    adminName: string,
+    currentReportAdminReview: [any],
     adminID: string
 }) => {
 
@@ -26,49 +24,20 @@ const VerifyReportDialog = (props: {
     const verifyReport = (adminName: string, state: string, userId: string) => {
 
         //states = warning,verified,improvement
-        const adminReview = [
-            {
-                name: props.adminName,
-                state: state,
-                adminId: props.adminID
-            }
-        ]
+        let adminReview = [] as any[]
+        if (props.currentReportAdminReview.length) {
+            adminReview = props.currentReportAdminReview.filter((item) => {
+                return item.adminId !== props.adminID;
+            })
+        }
+
+        adminReview.push({
+            name: props.adminName,
+            state: state,
+            adminId: props.adminID
+        })
+
         setBtnLoading(true)
-
-
-        // let myHeaders = new Headers();
-        // myHeaders.append("token", AdminID());
-        // myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-        //
-        // let urlencoded = new URLSearchParams();
-        // urlencoded.append("userID", userId);
-        // urlencoded.append("companyID", CompanyId());
-        // urlencoded.append("jalaliDate", props.jalaliDate);
-        // urlencoded.append("adminReview", JSON.stringify(adminReview));
-        //
-        // let requestOptions = {
-        //     method: 'POST',
-        //     headers: myHeaders,
-        //     body: urlencoded,
-        // };
-        //
-        // fetch("https://time.m3m.dev/api/editAdminReview.php", requestOptions)
-        //     .then(response => {
-        //         response.text()
-        //         console.log(response)
-        //         setBtnLoading(false)
-        //
-        //         props.onClose(adminReview)
-        //     })
-        //     .then(result => {
-        //         console.log(result)
-        //         setBtnLoading(false)
-        //     })
-        //     .catch(error => {
-        //         console.log('error', error)
-        //         setBtnLoading(false)
-        //     })
-
 
         let myHeaders = new Headers();
         myHeaders.append("token", AdminID());
@@ -88,16 +57,14 @@ const VerifyReportDialog = (props: {
         };
 
         fetch("https://time.m3m.dev/api/editAdminReview.php", requestOptions)
-            .then(response => {
-                response.text()
+            .then(() => {
                 setBtnLoading(false)
-
                 props.onClose(adminReview)
             })
-            .then(result => {
+            .then(() => {
                 setBtnLoading(false)
             })
-            .catch(error => {
+            .catch(() => {
                 setBtnLoading(false)
             })
         // editAdminReview(AdminID(), userId, CompanyId(), "[{}]", fullDate(0)).then((value) => {

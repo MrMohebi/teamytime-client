@@ -54,7 +54,8 @@ const Admin = () => {
         jalaliDate: '',
         userID: "",
         workingHours: "00:00",
-        trainingHours: "00:00"
+        trainingHours: "00:00",
+        currentReportAdminReview: ([] as any)
     });
 
     const [showVerifyDialog, setShowVerifyDialog] = useState(false);
@@ -65,8 +66,13 @@ const Admin = () => {
 
 
     useEffect(() => {
-        if (admin.token)
+        if (admin.token) {
             AdminID(admin.token)
+            setAdmin(produce(draft => {
+                draft.id = id as string
+            }))
+
+        }
     }, [admin]);
 
     //get admin
@@ -115,7 +121,7 @@ const Admin = () => {
 
                 let children = document.querySelectorAll('.header-day')
                 if (!CurrentDay())
-                    children.forEach((item, childIndex) => {
+                    children.forEach((item) => {
                         if (item.querySelector('.date-of-day')!.innerHTML === fullDate(0)) {
                             CurrentDay(item.id)
                             // GoToThisDay(children[childIndex].id)
@@ -204,9 +210,17 @@ const Admin = () => {
         return !textFieldsValues.length;
 
     }
+    const allowToSwipe = useRef(true)
 
     const handlers = useSwipeable({
-        onSwipedRight: (eventData) => {
+
+        onTouchStartOrOnMouseDown: ({event}) => {
+            console.log(event)
+            console.log(event.target)
+
+        },
+
+        onSwipedRight: () => {
             let nextID = 'd-' + (parseInt(CurrentDay().split('-')[1]) + 1)
 
 
@@ -218,7 +232,7 @@ const Admin = () => {
                 // document.getElementById('reports-scroller')!.scrollBy(-(document.getElementById('reports-scroller')!.childNodes[1] as HTMLDivElement).getBoundingClientRect().width, 0)
             }
         },
-        onSwipedLeft: (eventData) => {
+        onSwipedLeft: () => {
 
 
             let nextID = 'd-' + (parseInt(CurrentDay().split('-')[1]) - 1)
@@ -241,7 +255,10 @@ const Admin = () => {
     return (
         <div className={'bg-secondary min-h-full  pb-10 relative'}>
             {/* @ts-ignore*/}
-            <VerifyReportDialog adminName={admin.name} adminID={id} jalaliDate={currentUserData.jalaliDate}
+            <VerifyReportDialog adminID={id}
+                                currentReportAdminReview={currentUserData.currentReportAdminReview}
+                                adminName={admin.name}
+                                jalaliDate={currentUserData.jalaliDate}
                                 show={showVerifyDialog}
                                 onClose={(adminReviewObj: any) => {
 
@@ -259,7 +276,7 @@ const Admin = () => {
                                 trainingHours={currentUserData.trainingHours} name={currentUserData.name}
                                 role={currentUserData.role}/>
 
-            <div className={'h-20 text-white w-full bg-red mt-32 contents pointer-events-auto'} {...handlers}>
+            <div className={'h-20 text-white w-full bg-red mt-32 contents pointer-events-auto'}>
 
 
                 <Header admin={true} loading={loading} name={admin.name} role={admin.role}
@@ -272,7 +289,7 @@ const Admin = () => {
                     reports.length ?
                         adminRemainingTime > 1 ?
                             <div
-                                className={'w-full  pb-2 text-right text-hint-text IranSansMedium bg-background text-sm pt-2 px-3'}>
+                                className={'w-full pb-2 text-right text-hint-text IranSansMedium bg-background text-sm pt-2 px-3'}>
                         <span>
                                     کارمندان تا
                         </span>
@@ -318,10 +335,12 @@ const Admin = () => {
 
 
                                             let reportState = "";
-                                            let reportVerifiedBy = "";
+                                            let adminReview = [] as any;
+
                                             try {
                                                 reportState = report.adminReview[0].state
-                                                reportVerifiedBy = report.adminReview[0].name
+                                                adminReview = report.adminReview
+
                                             } catch (e) {
 
                                             }
@@ -424,9 +443,10 @@ const Admin = () => {
 
 
                                                     <div
-                                                        className={'w-full flex flex-row justify-between items-end text-white IranSansMedium px-3'}>
+                                                        className={'w-full flex flex-row justify-between items-end text-white IranSansMedium px-3 shrink-0'}>
                                                         <div
-                                                            className={'flex flex-row justify-start items-center'}>
+                                                            className={'flex flex-row justify-start items-center w-[75%]'}>
+
                                                             {!isThisReportEmpty(report) ?
                                                                 <div
                                                                     className={'flex flex-row justify-center items-center  '}
@@ -496,7 +516,7 @@ const Admin = () => {
                                                                     }}
                                                                 >
                                                                     <div
-                                                                        className={'w-9 h-9 border flex flex-row justify-center items-center border-inactive-border rounded-xl'}>
+                                                                        className={'w-9 h-9 border flex flex-row justify-center items-center border-inactive-border rounded-xl shrink-0'}>
                                                                         <img src="/svg/more-arrow.svg"
                                                                              className={'p-2 up-arrow transition-all duration-300 ease-in-out'}
                                                                              alt=""/>
@@ -504,7 +524,7 @@ const Admin = () => {
 
 
                                                                     <span
-                                                                        className={'IranSansMedium text-primary  mr-2 more-text overflow-hidden'}
+                                                                        className={'IranSansMedium text-primary whitespace-nowrap mr-2 more-text overflow-hidden'}
                                                                         style={{
                                                                             fontSize: '0.7rem'
                                                                         }}>نمایش  اطلاعات بیشتر</span>
@@ -515,37 +535,87 @@ const Admin = () => {
 
 
                                                             {
-                                                                reportState ?
-                                                                    <Button style={{
-                                                                        pointerEvents: 'none',
-                                                                        opacity: '0'
-                                                                    }}
-                                                                            onClick={() => {
-                                                                                setCurrentUserData(
-                                                                                    produce((draft) => {
-                                                                                        draft.userID = report.userID;
-                                                                                        draft.jalaliDate = report.jalaliDate;
-                                                                                        draft.workingHours = report.timeFields[0] ? report.timeFields[0].value : "00:00"
-                                                                                        draft.trainingHours = report.timeFields[1] ? report.timeFields[1].value : "00:00"
-                                                                                        draft.name = report.user.name
-                                                                                        draft.role = report.user.role
-                                                                                    })
-                                                                                )
-
-                                                                                setShowVerifyDialog(true)
+                                                                adminReview.length ?
 
 
-                                                                            }}
-                                                                            className={`border-solid flex flex-row justify-center items-center verify-btn mr-1 border ${reportState === 'verified' ? "border-primary text-primary" : reportState === "warning" ? 'border-red text-red' : reportState === 'improvement' ? "border-green text-green" : 'border-gray-600'} border-primary rounded-xl text-primary px-4 `}>
+                                                                    <div
+                                                                        className={' verify-btn hide-scrollbar overflow-x-hidden relative shrink-0 w-full '}
+                                                                        onPointerMove={(e) => {
+                                                                            e.stopPropagation()
+                                                                        }}
+                                                                        style={{
+                                                                            pointerEvents: 'none',
+                                                                            opacity: '0'
+                                                                        }}
+                                                                    >
+                                                                        <div className={'absolute left-0 top-0 h-full w-2 bg-gradient-to-r from-primary-dark to-transparent z-10'}></div>
+                                                                        <div className={'absolute right-0 top-0 h-full w-2 bg-gradient-to-l from-primary-dark to-transparent z-10'}></div>
+                                                                        <div
+                                                                            className={'flex flex-row justify-start items-center w-full h-full overflow-x-scroll overflow-y-visible px-4'}>
+
+                                                                            <Button style={{}}
+                                                                                    onClick={() => {
+                                                                                        setCurrentUserData(
+                                                                                            produce((draft) => {
+                                                                                                draft.userID = report.userID;
+                                                                                                draft.jalaliDate = report.jalaliDate;
+                                                                                                draft.workingHours = report.timeFields[0] ? report.timeFields[0].value : "00:00"
+                                                                                                draft.trainingHours = report.timeFields[1] ? report.timeFields[1].value : "00:00"
+                                                                                                draft.name = report.user.name
+                                                                                                draft.role = report.user.role
+                                                                                                draft.currentReportAdminReview = adminReview
+                                                                                            })
+                                                                                        )
+                                                                                        setShowVerifyDialog(true)
+
+                                                                                    }}
+                                                                                    className={'border-solid verify-btn mx-1 shrink-0 border border-primary rounded-xl text-primary px-4 '}>
+                                                                    <span
+                                                                        className={'IranSansMedium whitespace-nowrap'}>
+                                                                        {
+                                                                            report.adminReview && (report.adminReview as [any]).filter((item) => {
+                                                                                return item.adminId === admin.id
+                                                                            }).length ?
+                                                                                "تغیر نظر" :
+                                                                                "ثبت نظر"
+                                                                        }
+                                                                    </span>
+                                                                            </Button>
+
+                                                                            {
+                                                                                adminReview.map((item: any, index: any) => {
+
+                                                                                    return (
+                                                                                        <Button key={index}
+
+                                                                                                className={`border-solid shrink-0 mx-1 flex flex-row justify-center items-center  mr-1 border ${item.state === 'verified' ? "border-primary text-primary" : item.state === "warning" ? 'border-red text-red' : item.state === 'improvement' ? "border-green text-green" : 'border-gray-600'} border-primary rounded-xl text-primary px-4 `}>
                                                                     <span className={'IranSansMedium text-inherit'}>
 {
-    reportVerifiedBy
+    item.name
 }
                                                                     </span>
-                                                                        <img
-                                                                            src={("/svg/") + (reportState === 'verified' ? "edit-blue" : reportState === "warning" ? 'edit-red' : reportState === 'improvement' ? "edit-green" : 'bg-gray-600') + '.svg'}
-                                                                            className={'h-5 w-5 mr-2'} alt="edit report"/>
-                                                                    </Button> :
+                                                                                            {/*{*/}
+                                                                                            {/*    admin.id === item.adminId ?*/}
+                                                                                            {/*        <img*/}
+                                                                                            {/*            src={("/svg/") + (item.state === 'verified' ? "edit-blue" : item.state === "warning" ? 'edit-red' : item.state === 'improvement' ? "edit-green" : 'bg-gray-600') + '.svg'}*/}
+                                                                                            {/*            className={'h-5 w-5 mr-2'}*/}
+                                                                                            {/*            alt="edit report"/>*/}
+                                                                                            {/*        :*/}
+                                                                                            {/*        null*/}
+                                                                                            {/*}*/}
+
+                                                                                        </Button>
+                                                                                    )
+                                                                                })
+                                                                            }
+
+
+                                                                        </div>
+
+
+                                                                    </div>
+
+                                                                    :
                                                                     <Button style={{
                                                                         pointerEvents: 'none',
                                                                         opacity: '0'
@@ -577,7 +647,7 @@ const Admin = () => {
                                                         </div>
 
 
-                                                        <span className={''} style={{
+                                                        <span className={'shrink-0'} style={{
                                                             fontSize: '0.7rem'
                                                         }}>{new Intl.DateTimeFormat('fa-IR', {timeStyle: 'short'}).format(d)}</span>
                                                     </div>

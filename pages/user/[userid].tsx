@@ -24,7 +24,6 @@ import {GetDayNumberByID} from "../../helpers/GetDayNumberByID";
 import {fullDate} from "../../helpers/FullDate";
 // @ts-ignore
 import moment from 'moment-jalaali'
-import {thisExpression} from "@babel/types";
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -171,25 +170,9 @@ const Userid = () => {
 
                     day.workHour = workHour;
 
-                    let trainingHour;
-                    if (day.timeFields)
-                        trainingHour = Object.keys(day.timeFields).map((timeField) => {
-                            if (day.timeFields[timeField].title === 'ساعت آموزش') {
-                                return day.timeFields[timeField].value
-                            }
-                        })
 
                     day.trainingHour = workHour;
 
-                    //details
-                    let whatDidUserDo;
-                    if (day.textFields)
-
-                        whatDidUserDo = Object.keys(day.textFields).map((textField) => {
-                            if (day.textFields[textField].title === "شرح اقدامات") {
-                                return day.textFields[textField].value
-                            }
-                        })
 
 
                 } else {
@@ -312,10 +295,10 @@ const Userid = () => {
                                                 CurrentDay('d-' + index)
 
                                             let reportState = ''
-                                            let reportVerifiedBy = ''
+                                            let adminReview = [];
                                             try {
-                                                reportState = UserLocalDays()[day].adminReview[0].state
-                                                reportVerifiedBy = UserLocalDays()[day].adminReview[0].name
+                                                reportState = UserLocalDays()[day].adminReview[UserLocalDays()[day].adminReview.length-1].state
+                                                adminReview = UserLocalDays()[day].adminReview
 
                                             } catch (e) {
 
@@ -356,13 +339,14 @@ const Userid = () => {
                                                                 remainSeconds={UserLocalDays()[day].remainTime}/>
                                                             :
                                                             UserLocalDays()[day].remainTime < 0 ?
-                                                                <Passed reportVerifiedBy={reportVerifiedBy}
-                                                                        reportState={reportState}
-                                                                        dayData={UserLocalDays()[day]}
-                                                                        saved={(!!UserLocalDays()[day].createdAt)}
-                                                                        workHours={6}
-                                                                        trainingHours={UserLocalDays()[day].trainingHours}
-                                                                        whatDidUserDo={UserLocalDays()[day].whatDidUserDoInReport}/>
+                                                                <Passed
+                                                                    adminReview={adminReview}
+                                                                    reportState={reportState}
+                                                                    dayData={UserLocalDays()[day]}
+                                                                    saved={(!!UserLocalDays()[day].createdAt)}
+                                                                    workHours={6}
+                                                                    trainingHours={UserLocalDays()[day].trainingHours}
+                                                                    whatDidUserDo={UserLocalDays()[day].whatDidUserDoInReport}/>
                                                                 :
                                                                 UserLocalDays()[day].blockTime < passedSeconds || UserLocalDays()[day].remainTime < UserLocalDays()[day].blockTime ?
                                                                     <CanEdit
