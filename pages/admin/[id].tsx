@@ -171,20 +171,31 @@ const Admin = () => {
 
 
     useEffect(() => {
-        const urlSplitArray = document.baseURI.split('.unimun')
-        let companyName;
+        // console.log(location.hostname)
+        // const urlSplitArray = document.baseURI.split('.unimun')
+        // let companyName;
+        //
+        // companyName = urlSplitArray[0]
+        // companyName = companyName.replace('http://', '')
+        // companyName = companyName.replace('https://', '')
+        // if ((companyName as string).includes('/'))
+        //     companyName = 'arnoya'
+        //
+        // CompanyName(companyName)
+        // console.log(companyName)
+        // console.log('comp name split')
 
-        companyName = urlSplitArray[0]
-        companyName = companyName.replace('http://', '')
-        companyName = companyName.replace('https://', '')
-        if ((companyName as string).includes('/'))
-            companyName = 'arnoya'
+
+        let companyName = "";
+        if (CompanyName())
+            companyName = CompanyName()
+        else
+            companyName = location.hostname.split('.')[0]
 
         CompanyName(companyName)
-        console.log(companyName)
-        console.log('comp name split')
 
-        getCompany(CompanyName()).then((value) => {
+
+        getCompany(companyName).then((value) => {
             try {
                 CompanyId(value.data.id)
             } catch (e) {

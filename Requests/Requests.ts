@@ -1,10 +1,7 @@
 import axios from "axios";
-import {BaseURL} from "../store/store";
 
 
 const BASE_URL = "https://time.m3m.dev/api/"
-export const getUserList = axios.get(BASE_URL + 'getUsers.php', {});
-
 
 export const getCompany = (name: string) => {
 
@@ -72,7 +69,7 @@ export const getReportsForAdmin = (token: string, startDate: string, endDate: st
 
         });
 }
-export const editAdminReview = (token: string, userID: string, companyID: string, adminReview: string, jalaliDate: string, adminID:string) => {
+export const editAdminReview = (token: string, userID: string, companyID: string, adminReview: string, jalaliDate: string, adminID: string) => {
     return axios.post(BASE_URL + 'editAdminReview.php',
         {
             // headers: {

@@ -124,20 +124,11 @@ const CanEdit = (props: {
 
 
     const sampleOfThisTime = (time: any) => {
-
-        console.log(time)
-        console.log(time.sampleValues)
-        console.log('this was the sample')
         try {
             return time.sampleValues
         } catch (e) {
 
         }
-        // Object.keys(props.companyTimeFields as object).forEach((key) => {
-        //     if (((props.companyTimeFields as any)[key].title as string) === time.title) {
-        //         return props.companyTextFields[key].sampleValues as any[]
-        //     }
-        // })
         return ["05:00", "06:00", "07:00", "08:00"]
     }
     return (

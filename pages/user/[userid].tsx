@@ -83,8 +83,15 @@ const Userid = () => {
 
 
     useEffect(() => {
+        let companyName = "";
+        if (CompanyName())
+            companyName = CompanyName()
+        else
+            companyName = location.hostname.split('.')[0]
 
-        getCompany(CompanyName()).then((res) => {
+        CompanyName(companyName)
+
+        getCompany(companyName).then((res) => {
             CompanyId(res.data.id)
             CompanyTextFields(res.data.textFields)
             CompanyTimeFields(res.data.timeFields)
@@ -172,7 +179,6 @@ const Userid = () => {
 
 
                     day.trainingHour = workHour;
-
 
 
                 } else {
@@ -297,7 +303,7 @@ const Userid = () => {
                                             let reportState = ''
                                             let adminReview = [];
                                             try {
-                                                reportState = UserLocalDays()[day].adminReview[UserLocalDays()[day].adminReview.length-1].state
+                                                reportState = UserLocalDays()[day].adminReview[UserLocalDays()[day].adminReview.length - 1].state
                                                 adminReview = UserLocalDays()[day].adminReview
 
                                             } catch (e) {
