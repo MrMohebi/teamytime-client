@@ -20,7 +20,6 @@ const Passed = (props: {
         if (props.dayData.textFields)
             setFilteredTextFields(props.dayData.textFields.filter((textField: any) => textField.value))
 
-        console.log(props.adminReview)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.dayData]);
 

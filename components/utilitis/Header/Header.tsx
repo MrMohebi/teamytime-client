@@ -6,10 +6,8 @@ import gsap from 'gsap'
 import {
     AdminID,
     BaseURL,
-    CollapseHeader,
-    CoolDown,
-    CurrentDay,
-    CurrentSelectedDate,
+    CollapseHeader, CurrentDay,
+    CurrentSelectedDate, StartDate,
     UserId
 } from "../../../store/store";
 import {getReportsForAdmin, getUserReportsRange} from "../../../Requests/Requests";
@@ -57,6 +55,7 @@ const Header = (props: {
         const [indicatorColorClass, setIndicatorColorClass] = useState("bg-primary");
 
         const adminId = useReactiveVar(AdminID)
+        const reactiveCompanyStartDate = useReactiveVar(StartDate)
 
         const [localDays, setLocalDays] = useState([]);
 
@@ -68,6 +67,11 @@ const Header = (props: {
         }, [currentDay])
 
 
+        useEffect(()=>{
+            console.log('this is is after')
+            console.log(moment("1401/06/20",'jYYYY/jM/jD').unix())
+
+        },[reactiveCompanyStartDate])
         useEffect(() => {
 
             if (reactiveCollapseHeader) {

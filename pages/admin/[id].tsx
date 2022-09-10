@@ -732,7 +732,7 @@ const Admin = () => {
                                                                             <img alt={'avatar'}
                                                                                  src={avatar.profile ? BaseURL() + avatar.profile : '/img/no-image.png'}
                                                                                  key={index + "av"}
-                                                                                 className={'w-6 h-6 rounded-full object-fill  border-2 shrink-0'}
+                                                                                 className={'w-6 h-6 rounded-full object-fill shrink-0'}
                                                                                  style={{
                                                                                      transform: `translateX(${index / 1.5}rem)`
                                                                                  }}/>

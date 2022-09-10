@@ -159,7 +159,7 @@ const TimePicker = (props: {
 
 
                     {
-                        (props.sample).map((item: string, index) => {
+                        (props.sample ?? ["00:00"]).map((item: string, index) => {
 
                             let hour = parseInt(item.split(':')[0])
 
@@ -178,7 +178,7 @@ const TimePicker = (props: {
                                              resetMinutes();
                                          }
                                      }}>
-                                    {hour<10? `0${hour}`:hour}
+                                    {hour < 10 ? `0${hour}` : hour}
                                 </div>
                             )
                         })

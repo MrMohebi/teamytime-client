@@ -7,6 +7,7 @@ import TextField from "../utilitis/TextField/TextField";
 import {sendReport} from "../../Requests/Requests";
 import {CollapseHeader, CompanyId, CompanyRequiredFields, UserId} from "../../store/store";
 import Swal from "sweetalert2";
+import produce from "immer";
 
 const CanEdit = (props: {
     date: string,
@@ -30,6 +31,7 @@ const CanEdit = (props: {
 
     const textFieldsHolder = useRef<HTMLDivElement>(null)
     const lastScrollTop = useRef(0)
+    const [requiredTextFieldValues, setRequiredTextFieldValues] = useState([""] as [string]);
 
     const canEditScroller = useRef<HTMLDivElement>()
     moment.loadPersian()
@@ -131,13 +133,21 @@ const CanEdit = (props: {
         }
         return ["05:00", "06:00", "07:00", "08:00"]
     }
+    const [btnActive, setBtnActive] = useState(false);
+    useEffect(() => {
+        let btnAct = false;
+        requiredTextFieldValues.map((item) => {
+            btnAct = item.length > 3;
+        })
+        setBtnActive(btnAct)
+    }, [requiredTextFieldValues]);
     return (
         <div className={'h-full w-full relative'}>
             <div
                 className={`fixed left-0 bottom-5 z-50  transition-all duration-500  w-full flex flex-col justify-center items-center pointer-events-none`}>
 
                 <ButtonBase
-                    className={`w-11/12 max-w-btn-max-width ${props.active ? "pointer-events-auto" : 'pointer-events-none'} transition-all duration-300 ease-in-out mt-5 z-20 transition-all h-14 bg-primary rounded-2xl text-white IranSansMedium `}
+                    className={`w-11/12 max-w-btn-max-width ${btnActive ? " bg-primary" : "bg-gray-600 pointer-events-none"} ${btnLoading ? "pointer-events-none" : ""} ${props.active ? "pointer-events-auto" : 'pointer-events-none'} transition-all duration-300 ease-in-out mt-5 z-20 transition-all h-14 rounded-2xl text-white IranSansMedium `}
                     onClick={submitClickHandler}
                 >
                     {
@@ -254,6 +264,11 @@ const CanEdit = (props: {
                                                 title={textField.title}
                                                 maxLength={250}
                                                 onChange={(text: string) => {
+
+                                                    if (CompanyRequiredFields().includes(textField.title))
+                                                        setRequiredTextFieldValues(produce(draft => {
+                                                            draft[index] = text
+                                                        }))
 
 
                                                     if (text) {
