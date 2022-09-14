@@ -137,7 +137,7 @@ const CanEdit = (props: {
     useEffect(() => {
         let btnAct = false;
         requiredTextFieldValues.map((item) => {
-            btnAct = item.length > 3;
+            btnAct = item.length > 0;
         })
         setBtnActive(btnAct)
     }, [requiredTextFieldValues]);
