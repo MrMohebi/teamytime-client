@@ -147,7 +147,8 @@ const CanEdit = (props: {
                 className={`fixed left-0 bottom-5 z-50  transition-all duration-500  w-full flex flex-col justify-center items-center pointer-events-none`}>
 
                 <ButtonBase
-                    className={`w-11/12 max-w-btn-max-width ${btnActive ? " bg-primary" : "bg-gray-600 pointer-events-none"} ${btnLoading ? "pointer-events-none" : ""} ${props.active ? "pointer-events-auto" : 'pointer-events-none'} transition-all duration-300 ease-in-out mt-5 z-20 transition-all h-14 rounded-2xl text-white IranSansMedium `}
+                    disabled={!btnActive}
+                    className={`w-11/12 max-w-btn-max-width ${btnActive ? "bg-primary" : "bg-gray-600"} ${props.active ? "  pointer-events-auto" : ' pointer-events-none'}  ${btnLoading ? "pointer-events-none" : ""}  transition-all duration-300 ease-in-out mt-5 z-20 transition-all h-14 rounded-2xl text-white IranSansMedium `}
                     onClick={submitClickHandler}
                 >
                     {
