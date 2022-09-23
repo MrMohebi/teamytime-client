@@ -127,12 +127,15 @@ const CanEdit = (props: {
 
     const sampleOfThisTime = (time: any) => {
         try {
-            return time.sampleValues
+            if (!!time.sampleValues) {
+                return time.sampleValues
+            }
+            return ["05:00", "06:00", "07:00", "08:00"]
         } catch (e) {
-
+            return ["05:00", "06:00", "07:00", "08:00"]
         }
-        return ["05:00", "06:00", "07:00", "08:00"]
     }
+
     const [btnActive, setBtnActive] = useState(false);
     useEffect(() => {
         let btnAct = false;

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const BASE_URL = "https://time.m3m.dev/api/"
+const BASE_URL = "https://timeservice.unimun.me/api/"
 
 export const getCompany = (name: string) => {
 
@@ -22,7 +22,7 @@ export const getUser = (userID: string) => {
 
 export const sendReport = (userID: string, companyID: string, jalaliDate: string, timeFields: string, textFields: string, autoTime: string) => {
 
-    return axios.get("https://time.m3m.dev/api/upsertReport.php", {
+    return axios.get(BASE_URL + "upsertReport.php", {
         params: {
             userID: userID,
             companyID: companyID,

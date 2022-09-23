@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useRouter} from "next/router";
 import {getCompany, getUser, getUserReports} from "../../Requests/Requests";
 import {
-    CollapseHeader,
+    CollapseHeader, CompanyAllowedDays,
     CompanyId,
     CompanyName,
     CompanyRequiredFields, CompanyTextFields,
@@ -95,6 +95,7 @@ const Userid = () => {
             CompanyId(res.data.id)
             CompanyTextFields(res.data.textFields)
             CompanyTimeFields(res.data.timeFields)
+            CompanyAllowedDays(res.data.allowedDays)
 
             if (res.data.textFields) {
 
@@ -287,6 +288,13 @@ const Userid = () => {
 
                                 {
                                     Object.keys(reactiveUserLocalDays).map((day, index) => {
+                                        let allowedDays = [];
+                                        if (CompanyAllowedDays()) {
+                                            for (let i = 0; i >= -(CompanyAllowedDays()); i--) {
+                                                allowedDays.push(fullDate(i))
+                                            }
+                                        }
+
 
                                         let date = new Date()
                                         date.setSeconds(0)
@@ -340,32 +348,44 @@ const Userid = () => {
                                                             dayData={UserLocalDays()[day]}
                                                             remainSeconds={UserLocalDays()[day].remainTime}/>
                                                         :
-                                                        UserLocalDays()[day].remainTime > 3600 * 39 ?
-                                                            <NotYet
+
+                                                        allowedDays.includes(Object.keys(reactiveUserLocalDays)[index]) ?
+                                                            <CanEdit
+                                                                active={index - 1 === GetDayNumberByID(reactiveCurrentDay)}
+                                                                noTimeLimit={true} loading={loadingFragment}
+                                                                date={Object.keys(reactiveUserLocalDays)[index]}
+                                                                companyTimeFields={CompanyTimeFields()}
+                                                                companyTextFields={CompanyTextFields()}
+                                                                dayData={UserLocalDays()[day]}
                                                                 remainSeconds={UserLocalDays()[day].remainTime}/>
                                                             :
-                                                            UserLocalDays()[day].remainTime < 0 ?
-                                                                <Passed
-                                                                    adminReview={adminReview}
-                                                                    reportState={reportState}
-                                                                    dayData={UserLocalDays()[day]}
-                                                                    saved={(!!UserLocalDays()[day].createdAt)}
-                                                                    workHours={6}
-                                                                    trainingHours={UserLocalDays()[day].trainingHours}
-                                                                    whatDidUserDo={UserLocalDays()[day].whatDidUserDoInReport}/>
+                                                            UserLocalDays()[day].remainTime > 3600 * 39 ?
+                                                                <NotYet
+                                                                    remainSeconds={UserLocalDays()[day].remainTime}/>
                                                                 :
-                                                                UserLocalDays()[day].blockTime < passedSeconds || UserLocalDays()[day].remainTime < UserLocalDays()[day].blockTime ?
-                                                                    <CanEdit
-                                                                        active={index - 1 === GetDayNumberByID(reactiveCurrentDay)}
-                                                                        noTimeLimit={false} loading={loadingFragment}
-                                                                        date={Object.keys(reactiveUserLocalDays)[index]}
-                                                                        companyTimeFields={CompanyTimeFields()}
-                                                                        companyTextFields={CompanyTextFields()}
+                                                                UserLocalDays()[day].remainTime < 0 ?
+                                                                    <Passed
+                                                                        adminReview={adminReview}
+                                                                        reportState={reportState}
                                                                         dayData={UserLocalDays()[day]}
-                                                                        remainSeconds={UserLocalDays()[day].remainTime}/>
+                                                                        saved={(!!UserLocalDays()[day].createdAt)}
+                                                                        workHours={6}
+                                                                        trainingHours={UserLocalDays()[day].trainingHours}
+                                                                        whatDidUserDo={UserLocalDays()[day].whatDidUserDoInReport}/>
+                                                                    :
+                                                                    UserLocalDays()[day].blockTime < passedSeconds || UserLocalDays()[day].remainTime < UserLocalDays()[day].blockTime ?
+                                                                        <CanEdit
+                                                                            active={index - 1 === GetDayNumberByID(reactiveCurrentDay)}
+                                                                            noTimeLimit={false}
+                                                                            loading={loadingFragment}
+                                                                            date={Object.keys(reactiveUserLocalDays)[index]}
+                                                                            companyTimeFields={CompanyTimeFields()}
+                                                                            companyTextFields={CompanyTextFields()}
+                                                                            dayData={UserLocalDays()[day]}
+                                                                            remainSeconds={UserLocalDays()[day].remainTime}/>
 
-                                                                    : <NotYet
-                                                                        remainSeconds={UserLocalDays()[day].blockTime - passedSeconds}/>
+                                                                        : <NotYet
+                                                                            remainSeconds={UserLocalDays()[day].blockTime - passedSeconds}/>
 
                                                 }
 
