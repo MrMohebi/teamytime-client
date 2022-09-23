@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const BASE_URL = "https://timeservice.unimun.me/api/"
+export const BASE_URL = "https://timeservice.unimun.me/api/"
 
 export const getCompany = (name: string) => {
 

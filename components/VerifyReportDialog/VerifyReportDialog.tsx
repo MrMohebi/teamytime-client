@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {AdminID, CompanyId} from "../../store/store";
 import {Button} from "@material-ui/core";
 import {CircularProgress} from "@material-ui/core";
+import {BASE_URL} from "../../Requests/Requests";
 
 const VerifyReportDialog = (props: {
     userID: string,
@@ -56,7 +57,7 @@ const VerifyReportDialog = (props: {
 
         };
 
-        fetch("https://time.m3m.dev/api/editAdminReview.php", requestOptions)
+        fetch(BASE_URL + "editAdminReview.php", requestOptions)
             .then(() => {
                 setBtnLoading(false)
                 props.onClose(adminReview)
