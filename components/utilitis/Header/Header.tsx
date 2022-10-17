@@ -5,7 +5,6 @@ import ScrollTrigger from 'gsap/dist/ScrollTrigger'
 import gsap from 'gsap'
 import {
     AdminID,
-    BaseURL,
     CollapseHeader, CurrentDay,
     CurrentSelectedDate, StartDate,
     UserId
@@ -20,6 +19,7 @@ import $ from 'jquery'
 import {GoToThisDay} from "../../GoToThis";
 import {GetDayNumberByID} from "../../../helpers/GetDayNumberByID";
 import {fullDate} from "../../../helpers/FullDate";
+import {IMGURL} from "../../../helpers/IMGURL";
 
 
 gsap.registerPlugin(ScrollTrigger)
@@ -35,8 +35,6 @@ const Header = (props: {
         loading?: boolean
         admin?: boolean,
         adminToken?: string
-
-
     }) => {
 
 
@@ -52,7 +50,7 @@ const Header = (props: {
 
         const [goToPosition, setGoToPosition] = useState('');
 
-        const [indicatorColorClass, setIndicatorColorClass] = useState("bg-primary");
+        const [indicatorColorClass] = useState("bg-primary");
 
         const adminId = useReactiveVar(AdminID)
         const reactiveCompanyStartDate = useReactiveVar(StartDate)
@@ -67,11 +65,11 @@ const Header = (props: {
         }, [currentDay])
 
 
-        useEffect(()=>{
+        useEffect(() => {
             console.log('this is is after')
-            console.log(moment("1401/06/20",'jYYYY/jM/jD').unix())
+            console.log(moment("1401/06/20", 'jYYYY/jM/jD').unix())
 
-        },[reactiveCompanyStartDate])
+        }, [reactiveCompanyStartDate])
         useEffect(() => {
 
             if (reactiveCollapseHeader) {
@@ -153,7 +151,7 @@ const Header = (props: {
                         if (res.data) {
                             let datesArr = [] as any;
 
-                            Object.keys(res.data).forEach((date, index) => {
+                            Object.keys(res.data).forEach((date) => {
                                 datesArr.push(res.data[date])
                             })
                             setLocalDays(datesArr)
@@ -188,7 +186,6 @@ const Header = (props: {
             const d = new Date()
             d.setDate(d.getDate() + dayOffset)
 
-            let daysE = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             let days = ['یکشنبه', 'دوشنبه', 'سه شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
 
             let dayName = days[d.getDay()];
@@ -244,7 +241,7 @@ const Header = (props: {
                     let middleOfIndicator = (indicatorRef.current ?? document.createElement('div') as HTMLDivElement).getBoundingClientRect().x + indicatorW / 2;
 
 
-                    elChildren.forEach((item, index) => {
+                    elChildren.forEach((item) => {
 
 
                         let middleOfTheChild = Math.floor(item.getBoundingClientRect().left + (eachChildW / 2));
@@ -270,7 +267,7 @@ const Header = (props: {
         const scrollToToday = () => {
             if (scrollerRef.current) {
                 let children = scrollerRef.current.querySelectorAll('.header-day')
-                children.forEach((item, childIndex) => {
+                children.forEach((item) => {
                     if (item.querySelector('.date-of-day')!.innerHTML === fullDate(0)) {
                         CurrentDay(item.id)
                         setTodayID(item.id)
@@ -429,9 +426,10 @@ const Header = (props: {
 
                     <div className={'flex flex-row justify-center items-center'}>
                         <div className={'h-14 w-14 rounded-xl bg-primary overflow-hidden'}>
-                            <img src={`${props.profileURL ? BaseURL() + props.profileURL : " /img/no-image.png"}`}
-                                 alt="Arnoya"
-                                 className={'w-full h-full block object-cover'}/>
+                            <img
+                                src={`${props.profileURL ? IMGURL(props.profileURL) : " /img/no-image.png"}`}
+                                alt="Arnoya"
+                                className={'w-full h-full block object-cover'}/>
                         </div>
                         <div className={'flex h-full flex-col justify-around items-start mr-3'}>
                             <span className={'block IranSansMedium text-md text-white'}>{props.name ?? ""}</span>

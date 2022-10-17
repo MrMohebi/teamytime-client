@@ -11,6 +11,9 @@ export const getCompany = (name: string) => {
         }
     });
 }
+export const getUsers = () => {
+    return axios.get(BASE_URL + 'getUsers.php',)
+}
 export const getUser = (userID: string) => {
 
     return axios.get(BASE_URL + 'getUser.php', {
