@@ -15,6 +15,7 @@ import {fullDate} from "../../helpers/FullDate";
 import AdminNoReports from "../../components/DayFragments/AdminNoReports";
 import VerifyReportDialog from "../../components/VerifyReportDialog/VerifyReportDialog";
 import produce from 'immer'
+import {IMGURL} from "../../helpers/IMGURL";
 
 moment.loadPersian()
 const Admin = () => {
@@ -375,7 +376,7 @@ const Admin = () => {
                                                                 className={'h-12 w-12 rounded-xl bg-primary overflow-hidden'}>
                                                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                                                 <img
-                                                                    src={`${report.user.profile ? BaseURL() + report.user.profile : "/img/no-image.png"} `}
+                                                                    src={`${report.user.profile ? IMGURL(report.user.profile) : "/img/no-image.png"} `}
                                                                     alt="Arnoya"
                                                                     className={'w-full h-full block object-cover'}/>
                                                             </div>
@@ -730,7 +731,7 @@ const Admin = () => {
                                                                         return (
 
                                                                             <img alt={'avatar'}
-                                                                                 src={avatar.profile ? BaseURL() + avatar.profile : '/img/no-image.png'}
+                                                                                 src={avatar.profile ? IMGURL(avatar.profile) : '/img/no-image.png'}
                                                                                  key={index + "av"}
                                                                                  className={'w-6 h-6 rounded-full object-fill shrink-0'}
                                                                                  style={{
