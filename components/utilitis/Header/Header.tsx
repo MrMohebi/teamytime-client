@@ -23,7 +23,7 @@ import {IMGURL} from "../../../helpers/IMGURL";
 
 
 gsap.registerPlugin(ScrollTrigger)
-export const backDaysLimit = 7;
+export const backDaysLimit = 30;
 export const backDaysLimitAdmin = 20;
 
 
