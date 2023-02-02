@@ -28,7 +28,7 @@ import moment from 'moment-jalaali'
 gsap.registerPlugin(ScrollTrigger)
 
 const Userid = () => {
-
+    
 
     const [loadingFragment, setLoadingFragment] = useState(true);
     const [companyGot, setCompanyGot] = useState(false);
@@ -84,10 +84,7 @@ const Userid = () => {
 
     useEffect(() => {
         let companyName = "";
-        if (CompanyName())
-            companyName = CompanyName()
-        else
-            companyName = location.hostname.split('.')[0]
+        companyName = location.hostname.split('.')[0]
 
         CompanyName(companyName)
 

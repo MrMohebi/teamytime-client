@@ -188,10 +188,7 @@ const Admin = () => {
 
 
         let companyName = "";
-        if (CompanyName())
-            companyName = CompanyName()
-        else
-            companyName = location.hostname.split('.')[0]
+        companyName = location.hostname.split('.')[0]
 
         CompanyName(companyName)
 
@@ -560,8 +557,10 @@ const Admin = () => {
                                                                             opacity: '0'
                                                                         }}
                                                                     >
-                                                                        <div className={'absolute left-0 top-0 h-full w-2 bg-gradient-to-r from-primary-dark to-transparent z-10'}></div>
-                                                                        <div className={'absolute right-0 top-0 h-full w-2 bg-gradient-to-l from-primary-dark to-transparent z-10'}></div>
+                                                                        <div
+                                                                            className={'absolute left-0 top-0 h-full w-2 bg-gradient-to-r from-primary-dark to-transparent z-10'}></div>
+                                                                        <div
+                                                                            className={'absolute right-0 top-0 h-full w-2 bg-gradient-to-l from-primary-dark to-transparent z-10'}></div>
                                                                         <div
                                                                             className={'flex flex-row justify-start items-center w-full h-full overflow-x-scroll overflow-y-visible px-4'}>
 
