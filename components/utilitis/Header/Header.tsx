@@ -403,7 +403,7 @@ const Header = (props: {
 
         return (
             <div
-                className={`w-full transition-all ease-in-out duration-500 bg-primary-dark top-0 left-0  z-30 ${false ? '-mt-20' : "-mt-0"}`}
+                className={`w-full transition-all ease-in-out duration-500 bg-primary-dark top-0 left-0  z-30 ${reactiveCollapseHeader ? '-mt-20' : "-mt-0"}`}
                 style={{
                     boxShadow: '0 11px 11px #151e27'
                 }}>
